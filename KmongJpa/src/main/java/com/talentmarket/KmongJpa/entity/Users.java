@@ -1,5 +1,6 @@
 package com.talentmarket.KmongJpa.entity;
 
+import com.talentmarket.KmongJpa.Dto.RegisterRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,9 +24,18 @@ public class Users {
     private String gender;
     private String provider;
     private Long providerId;
+    private String image;
 
-    @Builder.Default
-    private String image = "Defaultimage.img";
+protected Users () {}
 
-    protected Users () {}
+    public static Users createUsers(RegisterRequest request,String encodePassword) {
+    return Users.builder()
+            .email(request.getEmail())
+            .password(encodePassword)
+            .image("Defaultimage.img")
+            .address(request.getAddress())
+            .gender(request.getGender())
+            .build();
+    }
+
 }

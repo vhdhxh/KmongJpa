@@ -3,10 +3,12 @@ package com.talentmarket.KmongJpa.Dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @AllArgsConstructor
 @Builder
+@Setter
 public class RegisterRequest {
     private String password;
     private String address;
@@ -14,5 +16,4 @@ public class RegisterRequest {
     private String email;
     private String provider;
     private Long providerId;
-    private String image;
 }

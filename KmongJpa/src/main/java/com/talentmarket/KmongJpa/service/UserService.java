@@ -1,6 +1,7 @@
 package com.talentmarket.KmongJpa.service;
 
 import com.talentmarket.KmongJpa.Dto.RegisterRequest;
+import com.talentmarket.KmongJpa.config.auth.PrincipalDetails;
 import com.talentmarket.KmongJpa.entity.Users;
 import com.talentmarket.KmongJpa.repository.UserRepository;
 import lombok.Builder;
@@ -17,36 +18,21 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    //회원가입
 
+    //회원가입
     public Long Register(RegisterRequest request) {
-      Users user = IfImageNullhasDefault(request);
+        String encodePassword = bCryptPasswordEncoder.encode(request.getPassword());
+      Users user = Users.createUsers(request,encodePassword);
       Long Id = userRepository.save(user).getId();
       return Id;
     }
 
-    public Users IfImageNullhasDefault(RegisterRequest request) {
-       String encodePassword = bCryptPasswordEncoder.encode(request.getPassword());
-
-        if (request.getImage() == null) {
-           return Users.builder()
-                    .email(request.getEmail())
-                    .address(request.getAddress())
-                    .gender(request.getGender())
-                    .password(encodePassword)
-                    .build();
-
-
+     //회원탈퇴
+    public void Withdrawal(PrincipalDetails principalDetails){
+        if(principalDetails==null){
+            throw new IllegalArgumentException("이미 탈퇴된 회원입니다");
         }
-        return Users.builder()
-                .email(request.getEmail())
-                .address(request.getAddress())
-                .gender(request.getGender())
-                .password(encodePassword)
-                .image(request.getImage())
-                .build();
-
-
+        userRepository.delete(principalDetails.getDto());
     }
     }
 
