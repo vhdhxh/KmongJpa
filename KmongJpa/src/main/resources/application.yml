@@ -16,7 +16,7 @@ spring:
     #     password: 2938145a
   jpa:
     hibernate:
-      ddl-auto: create #validate
+      ddl-auto: validate #create #validate #create #validate #create
     properties:
       hibernate:
         show_sql: true

@@ -21,6 +21,7 @@ public class Users {
     private String email;
     private String password;
     private String address;
+    private String name;
     private String gender;
     private String provider;
     private Long providerId;
@@ -34,6 +35,7 @@ protected Users () {}
             .password(encodePassword)
             .image("Defaultimage.img")
             .address(request.getAddress())
+            .name(request.getName())
             .gender(request.getGender())
             .build();
     }

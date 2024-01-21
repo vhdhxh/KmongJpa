@@ -15,5 +15,6 @@ public class RegisterRequest {
     private String gender;
     private String email;
     private String provider;
+    private String name;
     private Long providerId;
 }

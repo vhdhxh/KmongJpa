@@ -1,12 +1,15 @@
 package com.talentmarket.KmongJpa.entity;
 
 import com.talentmarket.KmongJpa.Dto.WriteRequest;
+import com.talentmarket.KmongJpa.config.auth.PrincipalDetails;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -28,13 +31,14 @@ public class Board {
     private Users user;
 
     @CreatedDate
-    private String createdDate;
+    private LocalDateTime createdDate;
     private String writer;
     private String detail;
 
-    public static Board createBoard(WriteRequest reqeust) {
+    public static Board createBoard(WriteRequest reqeust, PrincipalDetails principalDetails) {
         return Board.builder()
-                .writer(reqeust.getWriter())
+                .user(principalDetails.getDto())
+                .writer(principalDetails.getDto().getName())
                 .thumbnail(reqeust.getThumbnail())
                 .detail(reqeust.getDetail())
                 .title(reqeust.getTitle())

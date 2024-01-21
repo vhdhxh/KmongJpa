@@ -19,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
+@Rollback(value = false)
 class UserTest {
     @Autowired
     UserRepository userRepository;
@@ -37,6 +38,7 @@ class UserTest {
             .password("1234")
             .address("주소")
             .gender("남자")
+           .name("닉네임")
             .build();
     //given
   Long Id = userService.Register(request);
