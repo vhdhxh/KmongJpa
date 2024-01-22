@@ -35,6 +35,7 @@ public class Board {
     private String writer;
     private String detail;
 
+
     public static Board createBoard(WriteRequest reqeust, PrincipalDetails principalDetails) {
         return Board.builder()
                 .user(principalDetails.getDto())
