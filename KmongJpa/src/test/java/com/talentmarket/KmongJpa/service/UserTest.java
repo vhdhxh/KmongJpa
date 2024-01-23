@@ -19,7 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
-@Rollback(value = false)
 class UserTest {
     @Autowired
     UserRepository userRepository;
@@ -58,12 +57,28 @@ class UserTest {
     @DisplayName("중복 회원이 가입했다면 예외가 발생한다")
     @Test
     void IfDuplicationMemberHasException() {
-    //when
-
     //given
+        RegisterRequest request = RegisterRequest.builder()
+                .email("vhdhxh@naver.com")
+                .password("1234")
+                .address("주소")
+                .gender("남자")
+                .name("닉네임")
+                .build();
+        RegisterRequest request2 = RegisterRequest.builder()
+                .email("vhdhxh@naver.com")
+                .password("1234")
+                .address("주소")
+                .gender("남자")
+                .name("닉네임")
+                .build();
+        Long Id = userService.Register(request);
 
-    //then
 
+      //when  //then
+     assertThatThrownBy(()->userService.Register(request2))
+             .isInstanceOf(IllegalArgumentException.class)
+             .hasMessage("중복된 회원입니다.");
     }
 
     @DisplayName("회원탈퇴를 한다.")
@@ -82,15 +97,20 @@ class UserTest {
 //    @Test
 //    void WithdrawalException() {
 //        //when
+//        Users user = Users.builder().email("test").build();
+//        userRepository.save(user);
 //
-//        PrincipalDetails principalDetails = new PrincipalDetails(userRepository.findAllByEmail("ets"));
+//        PrincipalDetails principalDetails = new PrincipalDetails(userRepository.findAllByEmail("test"));
 //        //given
 //        userService.Withdrawal(principalDetails);
+//        PrincipalDetails principalDetails2 = new PrincipalDetails(userRepository.findAllByEmail("test"));
+//
 //        //then
-//        assertThatThrownBy(() -> userService.Withdrawal(principalDetails))
-//                .isInstanceOf(IllegalArgumentException.class);
-
-
+//        assertThatThrownBy(() -> userService.Withdrawal(principalDetails2))
+//                .isInstanceOf(IllegalArgumentException.class)
+//                .hasMessage("이미 탈퇴된 회원입니다");
+//
+//
 //    }
 
     }

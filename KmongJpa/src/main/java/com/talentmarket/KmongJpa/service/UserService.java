@@ -21,6 +21,9 @@ public class UserService {
 
     //회원가입
     public Long Register(RegisterRequest request) {
+        if (userRepository.findAllByEmail(request.getEmail())!=null){
+            throw new IllegalArgumentException("중복된 회원입니다.");
+        }
         String encodePassword = bCryptPasswordEncoder.encode(request.getPassword());
       Users user = Users.createUsers(request,encodePassword);
       Long Id = userRepository.save(user).getId();
