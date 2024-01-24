@@ -1,12 +1,10 @@
 package com.talentmarket.KmongJpa.Dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor //역직렬화 과정시 objectmapper가 기본생성자 필요
 @Builder
 @Setter
 public class RegisterRequest {

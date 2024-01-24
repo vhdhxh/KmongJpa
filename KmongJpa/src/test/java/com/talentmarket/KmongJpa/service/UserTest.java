@@ -3,6 +3,7 @@ package com.talentmarket.KmongJpa.service;
 import com.talentmarket.KmongJpa.Dto.RegisterRequest;
 import com.talentmarket.KmongJpa.config.auth.PrincipalDetails;
 import com.talentmarket.KmongJpa.entity.Users;
+import com.talentmarket.KmongJpa.exception.CustomException;
 import com.talentmarket.KmongJpa.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.assertj.core.api.ThrowableAssert;
@@ -12,12 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@ActiveProfiles("test")
 @Transactional
 class UserTest {
     @Autowired
@@ -72,13 +75,13 @@ class UserTest {
                 .gender("남자")
                 .name("닉네임")
                 .build();
-        Long Id = userService.Register(request);
+        userService.Register(request);
 
 
       //when  //then
      assertThatThrownBy(()->userService.Register(request2))
-             .isInstanceOf(IllegalArgumentException.class)
-             .hasMessage("중복된 회원입니다.");
+             .isInstanceOf(CustomException.class)
+             .hasMessage("중복된 이메일입니다.");
     }
 
     @DisplayName("회원탈퇴를 한다.")
@@ -87,11 +90,11 @@ class UserTest {
     //when
         Users users = Users.builder().email("test").password("test").build();
         userRepository.save(users);
-    Users user = userRepository.findAllByEmail("test");
+    Optional<Users> user = userRepository.findByEmail("test");
     //given
-      userRepository.delete(user);
+      userRepository.delete(user.get());
     //then
-     assertThat(userRepository.findAllByEmail("test")).isNull();
+     assertThat(userRepository.findByEmail("test")).isEmpty();
     }
 //    @DisplayName("회원탈퇴시 없는 회원이면 예외를 발생시킨다.")
 //    @Test

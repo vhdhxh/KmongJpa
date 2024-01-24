@@ -3,15 +3,21 @@ package com.talentmarket.KmongJpa.service;
 import com.talentmarket.KmongJpa.Dto.RegisterRequest;
 import com.talentmarket.KmongJpa.config.auth.PrincipalDetails;
 import com.talentmarket.KmongJpa.entity.Users;
+import com.talentmarket.KmongJpa.exception.CustomException;
+import com.talentmarket.KmongJpa.exception.ErrorCode;
 import com.talentmarket.KmongJpa.repository.UserRepository;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
+import org.antlr.v4.runtime.atn.SemanticContext;
 import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
+
+import static java.util.Optional.empty;
 
 @Service
 @RequiredArgsConstructor
@@ -20,10 +26,13 @@ public class UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     //회원가입
+
     public Long Register(RegisterRequest request) {
-        if (userRepository.findAllByEmail(request.getEmail())!=null){
-            throw new IllegalArgumentException("중복된 회원입니다.");
+
+        if (userRepository.findByEmail(request.getEmail()).isPresent()){
+            throw new CustomException(ErrorCode.EMAIL_DUPLICATED);
         }
+
         String encodePassword = bCryptPasswordEncoder.encode(request.getPassword());
       Users user = Users.createUsers(request,encodePassword);
       Long Id = userRepository.save(user).getId();
@@ -31,6 +40,7 @@ public class UserService {
     }
 
      //회원탈퇴
+    @Transactional
     public void Withdrawal(PrincipalDetails principalDetails){
         if(principalDetails==null){
             throw new IllegalArgumentException("이미 탈퇴된 회원입니다");

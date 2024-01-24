@@ -1,47 +1,82 @@
 package com.talentmarket.KmongJpa.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.talentmarket.KmongJpa.Dto.RegisterRequest;
 import com.talentmarket.KmongJpa.config.auth.PrincipalDetailsService;
 import com.talentmarket.KmongJpa.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@Transactional
+@WebMvcTest(controllers = UserApi.class)
+@ActiveProfiles("test")
 class UserApiTest {
 
     @Autowired
     private MockMvc mockMvc;
-    @Mock
+    @MockBean
     private UserService userService;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @DisplayName("회원가입을 한다.")
+    @WithMockUser(username = "테스트_최고관리자", roles = {"SUPER"})
     @Test
     void testRegister() throws Exception {
     //when
-
+        RegisterRequest request = RegisterRequest.builder().email("test").password("1234").build();
+        mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/v1/register").with(csrf())
+                .content(objectMapper.writeValueAsString(request))
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isOk());
     //given
-        mockMvc.perform(post("/api/v1/register").param("email","test")
-                .param("password","1234")).andExpect(status().isOk());
+
 
         //then
 
     }
+    @DisplayName("중복된 이메일이면 예외가 터진다.")
+    @WithMockUser(username = "테스트_최고관리자", roles = {"SUPER"})
+    @Test
+    void DuplicateRegister() throws Exception{
+    //given
+      when(userService.Register(any())).thenThrow(new IllegalArgumentException("중복된 회원입니다."));
+    //when //then
+        RegisterRequest request = RegisterRequest.builder().email("test").password("1234").build();
+        mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/v1/register").with(csrf())
+                .content(objectMapper.writeValueAsString(request))
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isConflict());
+    }
     @Test
     public void testLoginSuccess() throws Exception {
-        this.mockMvc.perform(post("/login")
+        mockMvc.perform(post("/login")
                         .param("email", "vhdhxh@naver.com")
                         .param("password", "1234"))
                 .andExpect(status().isFound());
@@ -50,7 +85,7 @@ class UserApiTest {
 
     @Test
     public void testLoginFail() throws Exception {
-        this.mockMvc.perform(post("/login")
+        mockMvc.perform(post("/login")
                         .param("email", "vhdhxh@naver.com")
                         .param("password", "wrong_password"))
                 .andExpect(status().isFound());
