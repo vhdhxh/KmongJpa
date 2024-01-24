@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ExceptionAdvice {
     @ExceptionHandler(CustomException.class)
     public ResponseEntity DuplicateRegisterException(CustomException exception) {
-        log.info(exception.getMessage());
+        log.info(exception.getErrorCode().getMessage());
 
         return ResponseEntity.status(exception.getErrorCode().getHttpStatus()).body(exception.getErrorCode().getMessage());
     }

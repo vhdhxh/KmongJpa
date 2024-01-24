@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum ErrorCode {
     EMAIL_DUPLICATED(HttpStatus.BAD_REQUEST,"중복된 이메일입니다.");
-//    ,asdf(HttpStatus.BAD_REQUEST,"dasdf");
+
 
 
     private HttpStatus httpStatus;

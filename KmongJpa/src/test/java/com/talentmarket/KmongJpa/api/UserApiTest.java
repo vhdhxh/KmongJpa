@@ -3,6 +3,8 @@ package com.talentmarket.KmongJpa.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.talentmarket.KmongJpa.Dto.RegisterRequest;
 import com.talentmarket.KmongJpa.config.auth.PrincipalDetailsService;
+import com.talentmarket.KmongJpa.exception.CustomException;
+import com.talentmarket.KmongJpa.exception.ErrorCode;
 import com.talentmarket.KmongJpa.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -65,14 +67,14 @@ class UserApiTest {
     @Test
     void DuplicateRegister() throws Exception{
     //given
-      when(userService.Register(any())).thenThrow(new IllegalArgumentException("중복된 회원입니다."));
+      when(userService.Register(any())).thenThrow(new CustomException(ErrorCode.EMAIL_DUPLICATED));
     //when //then
         RegisterRequest request = RegisterRequest.builder().email("test").password("1234").build();
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/api/v1/register").with(csrf())
                 .content(objectMapper.writeValueAsString(request))
                 .contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(MockMvcResultMatchers.status().isConflict());
+        ).andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
     @Test
     public void testLoginSuccess() throws Exception {
