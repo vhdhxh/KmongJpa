@@ -1,16 +1,28 @@
 package com.talentmarket.KmongJpa.Dto;
 
+import com.talentmarket.KmongJpa.entity.Users;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Getter;
 
+import java.io.Serializable;
+
 @Getter
-public class LoginDto {
-    private Long id;
+@Builder
+public class LoginDto implements Serializable {
+
+    @Email
     private String email;
     private String password;
-    private String address;
-    private String gender;
-    @NotEmpty
-    private String provider;
-    private Long providerId;
+    private Users users;
+
+    public static LoginDto createLoginDto(Users user) {
+        return LoginDto.builder()
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .users(user)
+                .build();
+    }
 }

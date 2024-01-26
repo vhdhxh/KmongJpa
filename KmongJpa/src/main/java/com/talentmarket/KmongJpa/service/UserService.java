@@ -26,13 +26,12 @@ public class UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     //회원가입
-
+@Transactional
     public Long Register(RegisterRequest request) {
 
         if (userRepository.findByEmail(request.getEmail()).isPresent()){
             throw new CustomException(ErrorCode.EMAIL_DUPLICATED);
         }
-
         String encodePassword = bCryptPasswordEncoder.encode(request.getPassword());
       Users user = Users.createUsers(request,encodePassword);
       Long Id = userRepository.save(user).getId();

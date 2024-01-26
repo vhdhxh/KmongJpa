@@ -2,7 +2,10 @@
 Spring:
   profiles:
     default: local
-
+spring:
+  session:
+    jdbc:
+      initialize-schema: always
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/kmongJpa?useUnicode=true&serverTimezone=Asia/Seoul
     username: root

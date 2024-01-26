@@ -17,10 +17,6 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 public class SecurityConfig  {
 
 
-
-
-
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(c ->c.disable());
@@ -32,7 +28,13 @@ public class SecurityConfig  {
                         .loginProcessingUrl("/login")
                         .usernameParameter("email")
                         .passwordParameter("password")
-                        .defaultSuccessUrl("/").permitAll());
+                        .defaultSuccessUrl("/").permitAll())
+                .logout(l->l.logoutUrl("/logout").logoutSuccessUrl("/logoutsucsess")
+                        .deleteCookies("SESSION"))
+
+
+                ;
+
 
                                     //Tip. 구글로그인 완료후 (엑세스토큰+ 사용자프로필정보 를 받는다)
 
