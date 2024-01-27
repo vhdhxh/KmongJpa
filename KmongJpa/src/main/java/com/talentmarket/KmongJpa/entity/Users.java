@@ -14,7 +14,7 @@ import java.io.Serializable;
 @Getter
 @AllArgsConstructor
 @Builder
-public class Users implements Serializable {
+public class Users implements Serializable { //직렬화 클래스 명시
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
