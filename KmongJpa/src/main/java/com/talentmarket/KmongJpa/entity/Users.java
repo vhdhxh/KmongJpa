@@ -16,6 +16,7 @@ import java.io.Serializable;
 @Builder
 public class Users implements Serializable { //직렬화 클래스 명시
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
