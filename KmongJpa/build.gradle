@@ -13,7 +13,7 @@ java {
 }
 
 jacoco {
-	toolVersion = "0.8.11"
+	toolVersion = "0.8.8"
 }
 
 subprojects {
@@ -57,7 +57,76 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+	finalizedBy 'jacocoTestReport'
 }
 
+// report 생성
+jacocoTestReport {
+	dependsOn test
+	reports {
+		xml.required = true
+		html.required = true
+		csv.required = false
+	}
 
+	afterEvaluate { // report에서 제외함. 안보여주기만 하는 것.
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: [
+					'com/kk/jjiiim/JjiiimApplication.class'
+			])
+		}))
+	}
+
+	finalizedBy 'jacocoTestCoverageVerification'
+}
+
+// violationRules에 따라서 커버리지를 만족하는지 검증
+jacocoTestCoverageVerification {
+	afterEvaluate { // verify에서 제외함. 퍼센티지에서 제거함.
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: [
+					'com/kk/jjiiim/JjiiimApplication.class'
+			])
+		}))
+	}
+	violationRules {
+		rule {
+			// 룰을 간단히 켜고 끌 수 있다.
+			enabled = true
+			// 룰을 체크할 단위는 클래스 단위
+			element = 'CLASS'
+			// 브랜치 커버리지를 최소한 90% 만족시켜야 한다.
+			limit {
+				counter = 'BRANCH'
+				value = 'COVEREDRATIO'
+				minimum = 0.90
+			}
+			// 라인 커버리지를 최소한 80% 만족시켜야 한다.
+			limit {
+				counter = 'LINE'
+				value = 'COVEREDRATIO'
+				minimum = 0.80
+			}
+			// 빈 줄을 제외한 코드의 라인수를 최대 200라인으로 제한한다.
+			limit {
+				counter = 'LINE'
+				value = 'TOTALCOUNT'
+				maximum = 200
+			}
+		}
+	}
+}
+
+task testCoverage(type: Test) { // testCoverage라는 task가 생성됨.
+	group 'verification'
+	description 'Runs the unit tests with coverage'
+
+	// test -> jacocoTestReport -> jacocoTestCoverageVerification 순으로 작동한다.
+	dependsOn(':test',
+			':jacocoTestReport',
+			':jacocoTestCoverageVerification')
+
+	tasks['jacocoTestReport'].mustRunAfter(tasks['test'])
+	tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
+}
 

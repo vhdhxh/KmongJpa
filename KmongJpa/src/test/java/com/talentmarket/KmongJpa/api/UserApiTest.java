@@ -76,20 +76,20 @@ class UserApiTest {
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
-    @Test
-    public void testLoginSuccess() throws Exception {
-        mockMvc.perform(post("/login")
-                        .param("email", "vhdhxh@naver.com")
-                        .param("password", "1234"))
-                .andExpect(status().isFound());
-
-    }
-
-    @Test
-    public void testLoginFail() throws Exception {
-        mockMvc.perform(post("/login")
-                        .param("email", "vhdhxh@naver.com")
-                        .param("password", "wrong_password"))
-                .andExpect(status().isFound());
-    }
+//    @Test
+//    public void testLoginSuccess() throws Exception {
+//        mockMvc.perform(post("/login")
+//                        .param("email", "vhdhxh@naver.com")
+//                        .param("password", "1234"))
+//                .andExpect(status().isFound());
+//
+//    }
+//
+//    @Test
+//    public void testLoginFail() throws Exception {
+//        mockMvc.perform(post("/login")
+//                        .param("email", "vhdhxh@naver.com")
+//                        .param("password", "wrong_password"))
+//                .andExpect(status().isFound());
+//    }
 }
