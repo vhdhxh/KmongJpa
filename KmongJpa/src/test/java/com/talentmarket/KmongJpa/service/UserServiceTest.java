@@ -6,13 +6,12 @@ import com.talentmarket.KmongJpa.entity.Users;
 import com.talentmarket.KmongJpa.exception.CustomException;
 import com.talentmarket.KmongJpa.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import org.assertj.core.api.ThrowableAssert;
+import jakarta.xml.bind.ValidationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
@@ -22,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
-class UserTest {
+class UserServiceTest {
     @Autowired
     UserRepository userRepository;
     @Autowired
@@ -53,8 +52,17 @@ class UserTest {
         assertThat(request.getGender()).isEqualTo(users.get().getGender());
         assertThat(bCryptPasswordEncoder.matches("1234",users.get().getPassword())).isTrue();
 
+    }
+    @DisplayName("회원가입 유효성 검사에 실패한다.")
+    @Test
+    void test() {
+    //given
+RegisterRequest request = RegisterRequest.builder().email("test").password("1234").build();
+    //when
 
-
+    //then
+        assertThatThrownBy(()->userService.Register(request))
+                .isInstanceOf(ValidationException.class);
     }
 
     @DisplayName("중복 회원이 가입했다면 예외가 발생한다")
@@ -91,8 +99,10 @@ class UserTest {
         Users users = Users.builder().email("test").password("test").build();
         userRepository.save(users);
     Optional<Users> user = userRepository.findByEmail("test");
+        PrincipalDetails principalDetails = new PrincipalDetails(user.get());
     //given
-      userRepository.delete(user.get());
+//      userRepository.delete(user.get());
+        userService.Withdrawal(principalDetails);
     //then
      assertThat(userRepository.findByEmail("test")).isEmpty();
     }

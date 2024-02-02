@@ -14,6 +14,5 @@ public class WriteRequest {
     private String contents;
     private String thumbnail;
     private String price;
-    private String writer;
     private String detail;
 }

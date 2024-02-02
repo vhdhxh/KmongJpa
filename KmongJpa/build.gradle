@@ -72,7 +72,16 @@ jacocoTestReport {
 	afterEvaluate { // report에서 제외함. 안보여주기만 하는 것.
 		classDirectories.setFrom(files(classDirectories.files.collect {
 			fileTree(dir: it, exclude: [
-					'com/kk/jjiiim/JjiiimApplication.class'
+					'**/*Application*',
+					"**/*Config*",
+					"**/*config*",
+					'**/*entity',
+					'**/*Dto*',
+					"**/*Request*",
+					"**/*Response*",
+					"**/*Interceptor*",
+					'**/*Exception*',
+					'**/*exception*'
 			])
 		}))
 	}
@@ -85,7 +94,15 @@ jacocoTestCoverageVerification {
 	afterEvaluate { // verify에서 제외함. 퍼센티지에서 제거함.
 		classDirectories.setFrom(files(classDirectories.files.collect {
 			fileTree(dir: it, exclude: [
-					'com/kk/jjiiim/JjiiimApplication.class'
+					'**/*Application*',
+					"**/*config*",
+					'**/*entity',
+					'**/*Dto*',
+					"**/*Request*",
+					"**/*Response*",
+					"**/*Interceptor*",
+					'**/*Exception*',
+					'**/*exception*'
 			])
 		}))
 	}

@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 @ActiveProfiles("test")
 class BoardTest {
-    @DisplayName("")
+    @DisplayName("ㅇ")
     @Test
     void test() {
     //given

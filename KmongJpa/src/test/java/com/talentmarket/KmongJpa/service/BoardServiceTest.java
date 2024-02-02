@@ -35,10 +35,11 @@ class BoardServiceTest {
         Users users = Users.builder().email("vhdhxh@naver.com").password("1234").build();
 
         WriteRequest request = WriteRequest.builder().title("제목")
+
                 .price("가격")
                 .contents("내용")
                 .detail("디테일")
-                .writer("작성자")
+
                 .thumbnail("썸네일이미지").build();
     //when
        Long Id = boardService.WriteBoard(request , new PrincipalDetails(users));
@@ -46,6 +47,9 @@ class BoardServiceTest {
     //then
     assertThat(Id).isEqualTo(board.get().getId());
     assertThat(board.get().getTitle()).isEqualTo("제목");
+
+
+
 
     }
 

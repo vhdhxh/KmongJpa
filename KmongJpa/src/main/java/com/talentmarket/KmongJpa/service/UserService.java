@@ -42,8 +42,11 @@ public class UserService {
     @Transactional
     public void Withdrawal(PrincipalDetails principalDetails){
         if(principalDetails==null){
-            throw new IllegalArgumentException("이미 탈퇴된 회원입니다");
+            throw new CustomException(ErrorCode.USER_NOTLOGIN);
         }
+        if(userRepository.findById(principalDetails.getDto().getId()).isEmpty()){
+            throw new CustomException(ErrorCode.USER_WITHDRAWLED);
+        };
         userRepository.delete(principalDetails.getDto());
     }
     }
