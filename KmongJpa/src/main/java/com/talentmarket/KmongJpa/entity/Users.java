@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -30,6 +32,11 @@ public class Users implements Serializable { //직렬화 클래스 명시
     private String provider;
     private Long providerId;
     private String image;
+    @Builder.Default
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Board> boards = new ArrayList<>();
+
+
 
 protected Users () {}
 
