@@ -28,6 +28,7 @@ public class ExceptionAdvice {
         return ResponseEntity.status(exception.getErrorCode().getHttpStatus()).body(exception.getErrorCode().getMessage());
     }
 
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ApiResponse MethodArgumentNotValidException(MethodArgumentNotValidException exception) {
