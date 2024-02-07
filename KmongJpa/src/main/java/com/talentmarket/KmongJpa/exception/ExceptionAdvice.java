@@ -29,6 +29,7 @@ public class ExceptionAdvice {
     }
 
 
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ApiResponse MethodArgumentNotValidException(MethodArgumentNotValidException exception) {
