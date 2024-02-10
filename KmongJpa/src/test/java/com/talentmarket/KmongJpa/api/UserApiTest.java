@@ -82,7 +82,7 @@ class UserApiTest {
     @Test
     void test() throws Exception {
         //given
-        RegisterRequest request = RegisterRequest.builder().email("test").password("1234").build();
+        RegisterRequest request = RegisterRequest.builder().email("test").name("test").address("test").password("1234").build();
 
         //when
 
@@ -103,7 +103,7 @@ class UserApiTest {
         @Test
         void test2() throws Exception {
             //given
-            RegisterRequest request = RegisterRequest.builder().password("1234").build();
+            RegisterRequest request = RegisterRequest.builder().password("1234").name("test").address("test").build();
 
             //when
 
