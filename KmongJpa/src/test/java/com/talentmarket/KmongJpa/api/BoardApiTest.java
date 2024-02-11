@@ -50,4 +50,8 @@ class BoardApiTest {
         ).andExpect(MockMvcResultMatchers.status().isOk());
     }
 
+
+
+
+
 }

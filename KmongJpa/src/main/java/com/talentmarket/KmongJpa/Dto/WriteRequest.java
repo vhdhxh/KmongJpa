@@ -5,9 +5,11 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 
 @Getter
+@Setter
 @Builder
 public class WriteRequest {
     private String title;

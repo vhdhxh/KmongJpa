@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class BoardService {
@@ -20,4 +22,11 @@ public class BoardService {
         return  boardRepository.save(board).getId();
 
     }
+    //게시글 수정
+    public Long UpdateBoard(WriteRequest writeRequest,  Long boardId) {
+       Board board = boardRepository.findById(boardId).orElseThrow(()->new IllegalArgumentException());
+         return board.updateBoard(writeRequest);
+    }
+
+    
 }

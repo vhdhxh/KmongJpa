@@ -48,4 +48,13 @@ public class Board {
                 .contents(reqeust.getContents())
                 .build();
     }
+    public Long updateBoard(WriteRequest request) {
+        this.contents = request.getContents();
+        this.detail = request.getDetail();
+        this.price = request.getPrice();
+        this.thumbnail = request.getThumbnail();
+        this.title = request.getTitle();
+        return this.Id;
+    }
+
 }
