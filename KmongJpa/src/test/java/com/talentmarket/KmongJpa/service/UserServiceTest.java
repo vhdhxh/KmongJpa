@@ -66,6 +66,7 @@ RegisterRequest request = RegisterRequest.builder().email("test").password("1234
     }
 
 
+
     @DisplayName("중복 회원이 가입했다면 예외가 발생한다")
     @Test
     void IfDuplicationMemberHasException() {
