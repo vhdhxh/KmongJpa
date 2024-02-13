@@ -21,7 +21,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class ExceptionAdvice {
-    @Http
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(CustomException.class)
     public ApiResponse DuplicateRegisterException(CustomException exception) {
         log.info(exception.getErrorCode().getMessage());
