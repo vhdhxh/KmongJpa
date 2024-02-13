@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @WebMvcTest(controllers = BoardApi.class)
 @ActiveProfiles("test")
@@ -48,9 +49,31 @@ class BoardApiTest {
                 .content(objectMapper.writeValueAsString(writeRequest))
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(MockMvcResultMatchers.status().isOk());
+
+
     }
 
+    @DisplayName("게시글을 수정 요청한다.")
+    @WithMockUser(username = "testUser")
+    @Test
+    void updateBoard() throws Exception{
+        //given
+        WriteRequest writeRequest = WriteRequest.builder()
+                .title("제목")
+                .contents("내용")
+                .build();
 
+        //when
+
+        //then
+        mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/v1/board/1").with(csrf())
+                .content(objectMapper.writeValueAsString(writeRequest))
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andDo(print()).andExpect(MockMvcResultMatchers.status().isOk());
+
+
+    }
 
 
 

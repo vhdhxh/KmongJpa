@@ -83,4 +83,15 @@ class BoardServiceTest {
         assertThat(board.getThumbnail()).isEqualTo("변경된 썸네일");
     }
 
+    @DisplayName("")
+    @Test
+    void test() {
+    //given
+
+    //when
+
+    //then
+
+    }
+
 }

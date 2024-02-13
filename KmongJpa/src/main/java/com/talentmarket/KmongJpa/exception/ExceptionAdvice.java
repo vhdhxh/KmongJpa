@@ -21,11 +21,13 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class ExceptionAdvice {
+    @Http
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity DuplicateRegisterException(CustomException exception) {
+    public ApiResponse DuplicateRegisterException(CustomException exception) {
         log.info(exception.getErrorCode().getMessage());
 
-        return ResponseEntity.status(exception.getErrorCode().getHttpStatus()).body(exception.getErrorCode().getMessage());
+        return ApiResponse.of(HttpStatus.BAD_REQUEST,exception.getMessage());
+
     }
 
 
