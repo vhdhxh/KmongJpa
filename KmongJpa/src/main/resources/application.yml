@@ -16,6 +16,7 @@ spring:
       ddl-auto: validate #create #validate #create #validate #create
     properties:
       hibernate:
+        default_batch_fetch_size: 100
         show_sql: true
         format_sql: true
   logging.level:
