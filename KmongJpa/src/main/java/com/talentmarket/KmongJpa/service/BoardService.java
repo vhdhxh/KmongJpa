@@ -1,5 +1,8 @@
 package com.talentmarket.KmongJpa.service;
 
+import com.talentmarket.KmongJpa.Dto.BoardPagingResponse;
+import com.talentmarket.KmongJpa.Dto.DetailResponse;
+import com.talentmarket.KmongJpa.Dto.RegisterRequest;
 import com.talentmarket.KmongJpa.Dto.WriteRequest;
 import com.talentmarket.KmongJpa.config.auth.PrincipalDetails;
 import com.talentmarket.KmongJpa.entity.Board;
@@ -7,6 +10,8 @@ import com.talentmarket.KmongJpa.exception.CustomException;
 import com.talentmarket.KmongJpa.exception.ErrorCode;
 import com.talentmarket.KmongJpa.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,11 +47,20 @@ public class BoardService {
 
     //게시글 상세보기
     @Transactional(readOnly = true)
-    public WriteRequest DetailBoard(Long boardId) {
-       Board board = boardRepository.findById(boardId)
+    public DetailResponse DetailBoard(Long boardId) {
+       Board board = boardRepository.findBoard(boardId)
                .orElseThrow(()->new CustomException(ErrorCode.BOARD_NOT_FOUND));
 
-       return WriteRequest.ToDto(board);
+       return DetailResponse.ToDto(board);
+    }
+
+//    게시글 페이징 반환
+    @Transactional(readOnly = true)
+    public Page<BoardPagingResponse> DetailBoard(Pageable pageable) {
+     Page<Board> boards = boardRepository.findBoard(pageable);
+        Page<BoardPagingResponse> map = boards.map(b->BoardPagingResponse.builder()
+                .writer(b.getUsers().getName()).price(b.getPrice()).title(b.getTitle()).thumbnail(b.getThumbnail()).build());
+        return map;
     }
 
     

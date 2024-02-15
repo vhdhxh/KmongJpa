@@ -29,7 +29,7 @@ public class Board {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private Users user;
+    private Users users;
 
     @CreatedDate
     private LocalDateTime createdDate;
@@ -39,7 +39,7 @@ public class Board {
 
     public static Board createBoard(WriteRequest reqeust, PrincipalDetails principalDetails) {
         return Board.builder()
-                .user(principalDetails.getDto())
+                .users(principalDetails.getDto())
                 .writer(principalDetails.getDto().getName())
                 .thumbnail(reqeust.getThumbnail())
                 .detail(reqeust.getDetail())

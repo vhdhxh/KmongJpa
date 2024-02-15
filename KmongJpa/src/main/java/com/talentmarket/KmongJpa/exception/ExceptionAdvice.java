@@ -26,7 +26,7 @@ public class ExceptionAdvice {
     public ApiResponse DuplicateRegisterException(CustomException exception) {
         log.info(exception.getErrorCode().getMessage());
 
-        return ApiResponse.of(HttpStatus.BAD_REQUEST,exception.getMessage());
+        return ApiResponse.of(HttpStatus.BAD_REQUEST,exception.getMessage(),null);
 
     }
 

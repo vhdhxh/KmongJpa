@@ -33,7 +33,7 @@ public class Users implements Serializable { //직렬화 클래스 명시
     private Long providerId;
     private String image;
     @Builder.Default
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "users")
     private List<Board> boards = new ArrayList<>();
 
 
