@@ -24,6 +24,9 @@ public class Comment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     private Board board;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private Users users;
     private String contents;
     @CreatedDate
     private LocalDateTime createdDate;
