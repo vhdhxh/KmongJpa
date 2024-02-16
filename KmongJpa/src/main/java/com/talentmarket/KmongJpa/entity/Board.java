@@ -31,6 +31,7 @@ public class Board {
     @JoinColumn(name = "user_id")
     private Users users;
 
+
     @CreatedDate
     private LocalDateTime createdDate;
     private String writer;
