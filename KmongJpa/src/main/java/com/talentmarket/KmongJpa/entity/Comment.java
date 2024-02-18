@@ -1,5 +1,8 @@
 package com.talentmarket.KmongJpa.entity;
 
+import com.talentmarket.KmongJpa.Dto.CommentWriteDto;
+import com.talentmarket.KmongJpa.Dto.DetailResponse;
+import com.talentmarket.KmongJpa.config.auth.PrincipalDetails;
 import com.talentmarket.KmongJpa.service.BoardService;
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,11 +25,21 @@ public class Comment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     private Board board;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private Users users;
     private String contents;
     @CreatedDate
     private LocalDateTime createdDate;
 
+
+    public static Comment CreateComment(CommentWriteDto commentWriteDto , PrincipalDetails principalDetails , Board board) {
+        return Comment.builder()
+                .board(board)
+                .contents(commentWriteDto.getContents())
+                .users(principalDetails.getDto())
+                .build();
+
+
+    }
 }

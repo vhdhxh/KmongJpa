@@ -18,13 +18,10 @@ public class CommentService {
     private final BoardRepository boardRepository;
     private final CommentRepository commentRepository;
 
+    //댓글 쓰기
     public void CommentWrite (CommentWriteDto commentWriteDto, PrincipalDetails principalDetails) {
        Board board = boardRepository.findById(commentWriteDto.getBoardId()).orElseThrow(()->new CustomException(ErrorCode.BOARD_NOT_FOUND));
-       Comment comment = Comment.builder()
-               .board(board)
-               .contents(commentWriteDto.getContents())
-               .users(principalDetails.getDto())
-               .build();
+       Comment comment = Comment.CreateComment(commentWriteDto , principalDetails , board);
        commentRepository.save(comment);
 
     }
