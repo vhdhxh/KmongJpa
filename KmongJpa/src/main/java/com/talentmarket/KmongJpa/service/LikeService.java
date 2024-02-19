@@ -29,11 +29,11 @@ public class LikeService {
         // 중복카운트 불가, 카운트가 없다는것을 검증해야됨
        if(likeRepository.findLikesByBoardId(boardId).isPresent()){
           throw new CustomException(ErrorCode.COUNTED_LIKE);
-       };
+       }
 
-        Optional<Board> board = boardRepository.findById(boardId);
-        Optional<Users> users = userRepository.findById(principalDetails.getDto().getId());
-        Like like = Like.builder().board(board.get()).users(users.get()).build();
+        Board board = boardRepository.findById(boardId).orElseThrow(()->new CustomException(ErrorCode.BOARD_NOT_FOUND));
+        Users users = userRepository.findById(principalDetails.getDto().getId()).orElseThrow(()->new CustomException(ErrorCode.USER_NOTLOGIN));
+        Like like = Like.builder().board(board).users(users).build();
        likeRepository.save(like);
     }
 
