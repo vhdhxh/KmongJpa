@@ -12,8 +12,8 @@ import java.util.Optional;
 
 public interface BoardRepository extends JpaRepository<Board,Long> {
     List<Board> findByTitle(String title);
-    @Query("select b from Board b join fetch b.users join fetch b.comment where b.Id = :Id")
-    Optional<Board> findBoard(Long Id);
+    @Query("select b from Board b left join fetch b.users left join fetch b.comment left join fetch b.comment.users where b.Id = :Id")
+    Optional<Board> findBoardAndComment(Long Id);
 
     @Query("select b from Board b join fetch b.users")
     Page<Board> findBoard(Pageable pageable);

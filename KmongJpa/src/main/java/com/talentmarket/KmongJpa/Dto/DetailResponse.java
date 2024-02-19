@@ -2,6 +2,7 @@ package com.talentmarket.KmongJpa.Dto;
 
 import com.talentmarket.KmongJpa.entity.Board;
 import com.talentmarket.KmongJpa.entity.Comment;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
@@ -23,6 +24,14 @@ public class DetailResponse {
 
 
     public static DetailResponse ToDto(Board board) {
+        List<Comment> comments = board.getComment();
+        List<CommentDto> map = comments.stream()
+                .map(c->new CommentDto(c.getCommentId()
+                        ,c.getContents()
+                        ,c.getBoard().getComment().get((int)(c.getCommentId()-1)).getUsers().getName()))
+                        .collect(Collectors.toList());
+//                        )).collect(Collectors.toList());
+
         return DetailResponse
                 .builder()
                 .contents(board.getContents())
@@ -31,15 +40,20 @@ public class DetailResponse {
                 .price(board.getPrice())
                 .detail(board.getDetail())
                 .writer(board.getUsers().getName())
-                .commentContents()
+                .commentContents(map)
                 .build();
     }
 
     @Data
+    @AllArgsConstructor
     public static class CommentDto {
+        private Long CommentId;
         private String contents;
         private String writer;
 
-
+        public CommentDto(Long commentId, String contents) {
+            CommentId = commentId;
+            this.contents = contents;
+        }
     }
 }

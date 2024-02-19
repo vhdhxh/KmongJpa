@@ -48,7 +48,7 @@ public class BoardService {
     //게시글 상세보기
     @Transactional(readOnly = true)
     public DetailResponse DetailBoard(Long boardId) {
-       Board board = boardRepository.findBoard(boardId)
+       Board board = boardRepository.findBoardAndComment(boardId)
                .orElseThrow(()->new CustomException(ErrorCode.BOARD_NOT_FOUND));
 
        return DetailResponse.ToDto(board);

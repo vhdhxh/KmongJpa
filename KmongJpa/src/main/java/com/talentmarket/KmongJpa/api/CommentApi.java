@@ -1,5 +1,6 @@
 package com.talentmarket.KmongJpa.api;
 
+import com.talentmarket.KmongJpa.Dto.ApiResponse;
 import com.talentmarket.KmongJpa.Dto.CommentWriteDto;
 import com.talentmarket.KmongJpa.config.auth.PrincipalDetails;
 import com.talentmarket.KmongJpa.service.CommentService;
@@ -15,8 +16,9 @@ public class CommentApi {
     private final CommentService commentService;
 
     @PostMapping("api/v1/comment")
-    public void writeComment(@RequestBody CommentWriteDto commentWriteDto , @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ApiResponse writeComment(@RequestBody CommentWriteDto commentWriteDto , @AuthenticationPrincipal PrincipalDetails principalDetails) {
         commentService.CommentWrite(commentWriteDto , principalDetails);
+        return ApiResponse.ok(null);
     }
 
 }
