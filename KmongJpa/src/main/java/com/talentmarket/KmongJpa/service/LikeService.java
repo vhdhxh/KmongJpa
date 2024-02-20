@@ -1,5 +1,7 @@
 package com.talentmarket.KmongJpa.service;
 
+
+import com.talentmarket.KmongJpa.Dto.LikeResponse;
 import com.talentmarket.KmongJpa.config.auth.PrincipalDetails;
 import com.talentmarket.KmongJpa.entity.Board;
 import com.talentmarket.KmongJpa.entity.Like;
@@ -13,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,17 +28,39 @@ public class LikeService {
    private final UserRepository userRepository;
 
    //찜 카운터 갱신
-    public void LikeCount(Long boardId , PrincipalDetails principalDetails) {
+    public void likeCount(Long boardId , PrincipalDetails principalDetails) {
+        Users.checkUserSession(principalDetails);
         // 중복카운트 불가, 카운트가 없다는것을 검증해야됨
-       if(likeRepository.findLikesByBoardId(boardId).isPresent()){
+
+        Long userId = principalDetails.getDto().getId();
+
+       if(likeRepository.findLikesByBoardIdAndUsersId(boardId,userId).isPresent()){
           throw new CustomException(ErrorCode.COUNTED_LIKE);
        }
 
         Board board = boardRepository.findById(boardId).orElseThrow(()->new CustomException(ErrorCode.BOARD_NOT_FOUND));
-        Users users = userRepository.findById(principalDetails.getDto().getId()).orElseThrow(()->new CustomException(ErrorCode.USER_NOTLOGIN));
-        Like like = Like.builder().board(board).users(users).build();
+
+       Users user = (principalDetails.getDto());
+        Like like = Like.builder().board(board).users(user).build();
        likeRepository.save(like);
     }
 
     //찜 카운터 내림
+    public void disLike(Long boardId , PrincipalDetails principalDetails) {
+        Users.checkUserSession(principalDetails);
+
+        if(likeRepository.findLikesByBoardIdAndUsersId(boardId,principalDetails.getDto().getId()).isPresent()){
+            throw new CustomException(ErrorCode.COUNTED_LIKE);
+        }
+        Long userId = principalDetails.getDto().getId();
+        likeRepository.deleteByUsersIdAndBoardId(userId,boardId);
+    }
+
+    //찜 카운트 조회
+    public LikeResponse getLike (Long boardId) {
+      List<Like> likes = likeRepository.findLikesByBoardId(boardId);
+      Long likeCount = (long) likes.size();
+      LikeResponse likeResponse = new LikeResponse(likeCount);
+        return likeResponse ;
+    }
 }

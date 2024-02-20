@@ -6,9 +6,7 @@ import com.talentmarket.KmongJpa.config.auth.PrincipalDetails;
 import com.talentmarket.KmongJpa.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,4 +19,17 @@ public class CommentApi {
         return ApiResponse.ok(null);
     }
 
+    @PostMapping("api/v1/comment/{commentId}")
+    public ApiResponse updateComment(@RequestBody CommentWriteDto commentWriteDto
+            , @AuthenticationPrincipal PrincipalDetails principalDetails
+    , @PathVariable Long commentId){
+        commentService.commentUpdate(commentWriteDto,principalDetails,commentId);
+        return ApiResponse.ok(null);
+    }
+
+    @DeleteMapping("api/v1/comment/{commentId}")
+    public ApiResponse deleteComment(@PathVariable Long commentId ,@AuthenticationPrincipal PrincipalDetails principalDetails){
+        commentService.commentDelete(principalDetails,commentId);
+        return ApiResponse.ok(null);
+    }
 }

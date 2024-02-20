@@ -40,6 +40,9 @@ public class Comment {
                 .users(principalDetails.getDto())
                 .build();
 
+    }
 
+    public void update(String contents) {
+        this.contents = contents;
     }
 }

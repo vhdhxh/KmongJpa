@@ -35,7 +35,7 @@ public class BoardApi {
             , @AuthenticationPrincipal PrincipalDetails principalDetails
             , @PathVariable Long boardId) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(boardService.UpdateBoard(writeRequest,boardId));
+        return ResponseEntity.status(HttpStatus.OK).body(boardService.UpdateBoard(writeRequest,boardId,principalDetails));
     }
 
     //게시글 삭제
@@ -43,7 +43,7 @@ public class BoardApi {
     public ResponseEntity deleteBoard (
              @AuthenticationPrincipal PrincipalDetails principalDetails
             , @PathVariable Long boardId) {
-        boardService.DeleteBoard(boardId);
+        boardService.DeleteBoard(boardId , principalDetails);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 

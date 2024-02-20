@@ -26,6 +26,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest
 @Transactional
@@ -67,14 +68,14 @@ class BoardServiceTest {
     void updateBoard() {
     //given
         Users users = Users.builder().email("vhdhxh@naver.com").password("1234").build();
-
+        PrincipalDetails principalDetails = new PrincipalDetails(users);
         WriteRequest request =
                 WriteRequest.builder().title("제목")
                 .price("가격")
                 .contents("내용")
                 .detail("디테일")
                 .thumbnail("썸네일이미지").build();
-        Long Id = boardService.WriteBoard(request , new PrincipalDetails(users));
+        Long Id = boardService.WriteBoard(request , principalDetails);
 
         request.setTitle("변경된 제목");
         request.setPrice("변경된 가격");
@@ -82,7 +83,7 @@ class BoardServiceTest {
         request.setDetail("변경된 디테일");
         request.setThumbnail("변경된 썸네일");
     //when
-     Long updatedBoardId = boardService.UpdateBoard(request,Id);
+     Long updatedBoardId = boardService.UpdateBoard(request,Id,principalDetails);
      Board board = boardRepository.findById(updatedBoardId).get();
     //then
         assertThat(Id).isEqualTo(updatedBoardId);

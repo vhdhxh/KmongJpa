@@ -41,9 +41,8 @@ public class UserService {
      //회원탈퇴
     @Transactional
     public void Withdrawal(PrincipalDetails principalDetails){
-        if(principalDetails==null){
-            throw new CustomException(ErrorCode.USER_NOTLOGIN);
-        }
+        Users.checkUserSession(principalDetails);
+
         if(userRepository.findById(principalDetails.getDto().getId()).isEmpty()){
             throw new CustomException(ErrorCode.USER_WITHDRAWLED);
         };

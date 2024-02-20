@@ -1,6 +1,9 @@
 package com.talentmarket.KmongJpa.entity;
 
 import com.talentmarket.KmongJpa.Dto.RegisterRequest;
+import com.talentmarket.KmongJpa.config.auth.PrincipalDetails;
+import com.talentmarket.KmongJpa.exception.CustomException;
+import com.talentmarket.KmongJpa.exception.ErrorCode;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -49,6 +52,11 @@ protected Users () {}
             .name(request.getName())
             .gender(request.getGender())
             .build();
+    }
+    public static void checkUserSession(PrincipalDetails principalDetails) {
+        if (principalDetails == null) {
+            throw new CustomException(ErrorCode.USER_NOT_LOGIN);
+        }
     }
 
 }

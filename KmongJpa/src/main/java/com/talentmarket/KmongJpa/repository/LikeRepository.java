@@ -10,6 +10,11 @@ import java.util.Optional;
 
 public interface LikeRepository extends JpaRepository<Like,Long> {
 
-    @Query("SELECT l FROM Like l WHERE l.board.id = :id")
-    Optional<Like> findLikesByBoardId(@Param("id") Long id);
+
+
+    List<Like> findLikesByBoardId( Long id);
+
+    Long countByBoardId(Long boardId);
+    Optional<Like> findLikesByBoardIdAndUsersId(Long boardId ,Long userId);
+    void deleteByUsersIdAndBoardId(Long userId, Long boardId);
 }
