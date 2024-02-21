@@ -56,6 +56,7 @@ public class BoardApi {
         return ApiResponse.ok(boardService.DetailBoard(boardId));
     }
 
+
     @GetMapping("/api/v1/board")
     public ApiResponse<Page> getPagingBoard (
             @AuthenticationPrincipal PrincipalDetails principalDetails
