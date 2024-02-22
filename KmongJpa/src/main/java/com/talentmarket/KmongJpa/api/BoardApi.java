@@ -57,6 +57,7 @@ public class BoardApi {
     }
 
 
+
     @GetMapping("/api/v1/board")
     public ApiResponse<Page> getPagingBoard (
             @AuthenticationPrincipal PrincipalDetails principalDetails
