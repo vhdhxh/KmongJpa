@@ -62,13 +62,14 @@ class LikeServiceTest {
         WriteRequest request = WriteRequest.builder().title("t").contents("t").build();
         Users user = Users.builder().id(1L).email("").password("").build();
         userRepository.save(user);
-        boardId = boardService.WriteBoard(request , new PrincipalDetails(user));
+        PrincipalDetails principalDetails = new PrincipalDetails(user);
+        boardId = boardService.WriteBoard(request , principalDetails);
     //when
-        likeService.likeCount(boardId,new PrincipalDetails(user));
+        likeService.likeCount(boardId,principalDetails);
+    likeService.disLike(boardId ,principalDetails);
         List<Like> likes = likeRepository.findLikesByBoardId(boardId);
-    likeService.disLike(boardId ,new PrincipalDetails(user));
     //then
-        assertThat(likes.get(0).getId()).isNull();
+        assertThat(likes).isEmpty();
     }
 
 }
