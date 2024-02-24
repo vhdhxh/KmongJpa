@@ -54,5 +54,21 @@ class LikeServiceTest {
     //then
      assertThat(likes.get(0).getUsers().getId()).isEqualTo(1L);
     }
+    @DisplayName("찜 카운터를 해제한다")
+    @Test
+    void test2() {
+    //given
+        Long boardId;
+        WriteRequest request = WriteRequest.builder().title("t").contents("t").build();
+        Users user = Users.builder().id(1L).email("").password("").build();
+        userRepository.save(user);
+        boardId = boardService.WriteBoard(request , new PrincipalDetails(user));
+    //when
+        likeService.likeCount(boardId,new PrincipalDetails(user));
+        List<Like> likes = likeRepository.findLikesByBoardId(boardId);
+    likeService.disLike(boardId ,new PrincipalDetails(user));
+    //then
+        assertThat(likes.get(0).getId()).isNull();
+    }
 
 }

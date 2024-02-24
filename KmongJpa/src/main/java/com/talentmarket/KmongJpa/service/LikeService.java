@@ -49,8 +49,8 @@ public class LikeService {
     public void disLike(Long boardId , PrincipalDetails principalDetails) {
         Users.checkUserSession(principalDetails);
 
-        if(likeRepository.findLikesByBoardIdAndUsersId(boardId,principalDetails.getDto().getId()).isPresent()){
-            throw new CustomException(ErrorCode.COUNTED_LIKE);
+        if(likeRepository.findLikesByBoardIdAndUsersId(boardId,principalDetails.getDto().getId()).isEmpty()){
+            throw new CustomException(ErrorCode.NOT_COUNTED_LIKE);
         }
         Long userId = principalDetails.getDto().getId();
         likeRepository.deleteByUsersIdAndBoardId(userId,boardId);

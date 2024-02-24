@@ -12,7 +12,8 @@ public enum ErrorCode {
     USER_NOT_LOGIN(HttpStatus.BAD_REQUEST,"로그인이 필요합니다."),
     BOARD_NOT_FOUND(HttpStatus.BAD_REQUEST,"게시글을 찾을 수 없습니다."),
     COUNTED_LIKE(HttpStatus.BAD_REQUEST,"이미 찜 등록한 게시글입니다."),
-    COMMENT_NOT_FOUND(HttpStatus.BAD_REQUEST,"댓글을 찾을 수 없습니다");
+    COMMENT_NOT_FOUND(HttpStatus.BAD_REQUEST,"댓글을 찾을 수 없습니다"),
+    NOT_COUNTED_LIKE(HttpStatus.BAD_REQUEST,"찜등록한 게시물이 아닙니다");
 
     private HttpStatus httpStatus;
     private String message;
