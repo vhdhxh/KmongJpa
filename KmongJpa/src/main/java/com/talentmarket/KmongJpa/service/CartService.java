@@ -8,12 +8,18 @@ import com.talentmarket.KmongJpa.entity.Users;
 import com.talentmarket.KmongJpa.exception.CustomException;
 import com.talentmarket.KmongJpa.exception.ErrorCode;
 import com.talentmarket.KmongJpa.repository.BoardRepository;
+import com.talentmarket.KmongJpa.repository.CartRepositoryCustom;
 import com.talentmarket.KmongJpa.repository.CartRepository;
+import com.talentmarket.KmongJpa.repository.CartRepositoryCustomImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CartService {
     private final CartRepository cartRepository;
     private final BoardRepository boardRepository;
@@ -28,5 +34,9 @@ public class CartService {
     }
 
     //장바구니 삭제
+    public void deleteCart(List<Long> boardIds,PrincipalDetails principalDetails) {
+        Users.checkUserSession(principalDetails);
+        cartRepository.deleteCart(boardIds);
+    }
 
 }
