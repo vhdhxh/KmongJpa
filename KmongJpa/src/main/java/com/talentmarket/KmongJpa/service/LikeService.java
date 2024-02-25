@@ -57,6 +57,7 @@ public class LikeService {
     }
 
     //찜 카운트 조회
+    @Transactional(readOnly = true)
     public LikeResponse getLike (Long boardId) {
       List<Like> likes = likeRepository.findLikesByBoardId(boardId);
       Long likeCount = (long) likes.size();
