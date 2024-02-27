@@ -4,6 +4,7 @@ import com.talentmarket.KmongJpa.Dto.ApiResponse;
 import com.talentmarket.KmongJpa.Dto.RegisterRequest;
 import com.talentmarket.KmongJpa.config.auth.PrincipalDetails;
 import com.talentmarket.KmongJpa.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,8 +25,8 @@ public class UserApi {
     }
 
     @DeleteMapping("/api/v1/user")
-    public ApiResponse<Object> Withdrawal(@AuthenticationPrincipal PrincipalDetails principalDetails) {
-        userService.Withdrawal(principalDetails);
+    public ApiResponse<Object> Withdrawal(HttpServletRequest request, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        userService.Withdrawal(principalDetails,request);
         return ApiResponse.ok(null);
     }
 

@@ -140,7 +140,7 @@ class UserApiTest {
     @Test
     void WithdrawalException() throws Exception{
     //given
-        doThrow(new CustomException(ErrorCode.USER_WITHDRAWLED)).when(userService).Withdrawal(any());
+        doThrow(new CustomException(ErrorCode.USER_WITHDRAWLED)).when(userService).Withdrawal(any(),any());
 
     //when
 

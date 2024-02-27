@@ -16,7 +16,7 @@ public class DetailResponse {
     private String title;
     private String contents;
     private String thumbnail;
-    private String price;
+    private int price;
     private String detail;
     private String writer;
     private List<CommentDto> commentContents;

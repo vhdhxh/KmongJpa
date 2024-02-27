@@ -1,6 +1,5 @@
 package com.talentmarket.KmongJpa.entity;
 
-import com.talentmarket.KmongJpa.Dto.CartDto;
 import com.talentmarket.KmongJpa.config.auth.PrincipalDetails;
 import jakarta.persistence.*;
 import lombok.*;
@@ -33,5 +32,8 @@ public class Cart {
                 .user(principalDetails.getDto())
                 .board(board)
                 .build();
+    }
+    public void updateCount(int count){
+        this.count +=count;
     }
 }

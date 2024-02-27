@@ -47,7 +47,7 @@ class BoardServiceTest {
 
         WriteRequest request = WriteRequest.builder().title("제목")
 
-                .price("가격")
+                .price(100)
                 .contents("내용")
                 .detail("디테일")
 
@@ -71,14 +71,14 @@ class BoardServiceTest {
         PrincipalDetails principalDetails = new PrincipalDetails(users);
         WriteRequest request =
                 WriteRequest.builder().title("제목")
-                .price("가격")
+                .price(100)
                 .contents("내용")
                 .detail("디테일")
                 .thumbnail("썸네일이미지").build();
         Long Id = boardService.WriteBoard(request , principalDetails);
 
         request.setTitle("변경된 제목");
-        request.setPrice("변경된 가격");
+        request.setPrice(100);
         request.setContents("변경된 내용");
         request.setDetail("변경된 디테일");
         request.setThumbnail("변경된 썸네일");
@@ -100,7 +100,7 @@ class BoardServiceTest {
         //given
         Users users = Users.builder().email("vhdhxh@naver.com").password("1234").build();
         WriteRequest request = WriteRequest.builder().title("제목")
-                .price("가격")
+                .price(100)
                 .contents("내용")
                 .detail("디테일")
                 .thumbnail("썸네일이미지").build();
@@ -121,7 +121,7 @@ class BoardServiceTest {
         //given
         Users users = Users.builder().email("vhdhxh@naver.com").password("1234").build();
         WriteRequest request = WriteRequest.builder().title("제목")
-                .price("가격")
+                .price(100)
                 .contents("내용")
                 .detail("디테일")
                 .thumbnail("썸네일이미지").build();

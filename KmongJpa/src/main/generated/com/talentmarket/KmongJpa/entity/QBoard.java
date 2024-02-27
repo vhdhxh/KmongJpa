@@ -32,7 +32,7 @@ public class QBoard extends EntityPathBase<Board> {
 
     public final NumberPath<Long> Id = createNumber("Id", Long.class);
 
-    public final StringPath price = createString("price");
+    public final NumberPath<Integer> price = createNumber("price", Integer.class);
 
     public final StringPath thumbnail = createString("thumbnail");
 

@@ -56,7 +56,7 @@ public class BoardApi {
         return ApiResponse.ok(boardService.DetailBoard(boardId));
     }
 
-
+   //게시글 페이징 반환
 
     @GetMapping("/api/v1/board")
     public ApiResponse<Page> getPagingBoard (

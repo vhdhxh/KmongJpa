@@ -8,6 +8,6 @@ import lombok.Data;
 public class BoardPagingResponse {
     public String thumbnail;
     public String title;
-    public String price;
+    public int price;
     public String writer;
 }

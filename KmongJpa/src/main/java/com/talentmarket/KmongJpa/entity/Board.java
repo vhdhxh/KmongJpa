@@ -27,7 +27,7 @@ public class Board {
     private String title;
     private String contents;
     private String thumbnail;
-    private String price;
+    private int price;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

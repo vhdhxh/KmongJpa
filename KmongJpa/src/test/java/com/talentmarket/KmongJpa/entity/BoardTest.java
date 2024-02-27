@@ -17,12 +17,12 @@ class BoardTest {
     @Test
     void test() {
     //given
-    Board board = Board.builder().price("100").title("제목").build();
+    Board board = Board.builder().price(100).title("제목").build();
     //when
 
     //then
     assertThat(board.getTitle()).isEqualTo("제목");
-        assertThat(board.getPrice()).isEqualTo("100");
+        assertThat(board.getPrice()).isEqualTo(100);
 
     }
 

@@ -18,6 +18,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -105,7 +106,7 @@ class UserServiceTest {
         PrincipalDetails principalDetails = new PrincipalDetails(user.get());
     //given
 //      userRepository.delete(user.get());
-        userService.Withdrawal(principalDetails);
+        userService.Withdrawal(principalDetails,any());
     //then
      assertThat(userRepository.findByEmail("test")).isEmpty();
     }

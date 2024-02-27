@@ -16,7 +16,7 @@ public class WriteRequest {
     private String title;
     private String contents;
     private String thumbnail;
-    private String price;
+    private int price;
     private String detail;
 
     public static WriteRequest ToDto(Board board) {
