@@ -49,6 +49,7 @@ public class CartService {
         }
 
         cartRepository.deleteCart(boardIds,principalDetails);
+
     }
 
     //장바구니 불러오기
@@ -58,6 +59,7 @@ public class CartService {
         Long userId = principalDetails.getDto().getId();
        List<Cart> carts = cartRepository.findCartByUserId(userId);
         List<CartResponse> response = carts.stream().map(c->new CartResponse(c.getBoard().getTitle(),c.getCount(),c.getBoard().getPrice())).collect(Collectors.toList());
+
        return response;
 
     }

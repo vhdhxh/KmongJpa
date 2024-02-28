@@ -15,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CartApi {
     private final CartService cartService;
+
     @PostMapping("/api/v1/cart")
     public ApiResponse Cart(@RequestBody CartRequest cartRequest, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         cartService.cart(cartRequest,principalDetails);
@@ -28,6 +29,7 @@ public class CartApi {
     @GetMapping("/api/v1/cart")
     public ApiResponse getCart(@AuthenticationPrincipal PrincipalDetails principalDetails){
        List<CartResponse> carts = cartService.getCart(principalDetails);
+
         return ApiResponse.ok(carts);
     }
 }
