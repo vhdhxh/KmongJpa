@@ -1,9 +1,7 @@
 package com.talentmarket.KmongJpa.entity;
 
 import com.talentmarket.KmongJpa.Dto.CommentWriteDto;
-import com.talentmarket.KmongJpa.Dto.DetailResponse;
 import com.talentmarket.KmongJpa.config.auth.PrincipalDetails;
-import com.talentmarket.KmongJpa.service.BoardService;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -23,8 +21,8 @@ public class Comment {
     @Column(name = "comment_id")
     private Long commentId;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id")
-    private Board board;
+    @JoinColumn(name = "item_id")
+    private Item item;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private Users users;
@@ -33,9 +31,9 @@ public class Comment {
     private LocalDateTime createdDate;
 
 
-    public static Comment CreateComment(CommentWriteDto commentWriteDto , PrincipalDetails principalDetails , Board board) {
+    public static Comment CreateComment(CommentWriteDto commentWriteDto , PrincipalDetails principalDetails , Item item) {
         return Comment.builder()
-                .board(board)
+                .item(item)
                 .contents(commentWriteDto.getContents())
                 .users(principalDetails.getDto())
                 .build();

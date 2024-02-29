@@ -1,14 +1,11 @@
 package com.talentmarket.KmongJpa.api;
 
 import com.talentmarket.KmongJpa.Dto.ApiResponse;
-import com.talentmarket.KmongJpa.Dto.BoardPagingResponse;
 import com.talentmarket.KmongJpa.Dto.DetailResponse;
 import com.talentmarket.KmongJpa.Dto.WriteRequest;
 import com.talentmarket.KmongJpa.config.auth.PrincipalDetails;
-import com.talentmarket.KmongJpa.repository.BoardRepository;
-import com.talentmarket.KmongJpa.service.BoardService;
+import com.talentmarket.KmongJpa.service.ItemService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -20,13 +17,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 public class BoardApi {
-    private final BoardService boardService;
+    private final ItemService itemService;
 
     //게시글 쓰기
     @PostMapping("/api/v1/board")
     public ResponseEntity writeBoard (@RequestBody WriteRequest writeRequest , @AuthenticationPrincipal PrincipalDetails principalDetails) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(boardService.WriteBoard(writeRequest,principalDetails));
+        return ResponseEntity.status(HttpStatus.OK).body(itemService.WriteBoard(writeRequest,principalDetails));
     }
 
     //게시글 수정
@@ -35,7 +32,7 @@ public class BoardApi {
             , @AuthenticationPrincipal PrincipalDetails principalDetails
             , @PathVariable Long boardId) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(boardService.UpdateBoard(writeRequest,boardId,principalDetails));
+        return ResponseEntity.status(HttpStatus.OK).body(itemService.UpdateBoard(writeRequest,boardId,principalDetails));
     }
 
     //게시글 삭제
@@ -43,7 +40,7 @@ public class BoardApi {
     public ResponseEntity deleteBoard (
              @AuthenticationPrincipal PrincipalDetails principalDetails
             , @PathVariable Long boardId) {
-        boardService.DeleteBoard(boardId , principalDetails);
+        itemService.DeleteBoard(boardId , principalDetails);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
@@ -53,7 +50,7 @@ public class BoardApi {
              @AuthenticationPrincipal PrincipalDetails principalDetails
             , @PathVariable Long boardId) {
 
-        return ApiResponse.ok(boardService.DetailBoard(boardId));
+        return ApiResponse.ok(itemService.DetailBoard(boardId));
     }
 
    //게시글 페이징 반환
@@ -63,6 +60,6 @@ public class BoardApi {
             @AuthenticationPrincipal PrincipalDetails principalDetails
             , @PageableDefault(size = 6)Pageable pageable) {
 
-        return ApiResponse.ok(boardService.DetailBoard(pageable));
+        return ApiResponse.ok(itemService.DetailBoard(pageable));
     }
 }

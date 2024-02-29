@@ -12,17 +12,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @Transactional
 @ActiveProfiles("test")
-class BoardTest {
+class ItemTest {
     @DisplayName("ㅇ")
     @Test
     void test() {
     //given
-    Board board = Board.builder().price(100).title("제목").build();
+    Item item = Item.builder().price(100).title("제목").build();
     //when
 
     //then
-    assertThat(board.getTitle()).isEqualTo("제목");
-        assertThat(board.getPrice()).isEqualTo(100);
+    assertThat(item.getTitle()).isEqualTo("제목");
+        assertThat(item.getPrice()).isEqualTo(100);
 
     }
 

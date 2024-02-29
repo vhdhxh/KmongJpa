@@ -4,10 +4,8 @@ import com.talentmarket.KmongJpa.Dto.WriteRequest;
 import com.talentmarket.KmongJpa.config.auth.PrincipalDetails;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.context.event.EventListener;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -19,10 +17,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-
-public class Board {
+public class Item {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "board_id")
+    @Column(name = "item_id")
     private Long Id;
     private String title;
     private String contents;
@@ -34,7 +31,7 @@ public class Board {
     private Users users;
 
     @Builder.Default
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "item")
     private List<Comment> comment = new ArrayList<>();
 
 
@@ -42,10 +39,10 @@ public class Board {
     private LocalDateTime createdDate;
     private String writer;
     private String detail;
+    private int stockQuantity;
 
-
-    public static Board createBoard(WriteRequest reqeust, PrincipalDetails principalDetails) {
-        return Board.builder()
+    public static Item createBoard(WriteRequest reqeust, PrincipalDetails principalDetails) {
+        return Item.builder()
                 .users(principalDetails.getDto())
                 .writer(principalDetails.getDto().getName())
                 .thumbnail(reqeust.getThumbnail())

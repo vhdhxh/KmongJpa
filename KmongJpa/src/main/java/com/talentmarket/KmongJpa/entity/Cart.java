@@ -22,15 +22,15 @@ public class Cart {
     private Users user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Board board;
+    private Item item;
 
     private int count;
 
-    public static Cart createCart(Board board,int count ,PrincipalDetails principalDetails) {
+    public static Cart createCart(Item item, int count , PrincipalDetails principalDetails) {
         return Cart.builder()
                 .count(count)
                 .user(principalDetails.getDto())
-                .board(board)
+                .item(item)
                 .build();
     }
     public void updateCount(int count){

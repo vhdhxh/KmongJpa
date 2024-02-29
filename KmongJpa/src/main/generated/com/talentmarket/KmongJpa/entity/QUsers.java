@@ -22,8 +22,6 @@ public class QUsers extends EntityPathBase<Users> {
 
     public final StringPath address = createString("address");
 
-    public final ListPath<Board, QBoard> boards = this.<Board, QBoard>createList("boards", Board.class, QBoard.class, PathInits.DIRECT2);
-
     public final StringPath email = createString("email");
 
     public final StringPath gender = createString("gender");
@@ -31,6 +29,8 @@ public class QUsers extends EntityPathBase<Users> {
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final StringPath image = createString("image");
+
+    public final ListPath<Item, QItem> items = this.<Item, QItem>createList("items", Item.class, QItem.class, PathInits.DIRECT2);
 
     public final StringPath name = createString("name");
 

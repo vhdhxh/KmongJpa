@@ -2,40 +2,35 @@ package com.talentmarket.KmongJpa.service;
 
 import com.talentmarket.KmongJpa.Dto.BoardPagingResponse;
 import com.talentmarket.KmongJpa.Dto.DetailResponse;
-import com.talentmarket.KmongJpa.Dto.RegisterRequest;
 import com.talentmarket.KmongJpa.Dto.WriteRequest;
 import com.talentmarket.KmongJpa.config.auth.PrincipalDetails;
-import com.talentmarket.KmongJpa.entity.Board;
+import com.talentmarket.KmongJpa.entity.Item;
 import com.talentmarket.KmongJpa.entity.Users;
-import com.talentmarket.KmongJpa.repository.BoardRepository;
+import com.talentmarket.KmongJpa.repository.ItemRepository;
 import com.talentmarket.KmongJpa.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.as;
-import static org.assertj.core.api.Assertions.assertThat;import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest
 @Transactional
 @ActiveProfiles("test")
-class BoardServiceTest {
+class ItemServiceTest {
     @Autowired
-    BoardRepository boardRepository;
+    ItemRepository itemRepository;
     @Autowired
-    BoardService boardService;
+    ItemService itemService;
     @Autowired
     UserRepository userRepository;
 
@@ -53,8 +48,8 @@ class BoardServiceTest {
 
                 .thumbnail("썸네일이미지").build();
     //when
-       Long Id = boardService.WriteBoard(request , new PrincipalDetails(users));
-   Optional<Board> board = boardRepository.findById(Id);
+       Long Id = itemService.WriteBoard(request , new PrincipalDetails(users));
+   Optional<Item> board = itemRepository.findById(Id);
     //then
     assertThat(Id).isEqualTo(board.get().getId());
     assertThat(board.get().getTitle()).isEqualTo("제목");
@@ -75,7 +70,7 @@ class BoardServiceTest {
                 .contents("내용")
                 .detail("디테일")
                 .thumbnail("썸네일이미지").build();
-        Long Id = boardService.WriteBoard(request , principalDetails);
+        Long Id = itemService.WriteBoard(request , principalDetails);
 
         request.setTitle("변경된 제목");
         request.setPrice(100);
@@ -83,15 +78,15 @@ class BoardServiceTest {
         request.setDetail("변경된 디테일");
         request.setThumbnail("변경된 썸네일");
     //when
-     Long updatedBoardId = boardService.UpdateBoard(request,Id,principalDetails);
-     Board board = boardRepository.findById(updatedBoardId).get();
+     Long updatedBoardId = itemService.UpdateBoard(request,Id,principalDetails);
+     Item item = itemRepository.findById(updatedBoardId).get();
     //then
         assertThat(Id).isEqualTo(updatedBoardId);
-        assertThat(board.getTitle()).isEqualTo("변경된 제목");
-        assertThat(board.getPrice()).isEqualTo("변경된 가격");
-        assertThat(board.getContents()).isEqualTo("변경된 내용");
-        assertThat(board.getDetail()).isEqualTo("변경된 디테일");
-        assertThat(board.getThumbnail()).isEqualTo("변경된 썸네일");
+        assertThat(item.getTitle()).isEqualTo("변경된 제목");
+        assertThat(item.getPrice()).isEqualTo("변경된 가격");
+        assertThat(item.getContents()).isEqualTo("변경된 내용");
+        assertThat(item.getDetail()).isEqualTo("변경된 디테일");
+        assertThat(item.getThumbnail()).isEqualTo("변경된 썸네일");
     }
 
     @DisplayName("게시글을 눌러 상세보기")
@@ -107,8 +102,8 @@ class BoardServiceTest {
         //when
 
         userRepository.save(users);
-        Long Id = boardService.WriteBoard(request , new PrincipalDetails(users));
-        DetailResponse detailResponse = boardService.DetailBoard(Id);
+        Long Id = itemService.WriteBoard(request , new PrincipalDetails(users));
+        DetailResponse detailResponse = itemService.DetailBoard(Id);
         //then
         assertThat(request.getTitle()).isEqualTo(detailResponse.getTitle());
 
@@ -130,8 +125,8 @@ class BoardServiceTest {
         //when
 
         userRepository.save(users);
-        Long Id = boardService.WriteBoard(request , new PrincipalDetails(users));
-        Page<BoardPagingResponse> boardList= boardService.DetailBoard(pageable);
+        Long Id = itemService.WriteBoard(request , new PrincipalDetails(users));
+        Page<BoardPagingResponse> boardList= itemService.DetailBoard(pageable);
         //then
         assertThat(boardList.getSize()).isEqualTo(6);
         assertThat(boardList.getContent().get(0).getPrice()).isEqualTo(request.getPrice());

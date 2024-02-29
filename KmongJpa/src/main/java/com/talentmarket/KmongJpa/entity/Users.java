@@ -8,8 +8,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -37,7 +35,7 @@ public class Users implements Serializable { //직렬화 클래스 명시
     private String image;
     @Builder.Default
     @OneToMany(mappedBy = "users")
-    private List<Board> boards = new ArrayList<>();
+    private List<Item> items = new ArrayList<>();
 
 
 

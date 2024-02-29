@@ -1,10 +1,8 @@
 package com.talentmarket.KmongJpa.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.talentmarket.KmongJpa.Dto.RegisterRequest;
 import com.talentmarket.KmongJpa.Dto.WriteRequest;
-import com.talentmarket.KmongJpa.service.BoardService;
-import com.talentmarket.KmongJpa.service.UserService;
+import com.talentmarket.KmongJpa.service.ItemService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,17 +15,16 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @WebMvcTest(controllers = BoardApi.class)
 @ActiveProfiles("test")
-class BoardApiTest {
+class ItemApiTest {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
-    private BoardService boardService;
+    private ItemService itemService;
     @Autowired
     private ObjectMapper objectMapper;
 

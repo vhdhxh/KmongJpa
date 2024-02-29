@@ -13,7 +13,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: validate #create #validate #create #validate #create
+      ddl-auto: create #create #validate #create #validate #create
     properties:
       hibernate:
         default_batch_fetch_size: 100

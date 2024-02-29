@@ -12,9 +12,9 @@ public interface LikeRepository extends JpaRepository<Like,Long> {
 
 
 
-    List<Like> findLikesByBoardId( Long id);
+    List<Like> findLikesByItemId( Long id);
 
-    Long countByBoardId(Long boardId);
-    Optional<Like> findLikesByBoardIdAndUsersId(Long boardId ,Long userId);
-    void deleteByUsersIdAndBoardId(Long userId, Long boardId);
+    Long countByItemId(Long itemId);
+    Optional<Like> findLikesByItemIdAndUsersId(Long itemId ,Long userId);
+    void deleteByUsersIdAndItemId(Long userId, Long itemId);
 }

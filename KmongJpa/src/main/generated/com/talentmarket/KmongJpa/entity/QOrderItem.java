@@ -11,16 +11,16 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QCart is a Querydsl query type for Cart
+ * QOrderItem is a Querydsl query type for OrderItem
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
-public class QCart extends EntityPathBase<Cart> {
+public class QOrderItem extends EntityPathBase<OrderItem> {
 
-    private static final long serialVersionUID = 283801387L;
+    private static final long serialVersionUID = 751497814L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
-    public static final QCart cart = new QCart("cart");
+    public static final QOrderItem orderItem = new QOrderItem("orderItem");
 
     public final NumberPath<Integer> count = createNumber("count", Integer.class);
 
@@ -28,28 +28,28 @@ public class QCart extends EntityPathBase<Cart> {
 
     public final QItem item;
 
-    public final QUsers user;
+    public final QOrder order;
 
-    public QCart(String variable) {
-        this(Cart.class, forVariable(variable), INITS);
+    public QOrderItem(String variable) {
+        this(OrderItem.class, forVariable(variable), INITS);
     }
 
-    public QCart(Path<? extends Cart> path) {
+    public QOrderItem(Path<? extends OrderItem> path) {
         this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
-    public QCart(PathMetadata metadata) {
+    public QOrderItem(PathMetadata metadata) {
         this(metadata, PathInits.getFor(metadata, INITS));
     }
 
-    public QCart(PathMetadata metadata, PathInits inits) {
-        this(Cart.class, metadata, inits);
+    public QOrderItem(PathMetadata metadata, PathInits inits) {
+        this(OrderItem.class, metadata, inits);
     }
 
-    public QCart(Class<? extends Cart> type, PathMetadata metadata, PathInits inits) {
+    public QOrderItem(Class<? extends OrderItem> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.item = inits.isInitialized("item") ? new QItem(forProperty("item"), inits.get("item")) : null;
-        this.user = inits.isInitialized("user") ? new QUsers(forProperty("user")) : null;
+        this.order = inits.isInitialized("order") ? new QOrder(forProperty("order"), inits.get("order")) : null;
     }
 
 }

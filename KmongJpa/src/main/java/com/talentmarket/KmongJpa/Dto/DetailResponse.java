@@ -1,11 +1,10 @@
 package com.talentmarket.KmongJpa.Dto;
 
-import com.talentmarket.KmongJpa.entity.Board;
+import com.talentmarket.KmongJpa.entity.Item;
 import com.talentmarket.KmongJpa.entity.Comment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,23 +22,23 @@ public class DetailResponse {
 
 
 
-    public static DetailResponse ToDto(Board board) {
-        List<Comment> comments = board.getComment();
+    public static DetailResponse ToDto(Item item) {
+        List<Comment> comments = item.getComment();
         List<CommentDto> map = comments.stream()
                 .map(c->new CommentDto(c.getCommentId()
                         ,c.getContents()
-                        ,c.getBoard().getComment().get((int)(c.getCommentId()-1)).getUsers().getName()))
+                        ,c.getItem().getComment().get((int)(c.getCommentId()-1)).getUsers().getName()))
                         .collect(Collectors.toList());
 //                        )).collect(Collectors.toList());
 
         return DetailResponse
                 .builder()
-                .contents(board.getContents())
-                .title(board.getTitle())
-                .thumbnail(board.getThumbnail())
-                .price(board.getPrice())
-                .detail(board.getDetail())
-                .writer(board.getUsers().getName())
+                .contents(item.getContents())
+                .title(item.getTitle())
+                .thumbnail(item.getThumbnail())
+                .price(item.getPrice())
+                .detail(item.getDetail())
+                .writer(item.getUsers().getName())
                 .commentContents(map)
                 .build();
     }

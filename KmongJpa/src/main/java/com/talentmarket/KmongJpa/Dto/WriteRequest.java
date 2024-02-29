@@ -1,11 +1,7 @@
 package com.talentmarket.KmongJpa.Dto;
 
-import com.talentmarket.KmongJpa.entity.Board;
-import com.talentmarket.KmongJpa.entity.Users;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ManyToOne;
+import com.talentmarket.KmongJpa.entity.Item;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
 
 @Getter
 @Setter
@@ -19,14 +15,14 @@ public class WriteRequest {
     private int price;
     private String detail;
 
-    public static WriteRequest ToDto(Board board) {
+    public static WriteRequest ToDto(Item item) {
         return WriteRequest
                 .builder()
-                .contents(board.getContents())
-                .title(board.getTitle())
-                .thumbnail(board.getThumbnail())
-                .price(board.getPrice())
-                .detail(board.getDetail())
+                .contents(item.getContents())
+                .title(item.getTitle())
+                .thumbnail(item.getThumbnail())
+                .price(item.getPrice())
+                .detail(item.getDetail())
                 .build();
     }
 }

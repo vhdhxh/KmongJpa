@@ -3,12 +3,12 @@ package com.talentmarket.KmongJpa.service;
 import com.talentmarket.KmongJpa.Dto.CartRequest;
 import com.talentmarket.KmongJpa.Dto.CartResponse;
 import com.talentmarket.KmongJpa.config.auth.PrincipalDetails;
-import com.talentmarket.KmongJpa.entity.Board;
+import com.talentmarket.KmongJpa.entity.Item;
 import com.talentmarket.KmongJpa.entity.Cart;
 import com.talentmarket.KmongJpa.entity.Users;
 import com.talentmarket.KmongJpa.exception.CustomException;
 import com.talentmarket.KmongJpa.exception.ErrorCode;
-import com.talentmarket.KmongJpa.repository.BoardRepository;
+import com.talentmarket.KmongJpa.repository.ItemRepository;
 import com.talentmarket.KmongJpa.repository.CartRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -25,16 +25,21 @@ import java.util.stream.Collectors;
 @Log4j2
 public class CartService {
     private final CartRepository cartRepository;
-    private final BoardRepository boardRepository;
+    private final ItemRepository itemRepository;
 
     //장바구니 담기
     public void cart (CartRequest cartRequest, PrincipalDetails principalDetails) {
         Users.checkUserSession(principalDetails);
-        Board board = boardRepository.findById(cartRequest.getBoardId()).orElseThrow(()->new CustomException(ErrorCode.BOARD_NOT_FOUND));
+        Item item = itemRepository.findById(cartRequest.getBoardId()).orElseThrow(()->new CustomException(ErrorCode.ITEM_NOT_FOUND));
+        int stockQuantity = item.getStockQuantity();
         int count = cartRequest.getCount();
-       Optional<Cart> optional = cartRepository.findByBoardIdAndUserId(cartRequest.getBoardId(),principalDetails.getDto().getId());
+        //재고가 만약 count 보다 작다면 수량부족(품절)
+        if (stockQuantity<count){
+            throw new CustomException(ErrorCode.STOCK_SOLD_OUT);
+        }
+       Optional<Cart> optional = cartRepository.findByItemIdAndUserId(cartRequest.getBoardId(),principalDetails.getDto().getId());
         if (optional.isEmpty()) {
-             Cart cart = Cart.createCart( board,count,principalDetails);
+             Cart cart = Cart.createCart(item,count,principalDetails);
             cartRepository.save(cart);
         } else
             optional.get().updateCount(count);
@@ -58,7 +63,7 @@ public class CartService {
         Users.checkUserSession(principalDetails);
         Long userId = principalDetails.getDto().getId();
        List<Cart> carts = cartRepository.findCartByUserId(userId);
-        List<CartResponse> response = carts.stream().map(c->new CartResponse(c.getBoard().getTitle(),c.getCount(),c.getBoard().getPrice())).collect(Collectors.toList());
+        List<CartResponse> response = carts.stream().map(c->new CartResponse(c.getItem().getTitle(),c.getCount(),c.getItem().getPrice())).collect(Collectors.toList());
 
        return response;
 

@@ -61,7 +61,7 @@ class CommentApiTest {
     @Test
     void WriteCommentException() throws Exception{
         //given
-        doThrow(new CustomException(ErrorCode.BOARD_NOT_FOUND)).when(commentService).CommentWrite(any(), any());
+        doThrow(new CustomException(ErrorCode.ITEM_NOT_FOUND)).when(commentService).CommentWrite(any(), any());
         CommentWriteDto commentWriteDto = new CommentWriteDto(1L,"contents");
 
         //when //then

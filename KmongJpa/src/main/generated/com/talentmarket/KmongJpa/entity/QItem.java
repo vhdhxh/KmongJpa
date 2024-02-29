@@ -11,16 +11,16 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QBoard is a Querydsl query type for Board
+ * QItem is a Querydsl query type for Item
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
-public class QBoard extends EntityPathBase<Item> {
+public class QItem extends EntityPathBase<Item> {
 
-    private static final long serialVersionUID = 207385659L;
+    private static final long serialVersionUID = 283997982L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
-    public static final QBoard board = new QBoard("board");
+    public static final QItem item = new QItem("item");
 
     public final ListPath<Comment, QComment> comment = this.<Comment, QComment>createList("comment", Comment.class, QComment.class, PathInits.DIRECT2);
 
@@ -34,6 +34,8 @@ public class QBoard extends EntityPathBase<Item> {
 
     public final NumberPath<Integer> price = createNumber("price", Integer.class);
 
+    public final NumberPath<Integer> stockQuantity = createNumber("stockQuantity", Integer.class);
+
     public final StringPath thumbnail = createString("thumbnail");
 
     public final StringPath title = createString("title");
@@ -42,23 +44,23 @@ public class QBoard extends EntityPathBase<Item> {
 
     public final StringPath writer = createString("writer");
 
-    public QBoard(String variable) {
+    public QItem(String variable) {
         this(Item.class, forVariable(variable), INITS);
     }
 
-    public QBoard(Path<? extends Item> path) {
+    public QItem(Path<? extends Item> path) {
         this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
-    public QBoard(PathMetadata metadata) {
+    public QItem(PathMetadata metadata) {
         this(metadata, PathInits.getFor(metadata, INITS));
     }
 
-    public QBoard(PathMetadata metadata, PathInits inits) {
+    public QItem(PathMetadata metadata, PathInits inits) {
         this(Item.class, metadata, inits);
     }
 
-    public QBoard(Class<? extends Item> type, PathMetadata metadata, PathInits inits) {
+    public QItem(Class<? extends Item> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.users = inits.isInitialized("users") ? new QUsers(forProperty("users")) : null;
     }

@@ -6,19 +6,16 @@ import com.talentmarket.KmongJpa.entity.Like;
 import com.talentmarket.KmongJpa.entity.Users;
 import com.talentmarket.KmongJpa.repository.LikeRepository;
 import com.talentmarket.KmongJpa.repository.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.core.parameters.P;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
@@ -29,7 +26,7 @@ class LikeServiceTest {
     @Autowired
     LikeService likeService;
     @Autowired
-    BoardService boardService;
+    ItemService itemService;
     @Autowired
     LikeRepository likeRepository;
     @Autowired
@@ -42,15 +39,15 @@ class LikeServiceTest {
     @Test
     void test() {
     //given
-    Long boardId;
+    Long itemId;
         WriteRequest request = WriteRequest.builder().title("t").contents("t").build();
        Users user = Users.builder().id(1L).email("").password("").build();
         userRepository.save(user);
-   boardId = boardService.WriteBoard(request , new PrincipalDetails(user));
+        itemId = itemService.WriteBoard(request , new PrincipalDetails(user));
 
     //when
-    likeService.likeCount(boardId,new PrincipalDetails(user));
-        List<Like> likes = likeRepository.findLikesByBoardId(boardId);
+    likeService.likeCount(itemId,new PrincipalDetails(user));
+        List<Like> likes = likeRepository.findLikesByItemId(itemId);
     //then
      assertThat(likes.get(0).getUsers().getId()).isEqualTo(1L);
     }
@@ -58,16 +55,16 @@ class LikeServiceTest {
     @Test
     void test2() {
     //given
-        Long boardId;
+        Long itemId;
         WriteRequest request = WriteRequest.builder().title("t").contents("t").build();
         Users user = Users.builder().id(1L).email("").password("").build();
         userRepository.save(user);
         PrincipalDetails principalDetails = new PrincipalDetails(user);
-        boardId = boardService.WriteBoard(request , principalDetails);
+        itemId = itemService.WriteBoard(request , principalDetails);
     //when
-        likeService.likeCount(boardId,principalDetails);
-    likeService.disLike(boardId ,principalDetails);
-        List<Like> likes = likeRepository.findLikesByBoardId(boardId);
+        likeService.likeCount(itemId,principalDetails);
+    likeService.disLike(itemId ,principalDetails);
+        List<Like> likes = likeRepository.findLikesByItemId(itemId);
     //then
         assertThat(likes).isEmpty();
     }
