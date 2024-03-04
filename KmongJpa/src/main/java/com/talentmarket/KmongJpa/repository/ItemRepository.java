@@ -17,6 +17,7 @@ public interface ItemRepository extends JpaRepository<Item,Long> {
 
     @Query("select I from Item I join fetch I.users")
     Page<Item> findItem(Pageable pageable);
+    List<Item> findAllByIdIn(List<Long> itemIds);
 
 //    @Query("select b from Board b where b.board_id = b.comment.board_id")
 //    Optional<Board> findBoardAndComment();

@@ -14,16 +14,27 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Builder
 public class TempOrderResponse {
-    private List<String> items;
+    private String item;
+    private int count;
+    private int price;
 
 
-    public static TempOrderResponse create(Order order) {
+    public static List<TempOrderResponse> createResponses(Order order) {
+
+//        List<String> orderItems = order.getOrderItems().stream()
+//                .map(OrderItem->OrderItem.getItem().getTitle())
+//                .collect(Collectors.toList());
+      List<TempOrderResponse> responses = order.getOrderItems().stream()
+              .map(orderItem->TempOrderResponse
+                      .builder()
+                      .item(orderItem.getItem().getTitle())
+                      .count(orderItem.getCount())
+                      .price(orderItem.getItem().getPrice())
+                      .build())
+              .collect(Collectors.toList());
 
 
-        List<String> orderItems = order.getOrderItems().stream()
-                .map(OrderItem->OrderItem.toString())
-                .collect(Collectors.toList());
-        return new TempOrderResponse(orderItems);
+        return responses;
     }
 
 }

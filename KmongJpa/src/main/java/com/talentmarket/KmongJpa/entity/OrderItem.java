@@ -1,8 +1,14 @@
 package com.talentmarket.KmongJpa.entity;
 
+import com.talentmarket.KmongJpa.Dto.TempOrderRequest;
+import com.talentmarket.KmongJpa.repository.ItemRepository;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -26,6 +32,9 @@ public class OrderItem {
     private Item item;
 
     private int count;
+
+
+
 
 
 }

@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 public class TempOrderRequest {
     List<TempOrderItems> tempOrderItems;
 
-
-    public static class  TempOrderItems {
+    @Data
+    public static class TempOrderItems {
         private Long itemId;
         private int itemCount;
     }
