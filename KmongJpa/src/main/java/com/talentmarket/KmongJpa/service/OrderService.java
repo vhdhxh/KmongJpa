@@ -2,12 +2,11 @@ package com.talentmarket.KmongJpa.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.talentmarket.KmongJpa.Dto.TempOrderRequest;
-import com.talentmarket.KmongJpa.Dto.TempOrderResponse;
-import com.talentmarket.KmongJpa.Dto.TokenRequestDto;
-import com.talentmarket.KmongJpa.Dto.TokenResponseDto;
+import com.talentmarket.KmongJpa.Dto.*;
 import com.talentmarket.KmongJpa.config.auth.PrincipalDetails;
 import com.talentmarket.KmongJpa.entity.*;
+import com.talentmarket.KmongJpa.exception.CustomException;
+import com.talentmarket.KmongJpa.exception.ErrorCode;
 import com.talentmarket.KmongJpa.repository.ItemRepository;
 import com.talentmarket.KmongJpa.repository.OrderItemRepository;
 import com.talentmarket.KmongJpa.repository.OrderRepository;
@@ -87,38 +86,75 @@ public class OrderService {
     // 결제가 (성공이든 실패든 처리되면)
     // 주문 상태 변경
     // 성공일 경우 포트원 서버 와 DB 주문 가격을 검증
-    public void afterOrder() throws JsonProcessingException, URISyntaxException {
-//        Order order = orderRepository.findById(orderId).orElseThrow();
-// api.iamport.kr/users/getToken 아래 바디를 담아 요청을 보내 응답으로 토큰을 받아온다
+    //주문을 성공 했을경우 true , 실패했을경우 false 반환
+    public Boolean afterOrder(PaymentRequest paymentRequest) throws JsonProcessingException, URISyntaxException {
+        // 포트원 서버 와 DB 주문 가격을 검증
+
+        int payAmount = paymentRequest.getAmount();
+        Order order = orderRepository.findByUuid(paymentRequest.getUuid());
+        int orderItemCount = order.getOrderItems().size();
+        int dbAmount = 0;
+        for (int i = 0; i < orderItemCount; i++) {
+            dbAmount += order.getOrderItems().get(i).getItem().getPrice();
+
+        }
+        // 가격이 서로 다르다면 결제 취소 요청
+        if (payAmount != dbAmount) {
+            order.updateStatus(OrderStatus.Fail);  //이부분은 아래 예외가 터지면 어차피 롤백되어서 의미가 없는거같다. 그럼어떻게?
+            boolean result = cancelPayment(paymentRequest.getImp_uid(), payAmount);  //외부 api인데 트랜잭션을 어떻게 적용하는게 좋을까? 만약 취소 요청 자체가 실패한다면?
+
+            return false;
+            //예외를 던지지말고 차라리 response를 return할까?
+        }
+        // 가격이 맞다면 주문 상태 변경 후 재고차감 그런데, 재고차감을 이시점에 하는게맞나?
+
+        for (int i = 0; i < orderItemCount; i++) {
+            int count = order.getOrderItems().get(i).getCount();
+            order.getOrderItems().get(i).getItem().stockReduce(count);
+        }
+
+        order.updateStatus(OrderStatus.Success);
+
+        //아니면 검증메소드();
+        //      결제취소메소드();
         //
-//        {
-//            "imp_key": "",
-//            "imp_secret": "",
-//        }
-        //
-        String time = Long.toString(System.currentTimeMillis());
+
+      return true;
+    }
+
+    public boolean cancelPayment(String imp_uid,int price) throws URISyntaxException, JsonProcessingException {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        TokenRequestDto request = TokenRequestDto.builder()
+
+        TokenRequestDto tokenRequest = TokenRequestDto.builder()
                 .imp_key(imp_key)
                 .imp_secret(imp_secret).build();
 
         //쌓은 바디를 json형태로 반환
         ObjectMapper objectMapper = new ObjectMapper();
-        String body = objectMapper.writeValueAsString(request);
+        String body = objectMapper.writeValueAsString(tokenRequest);
         // jsonBody와 헤더 조립
         HttpEntity<String> httpBody = new HttpEntity<>(body, headers);
-
         RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
-        //restTemplate로 post 요청 보내고 오류가 없으면 202코드 반환
         TokenResponseDto response = restTemplate.postForObject(new URI("https://api.iamport.kr/users/getToken"), httpBody, TokenResponseDto.class);
-        System.out.println(response.getResponse().toString());
+        System.out.println(response.getResponse().getAccess_token());
 
 
+        String accessToken = response.getResponse().getAccess_token();
+        headers.setBearerAuth(accessToken);
+        CanselRequest canselRequest = CanselRequest.builder()
+                .imp_id(imp_uid)
+                .checksum(price)
+                .build();
+        body = objectMapper.writeValueAsString(canselRequest);
 
+        HttpEntity<String> httpBody2 = new HttpEntity<>(body, headers);
+
+        restTemplate.postForObject(new URI("https://api.iamport.kr/payments/cancel"), httpBody2, TokenResponseDto.class);
+
+   return true;
     }
 
     // 결제하기 버튼 -> 가주문생성 -> 결제방식 선택후 결제 -> 결제 성공or실패 -> 주문상태 변경

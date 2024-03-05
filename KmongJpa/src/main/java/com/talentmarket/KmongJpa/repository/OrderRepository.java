@@ -19,4 +19,6 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
     public Order findByUUIDAndUserAndOrderStatus(@Param("uuid")String uuid
             , @Param("userId") Long userId,
               @Param("status") OrderStatus orderStatus);
+
+    Order findByUuid (String uuid);
 }

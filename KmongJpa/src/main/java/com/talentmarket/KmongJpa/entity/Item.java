@@ -2,6 +2,8 @@ package com.talentmarket.KmongJpa.entity;
 
 import com.talentmarket.KmongJpa.Dto.WriteRequest;
 import com.talentmarket.KmongJpa.config.auth.PrincipalDetails;
+import com.talentmarket.KmongJpa.exception.CustomException;
+import com.talentmarket.KmongJpa.exception.ErrorCode;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -41,15 +43,16 @@ public class Item {
     private String detail;
     private int stockQuantity;
 
-    public static Item createBoard(WriteRequest reqeust, PrincipalDetails principalDetails) {
+    public static Item createBoard(WriteRequest request, PrincipalDetails principalDetails) {
+        Users user = principalDetails.getDto();
         return Item.builder()
-                .users(principalDetails.getDto())
-                .writer(principalDetails.getDto().getName())
-                .thumbnail(reqeust.getThumbnail())
-                .detail(reqeust.getDetail())
-                .title(reqeust.getTitle())
-                .price(reqeust.getPrice())
-                .contents(reqeust.getContents())
+                .users(user)
+                .writer(user.getName())
+                .thumbnail(request.getThumbnail())
+                .detail(request.getDetail())
+                .title(request.getTitle())
+                .price(request.getPrice())
+                .contents(request.getContents())
                 .build();
     }
     public Long updateBoard(WriteRequest request) {
@@ -61,4 +64,10 @@ public class Item {
         return this.Id;
     }
 
+    public void stockReduce(int quantity) {
+       int restStock = this.stockQuantity-quantity;
+       if (restStock<0) {
+           throw new CustomException(ErrorCode.STOCK_NOT_NEGATIVE);
+       }
+    }
 }

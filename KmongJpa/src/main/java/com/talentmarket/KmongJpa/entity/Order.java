@@ -30,4 +30,9 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
+    public void updateStatus(OrderStatus status) {
+        this.orderStatus = status;
+    }
+
+
 }

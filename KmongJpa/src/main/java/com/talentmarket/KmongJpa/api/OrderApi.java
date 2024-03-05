@@ -2,6 +2,7 @@ package com.talentmarket.KmongJpa.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.talentmarket.KmongJpa.Dto.ApiResponse;
+import com.talentmarket.KmongJpa.Dto.PaymentRequest;
 import com.talentmarket.KmongJpa.Dto.TempOrderRequest;
 import com.talentmarket.KmongJpa.Dto.TempOrderResponse;
 import com.talentmarket.KmongJpa.config.auth.PrincipalDetails;
@@ -33,8 +34,8 @@ public class OrderApi {
     }
 
     @PostMapping("/api/v1/getToken")
-    public ApiResponse getToken() throws URISyntaxException, JsonProcessingException {
-        orderService.afterOrder();
+    public ApiResponse getToken(PaymentRequest paymentRequest) throws URISyntaxException, JsonProcessingException {
+        orderService.afterOrder(paymentRequest);
         return ApiResponse.ok(null);
     }
 
