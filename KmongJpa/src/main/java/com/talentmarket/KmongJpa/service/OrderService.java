@@ -122,6 +122,8 @@ public class OrderService {
       return true;
     }
 
+
+    //payment 서비스를 분리해야될거같다.
     public boolean cancelPayment(String imp_uid,int price) throws URISyntaxException, JsonProcessingException {
 
         HttpHeaders headers = new HttpHeaders();
