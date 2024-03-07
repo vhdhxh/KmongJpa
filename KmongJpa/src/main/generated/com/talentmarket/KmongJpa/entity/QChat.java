@@ -30,9 +30,7 @@ public class QChat extends EntityPathBase<Chat> {
 
     public final StringPath message = createString("message");
 
-    public final QUsers receiver;
-
-    public final QUsers sender;
+    public final NumberPath<Long> sender = createNumber("sender", Long.class);
 
     public QChat(String variable) {
         this(Chat.class, forVariable(variable), INITS);
@@ -52,9 +50,7 @@ public class QChat extends EntityPathBase<Chat> {
 
     public QChat(Class<? extends Chat> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.chatRoom = inits.isInitialized("chatRoom") ? new QChatRoom(forProperty("chatRoom")) : null;
-        this.receiver = inits.isInitialized("receiver") ? new QUsers(forProperty("receiver")) : null;
-        this.sender = inits.isInitialized("sender") ? new QUsers(forProperty("sender")) : null;
+        this.chatRoom = inits.isInitialized("chatRoom") ? new QChatRoom(forProperty("chatRoom"), inits.get("chatRoom")) : null;
     }
 
 }
