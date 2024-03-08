@@ -4,24 +4,26 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 @Getter
-public class ChatRoom {
+public class ChatRoomUser {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "chatRoom_id")
+    @Id @GeneratedValue
+    @Column(name = "chatRoomUser_id")
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private Users user;
+
+    @ManyToOne
+    @JoinColumn(name = "chatroom_id")
+    private ChatRoom chatRoom;
 
 
-//    @Builder.Default
-//    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
-//    private List<Chat> chatList = new ArrayList<>();
+
 }
