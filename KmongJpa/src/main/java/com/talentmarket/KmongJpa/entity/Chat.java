@@ -20,12 +20,9 @@ public class Chat {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "chatroom_id")
-    private ChatRoom chatRoom;
-
-
-    @Column(name = "sender_id")
-    private Long sender;
+    @JoinColumn(name = "chatRoomUser_id")
+    private ChatRoomUser chatRoomUser;
+    
 
 //    @ManyToOne
 //    @JoinColumn(name = "receiver_member_id")
@@ -38,5 +35,8 @@ public class Chat {
 
     @Builder.Default
     private LocalDateTime createTime = LocalDateTime.now();
+
+
+
 
 }

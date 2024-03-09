@@ -25,9 +25,9 @@ public class ChatApi {
             @PathVariable Long user2Id) {
 
 
-        Long roomId = chatService.createRoom(principalDetails, user2Id);
+        chatService.createRoom(principalDetails, user2Id);
         //만들어진 채팅방 roomId 를  매개변수에 넣어서 채팅방 인원들을 추가한다.
-        System.out.println(roomId);
-        return ApiResponse.ok(roomId);
+
+        return ApiResponse.ok(null);
     }
 }

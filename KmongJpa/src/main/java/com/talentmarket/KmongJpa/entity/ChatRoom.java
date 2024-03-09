@@ -20,6 +20,12 @@ public class ChatRoom {
     private Long id;
 
 
+    public static ChatRoom createRoom () {
+        ChatRoom chatRoom = ChatRoom
+                .builder()
+                .build();
+        return chatRoom;
+    }
 
 //    @Builder.Default
 //    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
