@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<!--관련 Namespace 선언 및 layout:decorate 추가-->
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}" xmlns:sec="http://www.w3.org/1999/xhtml">
+
+<head>
+<!--  layout.html 에 들어간 head 부분을 제외하고 개별 파일에만 적용되는 head 부분 추가-->
+<!--  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">-->
+<!--  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>-->
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      .b-example-divider {
+        width: 100%;
+        height: 3rem;
+        background-color: rgba(0, 0, 0, .1);
+        border: solid rgba(0, 0, 0, .15);
+        border-width: 1px 0;
+        box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+      }
+
+      .b-example-vr {
+        flex-shrink: 0;
+        width: 1.5rem;
+        height: 100vh;
+      }
+
+      .bi {
+        vertical-align: -.125em;
+        fill: currentColor;
+      }
+
+      .nav-scroller {
+        position: relative;
+        z-index: 2;
+        height: 2.75rem;
+        overflow-y: hidden;
+      }
+
+      .nav-scroller .nav {
+        display: flex;
+        flex-wrap: nowrap;
+        padding-bottom: 1rem;
+        margin-top: -1px;
+        overflow-x: auto;
+        text-align: center;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .btn-bd-primary {
+        --bd-violet-bg: #712cf9;
+        --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
+
+        --bs-btn-font-weight: 600;
+        --bs-btn-color: var(--bs-white);
+        --bs-btn-bg: var(--bd-violet-bg);
+        --bs-btn-border-color: var(--bd-violet-bg);
+        --bs-btn-hover-color: var(--bs-white);
+        --bs-btn-hover-bg: #6528e0;
+        --bs-btn-hover-border-color: #6528e0;
+        --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
+        --bs-btn-active-color: var(--bs-btn-hover-color);
+        --bs-btn-active-bg: #5a23c8;
+        --bs-btn-active-border-color: #5a23c8;
+      }
+      .bd-mode-toggle {
+        z-index: 1500;
+      }
+
+nav > ul > li.has_sub > a::after, .menu_toggle > span,
+.chkbox input:checked+i::before,
+.file_list > div > button > span::before, .file_upload label i::after,
+.paging .page_bt::after, .es, .wr_cm_txt span::before, .cm_list > div .cm_answer::before, .rating_star, .rating_star_per {content:''; background-image:url(../img/icons.png); background-repeat:no-repeat;}
+
+ * {box-sizing:border-box;}
+.paging {text-align:center; margin:2% 0 0;}
+.paging > p {display:inline-block; margin:0 4px;}
+.paging > p > a, .paging > p > span {margin-left:-1px;}
+.paging > p > a:first-child, .paging > p > span:first-child {margin-left:0;}
+.paging a, .paging span {display:inline-block; width:30px; height:30px; line-height:240%; color:#999; font-size:12px;}
+.paging a:hover {background:#f7f7f7;}
+.paging a.on, .paging span.on {background:#666; border-color:transparent; border-radius:4px; color:#fff;}
+.paging .page_bt {text-indent:-9999px; position:relative;}
+.paging .page_bt::after {background-position:-30px 0; width:6px; height:11px; position:absolute; top:50%; left:50%; margin:-5px 0 0 -3px;}
+.paging .first::after {background-position:-15px 0; width:12px; margin-left:-6px;}
+.paging .next::after {background-position:-40px 0;}
+.paging .last::after {background-position:-49px 0; width:12px; margin-left:-6px;}
+.paging .prev, .paging .last {margin-left:-1px;}
+
+#keyword {
+ margin:auto;
+    width:45%;
+    max-width:430px;
+    border:2px solid #8C8C8C;
+    border-radius:20px;
+    padding:0.5em 1em;
+    background-color:white;
+    text-align:left;
+}
+    </style>
+
+    <script>
+        function goChat(nickname){
+    let myNickname = document.querySelector(".loginMemberNickname").value;
+console.log(myNickname);
+console.log(nickname);
+    if(myNickname == ""){
+        alert("회원만 채팅기능을 이용할 수 있습니다.");
+        return;
+    }
+
+    if(nickname == myNickname){
+        alert("자기자신과는 채팅할 수 없습니다.");
+        return;
+    }
+
+    let roomId = 0;
+    fetch("/chat/"+nickname, {
+        method: "post"
+    })
+    .then((res) => res.json())
+    .then((json) => {
+        roomId = json;
+        console.log(roomId);
+        window.location.replace("/chat/"+roomId+"/"+nickname);
+    });
+}
+function go() {
+  const data = {
+    to: '01031547369'
+  };
+
+  fetch('/sms/send', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  })
+  .then(response => response.json())
+  .then(result => {
+    // 서버 응답 처리
+    console.log(result);
+  })
+  .catch(error => {
+    // 오류 처리
+    console.error(error);
+  });
+}
+    </script>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+            window.onload = () => {
+                // 페이지가 로드되었을 때, 딱 한 번만 함수를 실행
+                getPost();
+                findAllPost();
+            }
+
+            function getPost() {
+             $.ajax({
+        url: "/api/v1/Item",
+        type: "get",
+        success: function(data){
+
+        },
+        error: function(error){
+            alert(error.responseJSON.message);
+            window.location.replace("/");
+        }
+    });
+           }
+
+
+            // 게시글 리스트 조회
+            function findAllPost() {
+
+                // 1. PagingResponse의 멤버인 List<T> 타입의 list를 의미
+                const list = [[ ${response.list} ]];
+
+                // 2. 리스트가 비어있는 경우, 행에 "검색 결과가 없다"는 메시지를 출력하고, 페이지 번호(페이지네이션) HTML을 제거(초기화)한 후 로직을 종료
+                if ( !list.length ) {
+                    document.getElementById('list').innerHTML = '<td colspan="6"><div className="no_data_msg">검색된 결과가 없습니다.</div></td>';
+                    drawPage();
+                }
+
+                // 3. PagingResponse의 멤버인 pagination을 의미
+                const pagination = [[ ${response.pagination} ]];
+
+                // 4. @ModelAttribute를 이용해서 뷰(HTML)로 전달한 SearchDto 타입의 객체인 params를 의미
+                const params = [[ ${params} ]];
+
+                // 5. 리스트에 출력되는 게시글 번호를 처리하기 위해 사용되는 변수 (리스트에서 번호는 페이지 정보를 이용해서 계산해야 함)
+                let num = pagination.totalRecordCount - ((params.page - 1) * params.recordSize);
+
+                // 6. 리스트 데이터 렌더링
+                drawList(list, num);
+
+                // 7. 페이지 번호 렌더링
+                drawPage(pagination, params);
+            }
+
+
+            // 리스트 HTML draw
+            function drawList(list, num) {
+
+                // 1. 렌더링 할 HTML을 저장할 변수
+                let html = '';
+
+                /*
+                 * 2. 기존에 타임리프(Thymeleaf)를 이용해서 리스트 데이터를 그리던 것과 유사한 로직
+                 *    기존에는 게시글 번호를 (전체 데이터 수 - loop의 인덱스 번호)로 처리했으나, 현재는 (전체 데이터 수 - ((현재 페이지 번호 - 1) * 페이지당 출력할 데이터 개수))로 정밀히 계산
+                 */
+                list.forEach(row => {
+                    html += `
+                    <a href="/board/${row.board_Id}">
+                        <div class="col">
+                    <div class="card shadow-sm">
+                        <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><image href="/resources/user/${row.board_thumbnail}" height="100%" width="100%"/><text x="50%" y="50%" fill="#eceeef" dy=".3em"></text></svg>
+                        <div class="card-body">
+                            <p class="card-text">${row.board_title}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group">
+<!--                                    <button type="button" class="btn btn-sm btn-outline-secondary">View</button>-->
+<!--                                    <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>-->
+<span>${row.board_price}원</span>
+                                </div>
+                                <small class="text-body-secondary"></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </a>
+                    `;
+                })
+
+                // 3. id가 "list"인 요소를 찾아 HTML을 렌더링
+                document.getElementById('list').innerHTML = html;
+            }
+
+
+            // 페이지 HTML draw
+            function drawPage(pagination, params) {
+
+                // 1. 필수 파라미터가 없는 경우, 페이지 번호(페이지네이션) HTML을 제거(초기화)한 후 로직 종료
+                if ( !pagination || !params ) {
+                    document.querySelector('.paging').innerHTML = '';
+                    throw new Error('Missing required parameters...');
+                }
+
+                // 2. 렌더링 할 HTML을 저장할 변수
+                let html = '';
+
+                // 3. 이전 페이지가 있는 경우, 즉 시작 페이지(startPage)가 1이 아닌 경우 첫 페이지 버튼과 이전 페이지 버튼을 HTML에 추가
+                if (pagination.existPrevPage) {
+                    html += `
+                        <a href="javascript:void(0);" onclick="movePage(1)" class="page_bt first">첫 페이지</a>
+                        <a href="javascript:void(0);" onclick="movePage(${pagination.startPage - 1})" class="page_bt prev">이전 페이지</a>
+                    `;
+                }
+
+                /*
+                 * 4. 시작 페이지(startPage)와 끝 페이지(endPage) 사이의 페이지 번호(i)를 넘버링 하는 로직
+                 *    페이지 번호(i)와 현재 페이지 번호(params.page)가 동일한 경우, 페이지 번호(i)를 활성화(on) 처리
+                 */
+                html += '<p>';
+                for (let i = pagination.startPage; i <= pagination.endPage; i++) {
+                    html += (i !== params.page)
+                        ? `<a href="javascript:void(0);" onclick="movePage(${i});">${i}</a>`
+                        : `<span class="on">${i}</span>`
+                }
+                html += '</p>';
+
+                // 5. 현재 위치한 페이지 뒤에 데이터가 더 있는 경우, 다음 페이지 버튼과 끝 페이지 버튼을 HTML에 추가
+                if (pagination.existNextPage) {
+                    html += `
+                        <a href="javascript:void(0);" onclick="movePage(${pagination.endPage + 1});" class="page_bt next">다음 페이지</a>
+                        <a href="javascript:void(0);" onclick="movePage(${pagination.totalPageCount});" class="page_bt last">마지막 페이지</a>
+                    `;
+                }
+
+                // 6. class가 "paging"인 요소를 찾아 HTML을 렌더링
+                document.querySelector('.paging').innerHTML = html;
+            }
+
+
+            // 페이지 이동
+            function movePage(page) {
+
+
+                // 1. drawPage( )의 각 버튼에 선언된 onclick 이벤트를 통해 전달받는 page(페이지 번호)를 기준으로 객체 생성
+                const queryParams = {
+                    page: (page) ? page : 1,
+                    recordSize: 6,
+                    pageSize: 10,
+                    keyword: document.getElementById('keyword').value
+                }
+
+                /*
+                 * 2. location.pathname : 리스트 페이지의 URI("/post/list.do")를 의미
+                 *    new URLSearchParams(queryParams).toString() : queryParams의 모든 프로퍼티(key-value)를 쿼리 스트링으로 변환
+                 *    URI + 쿼리 스트링에 해당하는 주소로 이동
+                 *    (해당 함수가 리턴해주는 값을 브라우저 콘솔(console)에 찍어보시면 쉽게 이해하실 수 있습니다.)
+                 */
+                location.href = location.pathname + '?' + new URLSearchParams(queryParams).toString();
+            }
+
+        /*]]>*/
+
+        function handleKeyPress(event) {
+  if (event.keyCode === 13) {
+    // 엔터 키를 눌렀을 때 실행할 자바스크립트 함수를 호출합니다.
+    yourFunctionName();
+  }
+}
+
+
+function yourFunctionName() {
+  // 엔터 키를 눌렀을 때 실행할 동작을 구현합니다.
+  // 여기에 원하는 자바스크립트 코드를 작성하세요.
+  movePage(1);
+}
+
+        </script>
+<!--  필요하다면 개별파일에 사용될 css/js 선언-->
+</head>
+
+<!--   layout.html 에 정의한 main page 부분-->
+<body layout:fragment="content">
+
+
+
+<!--<div>이건 메인에서 만들었고</div>-->
+<!--<div onclick="goChat(123)" class="num">123과 채팅하기</div>-->
+<!--<div onclick="goChat('aa')" class="eng">aa와 채팅하기</div>-->
+
+</div>
+<!--<input type="hidden" sec:authorize="isAuthenticated()" class="loginMemberNickname" th:value="${#authentication.getPrincipal().member.nickname}">- -->
+<input type="hidden" sec:authorize="isAuthenticated()" class="loginMemberNickname" th:value="${#authentication.getPrincipal().dto.user_name}">
+<!--<input type="text" onclick="go()">-->
+<!--<input type="hidden" sec:authorize="isAuthenticated()" class="loginMemberNickname" th:value="${user.user_name}">-->
+</div>
+
+
+
+<main>
+
+    <section class="py-5 text-center" style="background-image: url('img/banner.jpg');background-size: cover;width: 100%; margin: 0; padding: 0;">
+
+        <div class="row py-lg-5">
+            <div class="col-lg-6 col-md-8 mx-auto">
+<!--                <h1 class="fw-light">Album example</h1>-->
+<!--                <p class="lead text-body-secondary">Something short and leading about the collection below—its contents, the creator, etc. Make it short and sweet, but not too short so folks don’t simply skip over it entirely.</p>-->
+                <p>
+<!--                    <a href="#" class="btn btn-primary my-2">Main call to action</a>-->
+<!--                    <a href="#" class="btn btn-secondary my-2">Secondary action</a>-->
+                    <input type="text" id="keyword" name="keyword" placeholder="키워드를 입력해 주세요." title="키워드 입력" onkeyup="handleKeyPress(event)"/>
+
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <div class="album py-5 bg-body-tertiary">
+        <div class="container">
+
+
+
+<!--            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">-->
+                <div id="list" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+<!--                <div class="col">-->
+<!--                    <div class="card shadow-sm">-->
+<!--                        <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>-->
+<!--                        <div class="card-body">-->
+<!--                            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>-->
+<!--                            <div class="d-flex justify-content-between align-items-center">-->
+<!--                                <div class="btn-group">-->
+<!--                                    <button type="button" class="btn btn-sm btn-outline-secondary">View</button>-->
+<!--                                    <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>-->
+<!--                                </div>-->
+<!--                                <small class="text-body-secondary">9 mins</small>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col">-->
+<!--                    <div class="card shadow-sm">-->
+<!--                        <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>-->
+<!--                        <div class="card-body">-->
+<!--                            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>-->
+<!--                            <div class="d-flex justify-content-between align-items-center">-->
+<!--                                <div class="btn-group">-->
+<!--                                    <button type="button" class="btn btn-sm btn-outline-secondary">View</button>-->
+<!--                                    <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>-->
+<!--                                </div>-->
+<!--                                <small class="text-body-secondary">9 mins</small>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col">-->
+<!--                    <div class="card shadow-sm">-->
+<!--                        <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>-->
+<!--                        <div class="card-body">-->
+<!--                            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>-->
+<!--                            <div class="d-flex justify-content-between align-items-center">-->
+<!--                                <div class="btn-group">-->
+<!--                                    <button type="button" class="btn btn-sm btn-outline-secondary">View</button>-->
+<!--                                    <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>-->
+<!--                                </div>-->
+<!--                                <small class="text-body-secondary">9 mins</small>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <div class="col">-->
+<!--                    <div class="card shadow-sm">-->
+<!--                        <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>-->
+<!--                        <div class="card-body">-->
+<!--                            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>-->
+<!--                            <div class="d-flex justify-content-between align-items-center">-->
+<!--                                <div class="btn-group">-->
+<!--                                    <button type="button" class="btn btn-sm btn-outline-secondary">View</button>-->
+<!--                                    <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>-->
+<!--                                </div>-->
+<!--                                <small class="text-body-secondary">9 mins</small>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col">-->
+<!--                    <div class="card shadow-sm">-->
+<!--                        <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>-->
+<!--                        <div class="card-body">-->
+<!--                            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>-->
+<!--                            <div class="d-flex justify-content-between align-items-center">-->
+<!--                                <div class="btn-group">-->
+<!--                                    <button type="button" class="btn btn-sm btn-outline-secondary">View</button>-->
+<!--                                    <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>-->
+<!--                                </div>-->
+<!--                                <small class="text-body-secondary">9 mins</small>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col">-->
+<!--                    <div class="card shadow-sm">-->
+<!--                        <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>-->
+<!--                        <div class="card-body">-->
+<!--                            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>-->
+<!--                            <div class="d-flex justify-content-between align-items-center">-->
+<!--                                <div class="btn-group">-->
+<!--                                    <button type="button" class="btn btn-sm btn-outline-secondary">View</button>-->
+<!--                                    <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>-->
+<!--                                </div>-->
+<!--                                <small class="text-body-secondary">9 mins</small>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <div class="col">-->
+<!--                    <div class="card shadow-sm">-->
+<!--                        <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>-->
+<!--                        <div class="card-body">-->
+<!--                            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>-->
+<!--                            <div class="d-flex justify-content-between align-items-center">-->
+<!--                                <div class="btn-group">-->
+<!--                                    <button type="button" class="btn btn-sm btn-outline-secondary">View</button>-->
+<!--                                    <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>-->
+<!--                                </div>-->
+<!--                                <small class="text-body-secondary">9 mins</small>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col">-->
+<!--                    <div class="card shadow-sm">-->
+<!--                        <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>-->
+<!--                        <div class="card-body">-->
+<!--                            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>-->
+<!--                            <div class="d-flex justify-content-between align-items-center">-->
+<!--                                <div class="btn-group">-->
+<!--                                    <button type="button" class="btn btn-sm btn-outline-secondary">View</button>-->
+<!--                                    <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>-->
+<!--                                </div>-->
+<!--                                <small class="text-body-secondary">9 mins</small>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+
+<!--                <div class="col">-->
+<!--                    <div class="card shadow-sm">-->
+<!--                        <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>-->
+<!--                        <div class="card-body">-->
+<!--                            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>-->
+<!--                            <div class="d-flex justify-content-between align-items-center">-->
+<!--                                <div class="btn-group">-->
+<!--                                    <button type="button" class="btn btn-sm btn-outline-secondary">View</button>-->
+<!--                                    <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>-->
+<!--                                </div>-->
+<!--                                <small class="text-body-secondary">9 mins</small>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <div class="col">-->
+<!--                    <div class="card shadow-sm">-->
+<!--                        <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>-->
+<!--                        <div class="card-body">-->
+<!--                            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>-->
+<!--                            <div class="d-flex justify-content-between align-items-center">-->
+<!--                                <div class="btn-group">-->
+<!--                                    <button type="button" class="btn btn-sm btn-outline-secondary">View</button>-->
+<!--                                    <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>-->
+<!--                                </div>-->
+<!--                                <small class="text-body-secondary">9 mins</small>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--            </div>-->
+
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<div class="paging"></div>
+
+<!--<footer class="text-body-secondary py-5">-->
+<!--    <div class="container">-->
+<!--        <p class="float-end mb-1">-->
+<!--            <a href="#">Back to top</a>-->
+<!--        </p>-->
+<!--        <p class="mb-1">Album example is &copy; Bootstrap, but please download and customize it for yourself!</p>-->
+<!--        <p class="mb-0">New to Bootstrap? <a href="/">Visit the homepage</a> or read our <a href="../getting-started/introduction/">getting started guide</a>.</p>-->
+<!--    </div>-->
+<!--</footer>-->
+<script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
+
+
+</body>
+</html>

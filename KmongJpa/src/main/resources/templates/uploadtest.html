@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    .btn-upload {
+  width: 150px;
+  height: 30px;
+  background: #fff;
+  border: 1px solid rgb(77,77,77);
+  border-radius: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &:hover {
+    background: rgb(77,77,77);
+    color: #fff;
+  }
+}
+
+#fileInput {
+  display: none;
+}
+</style>
+<body>
+<label for="fileInput">
+    <div class="btn-upload">프로필 변경</div>
+</label>
+<input type="file" id="fileInput">
+
+<img id="imagePreview" src="img/oauth-kakao.png" style="width:300px;height:300px;">
+
+<script>
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            var file = e.target.files[0];
+            var formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/file-upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(result => {
+                console.log(result); // 서버 응답 출력
+
+                if (result.imageUrl) {
+                    showImage(result.imageUrl);
+                }
+            })
+            .catch(error => {
+                console.error(error); // 에러 처리
+            });
+        });
+
+        function showImage(url) {
+           var previewDiv = document.getElementById('imagePreview');
+           console.log(previewDiv);
+           previewDiv.src = "/resources/user/" + url;
+        }
+    </script>
+
+</body>
+</html>

@@ -22,13 +22,17 @@ public class QChat extends EntityPathBase<Chat> {
 
     public static final QChat chat = new QChat("chat");
 
-    public final QChatRoomUser chatRoomUser;
+    public final QChatRoom chatRoom;
 
     public final DateTimePath<java.time.LocalDateTime> createTime = createDateTime("createTime", java.time.LocalDateTime.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final StringPath message = createString("message");
+
+    public final NumberPath<Long> receiverId = createNumber("receiverId", Long.class);
+
+    public final NumberPath<Long> senderId = createNumber("senderId", Long.class);
 
     public QChat(String variable) {
         this(Chat.class, forVariable(variable), INITS);
@@ -48,7 +52,7 @@ public class QChat extends EntityPathBase<Chat> {
 
     public QChat(Class<? extends Chat> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.chatRoomUser = inits.isInitialized("chatRoomUser") ? new QChatRoomUser(forProperty("chatRoomUser"), inits.get("chatRoomUser")) : null;
+        this.chatRoom = inits.isInitialized("chatRoom") ? new QChatRoom(forProperty("chatRoom"), inits.get("chatRoom")) : null;
     }
 
 }

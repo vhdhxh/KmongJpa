@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body layout:fragment="content">
+<script>
+
+const baseUrl = window.location.pathname;   //posts    //posts/novel
+var id = baseUrl.replace("/board/", "");
+var price;
+var name;
+var writer;
+
+let loginMemberNickname = "";
+
+
+
+//update.js와 유사
+$(document).ready(function(){
+    loadPost();
+    loadComment();
+
+loginMemberNickname = document.querySelector(".loginMemberNickname").value; //"" 또는 닉네임
+<!--appendButton();-->
+
+
+});
+
+//update.js와 같음
+function appendButton() {
+let myNicknameElement = document.querySelector(".loginMemberNickname");
+let updateButtonElement = document.querySelector("#updateButton");
+
+if (myNicknameElement==writer) {
+  updateButtonElement.innerHTML += `
+    <button type="button" class="btn btn-warning" onclick="update()">수정하기</button>
+    <button type="button" class="btn btn-danger" onclick="deletePost()">삭제하기</button>
+  `;
+}
+}
+
+function loadPost(){
+    $.ajax({
+        url: "/api/board/"+id,
+        type: "get",
+        success: function(data){
+            replacePost(data);
+
+        },
+        error: function(error){
+            alert(error.responseJSON.message);
+            window.location.replace("/");
+        }
+    });
+}
+
+
+function replacePost(post){
+    document.querySelector("#title").innerHTML = post.board_title;
+    document.querySelector("#price").innerHTML = post.board_price + "원";
+    document.querySelector("#contents").innerHTML = post.board_contents;
+     document.querySelector("#detail").innerHTML = post.board_detail;
+      name = post.board_title;
+      price = post.board_price;
+      writer = post.board_writer;
+
+     var previewDiv = document.getElementById('thumbnail');
+           console.log(previewDiv);
+           previewDiv.src = "https://ec2-myawsbucket.s3.ap-northeast-2.amazonaws.com/image/"+post.board_thumbnail;
+
+let myNicknameElement = document.querySelector(".loginMemberNickname").value;
+let updateButtonElement = document.querySelector("#updateButton");
+
+if (myNicknameElement==writer) {
+  updateButtonElement.innerHTML += `
+    <button type="button" class="btn btn-warning" onclick="update()">수정하기</button>
+    <button type="button" class="btn btn-danger" onclick="deletePost()">삭제하기</button>
+  `;
+}
+console.log(loginMemberNickname);
+console.log(writer);
+}
+
+
+function loadComment(){
+    $.ajax({
+        url: "/api/comment/"+id,
+        type: "get",
+        success: function(commentList){
+             commentList.forEach(function(comment){
+                if(comment.commentDepth == 0){
+                    $("#commentList").append(addComment(comment));
+                }else{
+                    $(".c"+comment.commentRid).append(addComment(comment));
+                    console.log(comment);
+                }
+            });
+        },
+        error: function(error){
+            alert(error.responseText);
+            window.location.replace("/item/list");
+        }
+    });
+}
+
+function deleteComment(commentId, event){
+
+    var deleteOk = confirm("댓글을 삭제하시겠습니까?");
+    if(deleteOk == false){
+        return;
+    }
+
+
+    $.ajax({
+        url: "/api/comment",
+        type: "delete",
+        data:  {boardId : id , commentId : commentId },
+        success: function(deleted){
+            var row = $(event.target).parents(".commentRow");
+            var tags = row.children();
+            for(var i=0; i<tags.length; i++){
+                if(tags[i].tagName != "I"){
+                    tags[i].remove();
+                }
+            }
+
+            var result = `<div> 삭제된 댓글입니다. </div>`;
+            row.append(result);
+        },
+        error: function(error){
+            alert("삭제되지 않았습니다");
+            //window.location.replace("/posts");
+        }
+    });
+}
+
+var prevUpdateId = null;
+function openUpdateForm(commentId, event){
+
+    var updateContent = $(event.target).parents(".commentRow").find(".commentContent")[0];
+    var updateMenu = $(event.target).parents(".commentRow").children(".commentMenu")[0];
+  console.log(updateContent);
+  console.log(updateMenu);
+    //다시 클릭한 경우엔 삭제하고 끝
+    if(prevUpdateId == commentId){
+        document.querySelector("#updateForm").remove();
+        $(updateContent).show();
+        $(updateMenu).show();
+        prevUpdateId = null;
+        return;
+    }
+
+    //다른 답글버튼을 눌렀을땐 삭제하고 해당부분에 추가
+    if(document.querySelector("#updateForm") != null){
+        document.querySelector("#updateForm").remove();
+        $(".c"+prevUpdateId+" .commentRow .commentContent").show();
+        $(".c"+prevUpdateId+" .commentRow .commentMenu").show();
+        prevUpdateId = null;
+    }
+
+    var result = `
+        <form id="updateForm" class="commentWriteForm">
+            <div class="row">
+                <div class="input-group">
+                    <textarea class="form-control" rows="3"; name="content" placeholder="댓글 남기기">${updateContent.innerHTML}</textarea>
+                    <button class="btn btn-outline-primary" type="button" onclick="updateComment('${commentId}', event)"><i class="fas fa-comments"></i></button>
+                </div>
+            </div>
+
+             <div class="commentMenu">
+                  <div style="float:right;" class="mt-2">
+                      <span onclick="openUpdateForm('${commentId}', event)">수정취소</span>
+                  </div>
+             </div>
+        </form>
+    `;
+
+    prevUpdateId = commentId;
+    $(updateContent).after(result);
+    $(updateContent).hide();
+    $(updateMenu).hide();
+}
+
+
+var replyClickAgain = null;
+function openReplyForm(identify, event){
+    //다시 클릭한 경우엔 삭제하고 끝
+    if(replyClickAgain == event.target){
+        replyClickAgain = null;
+        document.querySelector("#replyForm").remove();
+        return;
+    }
+    //다른 답글버튼을 눌렀을땐 삭제하고 해당부분에 추가
+    if(document.querySelector("#replyForm") != null){
+        document.querySelector("#replyForm").remove();
+    }
+
+    var depth=0;
+    if(identify != null){
+        depth = parseInt(identify.split("_")[1]) + 1;
+    }
+   var cid = parseInt(identify.split("_")[0])
+    var margin = "margin-left:"+(depth * 15)+"px;";
+    var result = `
+     <form class="mt-2" id="replyForm">
+            <div class="form-group">
+              <textarea class="form-control replyText" rows="2" placeholder="대댓글을 입력하세요."></textarea>
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="replyWrite(${cid})">대댓글 작성</button>
+          </form>
+    `;
+
+    $(event.target).parents(".commentRow").after(result);
+    replyClickAgain = event.target;
+    console.log(result);
+
+}
+
+
+
+
+function addComment(comment){
+var identify = comment.commentId+"_"+comment.commentDepth;
+ var margin = "ml-"+comment.commentDepth*4;
+ var commentMenu = `
+    <button type="button" class="btn btn-warning btn-sm" onclick="openUpdateForm('${comment.commentId}',event)">수정</button>
+    <button type="button" class="btn btn-danger btn-sm" onclick="deleteComment('${comment.commentId}', event)">삭제</button>
+    `;
+    //로그인한자와 댓글작성자가 같지 않다면 수정, 삭제 불가
+    if(loginMemberNickname != comment.commentWriter){
+        commentMenu = "";
+    }
+var replyMenu =    `
+<button type="button" class="btn btn-sm" onclick="openReplyForm('${identify}', event)">답글</button>
+`;
+if(loginMemberNickname === "" || comment.commentDepth===1){
+        replyMenu = "";
+}
+
+    var result = `
+    <div class="c${comment.commentId}">
+    <div class="commentRow">
+      <div class="mt-2 ${margin}">
+          <div class="card-body" style="position: relative;">
+            <h6 class="card-subtitle mb-2 text-muted">댓글 작성자: ${comment.commentWriter} | 작성일:${comment.commentCreateTime}</h6>
+            <p class="card-text commentContent">${comment.commentContents}</p>
+            <div style="position: absolute; right: 10px; top: 10px;">
+              ${replyMenu}
+
+             ${commentMenu}
+            </div>
+          </div>
+        </div>
+        </div>
+
+        </div>
+           `;
+
+ if(comment.status == 1){
+          result = `
+          <div class="commentWrap c${comment.commentId}">
+               <div class="mt-2 ${margin} commentRow">
+               <div class="card-body" style="position: relative;">
+                   <div> 삭제된 댓글입니다. </div>
+
+               </div>
+               </div>
+           </div>
+           `;
+      }
+    return result;
+}
+
+<!--댓글리스트 그리기-->
+
+<!--   function drawList(list) {-->
+<!--let html = '';-->
+<!--                // 1. 렌더링 할 HTML을 저장할 변수-->
+
+
+<!--                /*-->
+<!--                 * 2. 기존에 타임리프(Thymeleaf)를 이용해서 리스트 데이터를 그리던 것과 유사한 로직-->
+<!--                 *    기존에는 게시글 번호를 (전체 데이터 수 - loop의 인덱스 번호)로 처리했으나, 현재는 (전체 데이터 수 - ((현재 페이지 번호 - 1) * 페이지당 출력할 데이터 개수))로 정밀히 계산-->
+<!--                 */-->
+<!--                list.forEach(row => {-->
+<!--                    html += `-->
+<!--                   <div class=" mt-2">-->
+<!--          <div class="card-body" style="position: relative;">-->
+<!--            <h6 class="card-subtitle mb-2 text-muted">댓글 작성자: ${row.commentWriter} | 작성일: 2023-11-02</h6>-->
+<!--            <p class="card-text">${row.commentContents}</p>-->
+<!--            <div style="position: absolute; right: 10px; top: 10px;">-->
+<!--              <button type="button" class="btn btn-sm" onclick="updateComment()">답글</button>-->
+
+<!--              <button type="button" class="btn btn-warning btn-sm" onclick="openUpdateForm()">수정</button>-->
+<!--              <button type="button" class="btn btn-danger btn-sm" onclick="deleteComment()">삭제</button>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--                    `;-->
+<!--    console.log(html);-->
+
+<!--$.ajax({-->
+<!--        url: "/api/comment/reply",-->
+<!--        type: "get",-->
+<!--        data: {boardId : row.boardId, userId : row.userId},-->
+<!--        success: function(response){-->
+
+<!--          html = drawReply(response,html);-->
+<!--           console.log(response);-->
+
+
+
+<!--document.getElementById('list').innerHTML = html;-->
+<!--        },-->
+<!--        error: function(error){-->
+<!--            alert(error.responseJSON.message);-->
+
+<!--        }-->
+<!--    });-->
+
+
+<!--                })-->
+
+<!--                // 3. id가 "list"인 요소를 찾아 HTML을 렌더링-->
+<!--&lt;!&ndash;                document.getElementById('list').innerHTML = html;&ndash;&gt;-->
+<!--            }-->
+
+<!--function drawReply(data, html) {-->
+<!--    data.forEach(reply => {-->
+<!--        html += `-->
+<!--             <div style="margin-left: 40px;">-->
+<!--          <div class=" mt-2">-->
+<!--            <div class="card-body" style="position: relative;">-->
+<!--              <h6 class="card-subtitle mb-2 text-muted">대댓글 작성자: ${reply.commentWriter} | 작성일: 2023-11-03</h6>-->
+<!--              <p class="card-text">${reply.commentContents}</p>-->
+<!--              <div style="position: absolute; right: 10px; top: 10px;">-->
+
+<!--                <button type="button" class="btn btn-warning btn-sm" onclick="updateReply()">수정</button>-->
+<!--                <button type="button" class="btn btn-danger btn-sm" onclick="deleteReply()">삭제</button>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+
+<!--          </div>-->
+<!--        `;-->
+<!--    });-->
+<!--    return html;-->
+<!--}-->
+
+<!--댓글리스트 그리기-->
+
+function Chat() {
+const yournickname = writer;
+goChat(yournickname)
+}
+
+function goChat(nickname){
+
+ let myNickname = "";
+ let myNicknameElement = document.querySelector(".loginMemberNickname");
+if (myNicknameElement) {
+  myNickname = myNicknameElement.value;
+} else {
+  // 요소가 없을 때의 처리...
+   alert("회원만 채팅기능을 이용할 수 있습니다.");
+        return;
+}
+
+console.log(myNickname);
+console.log(nickname);
+    if(myNickname == ""){
+        alert("회원만 채팅기능을 이용할 수 있습니다.");
+        return;
+    }
+
+    if(nickname == myNickname){
+        alert("자기자신과는 채팅할 수 없습니다.");
+        return;
+    }
+
+    let roomId = 0;
+    fetch("/chat/"+nickname, {
+        method: "post"
+    })
+    .then((res) => res.json())
+    .then((json) => {
+        roomId = json;
+        console.log(roomId);
+        window.location.replace("/chat/"+roomId+"/"+nickname);
+    });
+}
+function deletePost() {
+ var question = confirm("게시글을 삭제하시겠습니까?");
+    if(question == false){
+        return;
+    }
+$.ajax({
+        url: "/api/board/"+id,
+        type: "delete",
+        success: function(data){
+            alert("게시글이 삭제되었습니다");
+            window.location.replace("/");
+        },
+        error: function(error){
+            alert(error.responseText);
+            window.location.replace("/");
+        }
+    });
+}
+function update() {
+window.location.href = '/board/update/' + id
+}
+function payments(){
+const yournickname = writer;
+ let myNickname = "";
+ let myNicknameElement = document.querySelector(".loginMemberNickname");
+if (myNicknameElement) {
+  myNickname = myNicknameElement.value;
+} else {
+  // 요소가 없을 때의 처리...
+  alert("로그인이 필요합니다.");
+  return;
+}
+
+   if(yournickname == myNickname){
+        alert("자기자신이 올린 상품은 구매할 수 없습니다.");
+        return;
+    }
+
+  window.location.href = `/order/${id}`;
+
+
+}
+
+
+
+function writeComment() {
+
+let myNickname = "";
+ let myNicknameElement = document.querySelector(".loginMemberNickname");
+if (myNicknameElement) {
+  myNickname = myNicknameElement.value;
+} else {
+  // 요소가 없을 때의 처리...
+   alert("로그인이 필요합니다.");
+        return;
+}
+
+   var userId = document.querySelector(".loginMemberId").value;
+   var contents = document.querySelector("#commentContents").value;
+const data = {
+    boardId: id,
+    userId: userId,
+    contents: contents
+
+};
+console.log(data.boardId);
+console.log(data.userId);
+$.ajax({
+        url: "/api/comment",
+        type: "post",
+        data: data,
+        success: function(response){
+            alert("댓글이 작성되었습니다");
+            window.location.replace("/board/"+id);
+        },
+        error: function(error){
+            alert(error.responseText);
+            window.location.replace("/");
+        }
+    });
+}
+
+function replyWrite(rid) {
+   var userId = document.querySelector(".loginMemberId").value;
+   var contents = document.querySelector(".replyText").value;
+const data = {
+    boardId: id,
+    userId: userId,
+    contents: contents,
+    commentRid : rid
+
+};
+console.log(data.boardId);
+console.log(data.userId);
+$.ajax({
+        url: "/api/comment/reply",
+        type: "post",
+        data: data,
+        success: function(response){
+            alert("댓글이 작성되었습니다");
+            window.location.replace("/board/"+id);
+        },
+        error: function(error){
+            alert(error.responseText);
+            window.location.replace("/");
+        }
+    });
+}
+
+function updateComment(commentId, event){
+    var textarea = $(event.target).parents(".input-group").children("textarea")[0];
+
+    $.ajax({
+        url: "/api/comment",
+        type: "put",
+        contentType: 'application/json',
+        data: JSON.stringify({
+            "content":textarea.value,"boardId" : id , "commentId" : commentId
+        }),
+        success: function(updated){
+            document.querySelector("#updateForm").remove();
+            $(".c"+commentId+" .commentRow .commentContent")[0].innerHTML = textarea.value;
+            $(".c"+commentId+" .commentRow .commentContent").show();
+            $(".c"+commentId+" .commentRow .commentMenu").show();
+            prevUpdateId = null;
+        },
+        error: function(error){
+            alert("수정되지 않았습니다");
+        }
+    });
+}
+
+</script>
+
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-8">
+      <img src="" alt="tumbnail" id="thumbnail" style="width:730px;height:450px">
+      <div class="card">
+        <div class="card-header">
+          <h2 id="title"></h2>
+        </div>
+        <div class="card-body" style="min-height:500px">
+          <h6 class="card-subtitle mb-2 text-muted">작성자: 홍길동 | 작성일: 2023-11-02</h6>
+          <p class="card-text" id="contents"></p>
+        </div>
+      </div>
+      <div class="text-right" id="updateButton">
+<!--        <button type="button" class="btn btn-warning" onclick="update()">수정하기</button>-->
+<!--        <button type="button" class="btn btn-danger" onclick="deletePost()">삭제하기</button>-->
+      </div>
+
+      <form class="mt-4">
+        <div class="form-group">
+          <textarea class="form-control" rows="3" placeholder="댓글을 입력하세요." name="contents" id="commentContents"></textarea>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="writeComment()">댓글 작성</button>
+      </form>
+
+      <div class="mt-4">
+        <h3>댓글 목록</h3>
+
+        <div id="commentList">
+
+
+        </div>
+
+<!--        <div class=" mt-2">-->
+<!--          <div class="card-body" style="position: relative;">-->
+<!--            <h6 class="card-subtitle mb-2 text-muted">댓글 작성자: 이몽룡 | 작성일: 2023-11-02</h6>-->
+<!--            <p class="card-text">댓글 내용이 들어가는 부분입니다.</p>-->
+<!--            <div style="position: absolute; right: 10px; top: 10px;">-->
+<!--              <button type="button" class="btn btn-sm" onclick="updateComment()">답글</button>-->
+
+<!--              <button type="button" class="btn btn-warning btn-sm" onclick="updateComment()">수정</button>-->
+<!--              <button type="button" class="btn btn-danger btn-sm" onclick="deleteComment()">삭제</button>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+
+
+<!--        <div style="margin-left: 40px;">-->
+<!--          <div class=" mt-2">-->
+<!--            <div class="card-body" style="position: relative;">-->
+<!--              <h6 class="card-subtitle mb-2 text-muted">대댓글 작성자: 창선 | 작성일: 2023-11-03</h6>-->
+<!--              <p class="card-text">대댓글 내용이 들어가는 부분입니다.</p>-->
+<!--              <div style="position: absolute; right: 10px; top: 10px;">-->
+
+<!--                <button type="button" class="btn btn-warning btn-sm" onclick="updateReply()">수정</button>-->
+<!--                <button type="button" class="btn btn-danger btn-sm" onclick="deleteReply()">삭제</button>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+
+<!--          &lt;!&ndash; 답글 버튼을 누르면 이곳에 생기게 &ndash;&gt;-->
+<!--          <form class="mt-2">-->
+<!--            <div class="form-group">-->
+<!--              <textarea class="form-control" rows="2" placeholder="대댓글을 입력하세요."></textarea>-->
+<!--            </div>-->
+<!--            <button type="submit" class="btn btn-secondary btn-sm">대댓글 작성</button>-->
+<!--          </form>-->
+
+<!--        </div>-->
+
+
+
+<!--        <div class=" mt-2">-->
+<!--          <div class="card-body" style="position: relative;">-->
+<!--            <h6 class="card-subtitle mb-2 text-muted">댓글 작성자: 이몽룡 | 작성일: 2023-11-02</h6>-->
+<!--            <p class="card-text">댓글 내용이 들어가는 부분입니다.</p>-->
+<!--            <div style="position: absolute; right: 10px; top: 10px;">-->
+<!--              <button type="button" class="btn btn-sm" onclick="updateComment()">답글</button>-->
+<!--              <button type="button" class="btn btn-warning btn-sm" onclick="updateComment()">수정</button>-->
+<!--              <button type="button" class="btn btn-danger btn-sm" onclick="deleteComment()">삭제</button>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+
+
+<!--        <div class=" mt-2">-->
+<!--          <div class="card-body" style="position: relative;">-->
+<!--            <h6 class="card-subtitle mb-2 text-muted">댓글 작성자: 이몽룡 | 작성일: 2023-11-02</h6>-->
+<!--            <p class="card-text">댓글 내용이 들어가는 부분입니다.</p>-->
+<!--            <div style="position: absolute; right: 10px; top: 10px;">-->
+<!--              <button type="button" class="btn btn-sm" onclick="updateComment()">답글</button>-->
+
+<!--              <button type="button" class="btn btn-warning btn-sm" onclick="updateComment()">수정</button>-->
+<!--              <button type="button" class="btn btn-danger btn-sm" onclick="deleteComment()">삭제</button>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+
+
+<!--        <div class=" mt-2">-->
+<!--          <div class="card-body" style="position: relative;">-->
+<!--            <h6 class="card-subtitle mb-2 text-muted">댓글 작성자: 이몽룡 | 작성일: 2023-11-02</h6>-->
+<!--            <p class="card-text">댓글 내용이 들어가는 부분입니다.</p>-->
+<!--            <div style="position: absolute; right: 10px; top: 10px;">-->
+<!--              <button type="button" class="btn btn-sm" onclick="updateComment()">답글</button>-->
+
+<!--              <button type="button" class="btn btn-warning btn-sm" onclick="updateComment()">수정</button>-->
+<!--              <button type="button" class="btn btn-danger btn-sm" onclick="deleteComment()">삭제</button>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+
+
+<!--        <div class=" mt-2">-->
+<!--          <div class="card-body" style="position: relative;">-->
+<!--            <h6 class="card-subtitle mb-2 text-muted">댓글 작성자: 이몽룡 | 작성일: 2023-11-02</h6>-->
+<!--            <p class="card-text">댓글 내용이 들어가는 부분입니다.</p>-->
+<!--            <div style="position: absolute; right: 10px; top: 10px;">-->
+<!--              <button type="button" class="btn btn-sm" onclick="updateComment()">답글</button>-->
+
+<!--              <button type="button" class="btn btn-warning btn-sm" onclick="updateComment()">수정</button>-->
+<!--              <button type="button" class="btn btn-danger btn-sm" onclick="deleteComment()">삭제</button>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+
+
+
+
+
+      </div>
+
+
+    </div>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header">
+          <h4>가격 정보</h4>
+        </div>
+        <div class="card-body">
+          <p id="detail">상품 요약</p>
+          <p class="card-text" id="price">₩10,000</p>
+
+          <button type="button" class="btn btn-primary btn-block" th:onclick="Chat()">문의하기</button>
+          <button type="button" class="btn btn-success btn-block" onclick="payments()">결제하기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--<div class="container mt-4">-->
+<!--  <div class="row">-->
+<!--    <div class="col-md-8">-->
+<!--      <img src="" alt="tumbnail" id="thumbnail" style="width:100%;height:35%">-->
+<!--      <div class="card">-->
+<!--        <div class="card-header">-->
+<!--          <h2 id="title">게시글 제목</h2>-->
+<!--        </div>-->
+<!--        <div class="card-body" style="min-height:500px">-->
+<!--          <h6 class="card-subtitle mb-2 text-muted">작성자: 홍길동 | 작성일: 2023-11-02</h6>-->
+<!--          <p class="card-text" id="contents">게시글 내용이 들어가는 부분입니다.</p>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <div class="text-right">-->
+<!--        <button type="button" class="btn btn-warning" onclick="update()">수정하기</button>-->
+<!--        <button type="button" class="btn btn-danger" onclick="deletePost()">삭제하기</button>-->
+<!--      </div>-->
+<!--      <div class="mt-4">-->
+<!--        <h3>댓글 목록</h3>-->
+<!--        <div class="card mt-2">-->
+<!--          <div class="card-body">-->
+<!--            <h6 class="card-subtitle mb-2 text-muted">댓글 작성자: 이몽룡 | 작성일: 2023-11-02</h6>-->
+<!--            <p class="card-text">댓글 내용이 들어가는 부분입니다.</p>-->
+<!--            <div class="text-right">-->
+<!--              <button type="button" class="btn btn-warning" onclick="updateComment()">댓글 수정</button>-->
+<!--              <button type="button" class="btn btn-danger" onclick="deleteComment()">댓글 삭제</button>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <form class="mt-4">-->
+<!--          <div class="form-group">-->
+<!--            <textarea class="form-control" rows="3" placeholder="댓글을 입력하세요."></textarea>-->
+<!--          </div>-->
+<!--          <button type="submit" class="btn btn-primary">댓글 작성</button>-->
+<!--        </form>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <div class="col-md-4">-->
+<!--      <div class="card">-->
+<!--        <div class="card-header">-->
+<!--          <h4>가격 정보</h4>-->
+<!--        </div>-->
+<!--        <div class="card-body">-->
+<!--          <p class="card-text" id="price">₩10,000</p>-->
+<!--          <button type="button" class="btn btn-primary btn-block" th:onclick="Chat()">문의하기</button>-->
+<!--          <button type="button" class="btn btn-success btn-block" onclick="payments()">결제하기</button>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+<input type="hidden" sec:authorize="isAuthenticated()" class="loginMemberNickname" th:value="${#authentication.getPrincipal().dto.user_name}">
+<input type="hidden" sec:authorize="isAuthenticated()" class="loginMemberId" th:value="${#authentication.getPrincipal().dto.user_id}">
+
+</body>
+</html>

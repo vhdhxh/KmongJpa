@@ -2,6 +2,7 @@ package com.talentmarket.KmongJpa.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.sql.results.graph.Fetch;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.ArrayList;
@@ -19,10 +20,20 @@ public class ChatRoom {
     @Column(name = "chatRoom_id")
     private Long id;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn
+    private Users user1;
 
-    public static ChatRoom createRoom () {
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn
+    private Users user2;
+
+
+    public static ChatRoom createRoom (Users user1 , Users user2) {
         ChatRoom chatRoom = ChatRoom
                 .builder()
+                .user1(user1)
+                .user2(user2)
                 .build();
         return chatRoom;
     }

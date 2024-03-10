@@ -48,10 +48,10 @@ dependencies {
 	// 스프링 세션 코어
 
 	implementation 'org.apache.httpcomponents.client5:httpclient5'
-
-
-
-
+	// 채팅 서비스에 필요한 웹소켓, sockjs, stomp
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'org.webjars:sockjs-client:1.0.2'
+	implementation 'org.webjars:stomp-websocket:2.3.3'
 	// 스프링 부트 스타터 데이터 JDBC
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 	implementation 'org.springframework.session:spring-session-jdbc'

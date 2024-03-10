@@ -20,8 +20,16 @@ public class Chat {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "chatRoomUser_id")
-    private ChatRoomUser chatRoomUser;
+    @JoinColumn(name = "chatRoom_id")
+    private ChatRoom chatRoom;
+
+    private Long senderId;
+
+    private Long receiverId;
+
+//    @ManyToOne
+//    @JoinColumn(name = "chatRoomUser_id")
+//    private ChatRoomUser chatRoomUser;
     
 
 //    @ManyToOne
@@ -37,6 +45,13 @@ public class Chat {
     private LocalDateTime createTime = LocalDateTime.now();
 
 
-
+    public static Chat createChat(ChatRoom chatRoom, String message,Long senderId,Long receiverId){
+        return Chat.builder()
+                .chatRoom(chatRoom)
+                .senderId(senderId)
+                .receiverId(receiverId)
+                .message(message)
+                .build();
+    }
 
 }

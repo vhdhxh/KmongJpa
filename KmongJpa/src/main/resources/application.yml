@@ -15,7 +15,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create #create #validate #create #validate #create
+      ddl-auto: validate #create #validate #create #validate #create
     properties:
       hibernate:
         default_batch_fetch_size: 100
@@ -23,7 +23,7 @@ spring:
         format_sql: true
   logging.level:
     org.hibernate.SQL: debug
-  # org.hibernate.type: trace
+#   org.hibernate.type: trace
 
   thymeleaf:
     prefix: classpath:templates/

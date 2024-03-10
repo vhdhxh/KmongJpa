@@ -60,7 +60,7 @@ public class ItemService {
     public Page<BoardPagingResponse> DetailBoard(Pageable pageable) {
      Page<Item> boards = itemRepository.findItem(pageable);
         Page<BoardPagingResponse> map = boards.map(b->BoardPagingResponse.builder()
-                .writer(b.getUsers().getName()).price(b.getPrice()).title(b.getTitle()).thumbnail(b.getThumbnail()).build());
+                .writer(b.getUsers().getName()).price(b.getPrice()).title(b.getTitle()).thumbnail(b.getThumbnail()).itemId(b.getId()).build());
         return map;
     }
 

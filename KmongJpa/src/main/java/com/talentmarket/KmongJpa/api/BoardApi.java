@@ -55,7 +55,7 @@ public class BoardApi {
 
    //게시글 페이징 반환
 
-    @GetMapping("/api/v1/board")
+    @GetMapping("/api/v1/Item")
     public ApiResponse<Page> getPagingBoard (
             @AuthenticationPrincipal PrincipalDetails principalDetails
             , @PageableDefault(size = 6)Pageable pageable) {

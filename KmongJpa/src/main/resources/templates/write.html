@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{fragments/layout}" xmlns:layout="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="//cdn.ckeditor.com/4.19.0/full/ckeditor.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body layout:fragment="content">
+<script>
+$(function () {
+	CKEDITOR.replace('contents', {
+		imageUploadUrl : '/file-upload2',
+		height: 500
+	});
+});
+
+function displayImage() {
+  var fileInput = document.getElementById('thumbnail');
+  var previewImg = document.getElementById('preview');
+
+  if (fileInput.files && fileInput.files[0]) {
+    var reader = new FileReader();
+
+    reader.onload = function(e) {
+      previewImg.src = e.target.result;
+    }
+
+    reader.readAsDataURL(fileInput.files[0]);
+  }
+}
+
+
+
+</script>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <img id="preview" src="" alt="Preview Image" class="img-thumbnail mb-3" style="
+    width: 850px;
+    height: 390px;">
+            <form id="writeForm" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="thumbnail">Thumbnail</label>
+                    <input type="file" class="form-control-file" id="thumbnail" name="thumbnail" onchange="displayImage()">
+                </div>
+                <div class="form-group">
+                    <label for="price">가격 </label>
+                    <input type="text" class="form-control" id="price" name="price">
+                </div>
+                <div class="form-group">
+                    <label for="title">제목 </label>
+                    <input type="text" class="form-control" id="title" name="title">
+                </div>
+                <div class="form-group">
+                    <label for="detail">상품요약 </label>
+                    <input type="text" class="form-control" id="detail" name="detail">
+                </div>
+                <div class="form-group">
+                    <label for="contents">내용 </label>
+                    <textarea class="form-control" id="contents" name="contents"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">글쓰기</button>
+            </form>
+        </div>
+    </div>
+</div>
+<!--<img id="preview" src="" alt="Preview Image">-->
+<!--<form id="writeForm" enctype="multipart/form-data">-->
+<!--<input type="file" id="thumbnail" name="thumbnail" onchange="displayImage()">-->
+<!--<div>가격 :<input type="text" id="price" name="price"></div>-->
+<!--<div>제목 :<input type="text" id="title" name="title"></div>-->
+<!--    <div>상품요약 :<input type="text" id="detail" name="detail"></div>-->
+<!--<textarea id="contents" name="contents"></textarea>-->
+<!--    <button type="submit">글쓰기</button>-->
+<!--</form>-->
+
+<script>
+    const form = document.getElementById('writeForm');
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const thumbnail = document.getElementById('thumbnail').files[0];
+  const price = document.getElementById('price').value;
+  const title = document.getElementById('title').value;
+  const detail = document.getElementById('detail').value;
+  const contents = CKEDITOR.instances.contents.getData();
+
+   if (!price || !title || !detail || !contents) {
+    alert('모든 항목을 채워주세요.');
+    event.preventDefault();
+    return false;
+  }
+
+  if (!/^\d+$/.test(price)) {
+    alert('가격은 숫자만 입력 가능합니다.');
+    event.preventDefault();
+    return false;
+  }
+
+
+
+
+  const formData = new FormData();
+  formData.append('thumbnail', thumbnail);
+  formData.append('board_price', price);
+  formData.append('board_title', title);
+  formData.append('board_detail', detail);
+  formData.append('board_contents', contents);
+
+  fetch('/api/board', {
+    method: 'POST',
+    body: formData
+  })
+    .then(response => response.json())
+    .then(data => {
+      // 요청에 대한 응답 처리
+      window.location.href = "/board/"+data
+      console.log(data);
+    })
+    .catch(error => {
+      // 오류 처리
+      console.error(error);
+    });
+});
+</script>
+</body>
+</html>

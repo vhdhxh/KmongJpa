@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{fragments/layout}" xmlns:layout="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+    .btn-upload {
+  width: 150px;
+  height: 30px;
+  background: #fff;
+  border: 1px solid rgb(77,77,77);
+  border-radius: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &:hover {
+    background: rgb(77,77,77);
+    color: #fff;
+  }
+}
+
+#fileInput {
+  display: none;
+}
+
+select {
+  width: 200px; /* 원하는 너비설정 */
+  padding: .8em .5em; /* 여백으로 높이 설정 */
+  font-family: inherit;  /* 폰트 상속 */
+  background: url(https://farm1.staticflickr.com/379/19928272501_4ef877c265_t.jpg) no-repeat 95% 50%; /* 네이티브 화살표 대체 */
+  border: 1px solid #999;
+  border-radius: 0px; /* iOS 둥근모서리 제거 */
+  -webkit-appearance: none; /* 네이티브 외형 감추기 */
+  -moz-appearance: none;
+  appearance: none;
+}
+
+select {
+  -webkit-appearance: none;  /* 네이티브 외형 감추기 */
+  -moz-appearance: none;
+  appearance: none;
+  background: url(이미지 경로) no-repeat 95% 50%;  /* 화살표 모양의 이미지 */
+}
+
+/* IE 10, 11의 네이티브 화살표 숨기기 */
+select::-ms-expand {
+  display: none;
+}
+
+.sidebar { max-width:230px; }
+.sidebar .nav li { width:100%; }
+.sidebar i { font-size:1.3em; }
+.sidebar a { font-size: 1.3em;}
+@media screen and (min-width: 767px) {
+    .sidebar { display:block; }
+    .sidebar.mobile { display:none; }
+}
+@media screen and (max-width: 767px) {
+    .sidebar { display:none; }
+    .sidebar.mobile { display:block; }
+}
+        .container .col { margin:0px; padding:0px; }
+        .container .sidebarCol { max-width:fit-content; min-height:calc(100vh - 57px); background-color: #f4f4f4; }
+
+        #myInfoForm { width:80%; max-width:400px; margin:auto; }
+        #myInfoForm h3 { text-align:center; font-weight:bold; margin-top:40px; }
+        #myInfoForm .row { margin:0px; padding:0px; }
+</style>
+</head>
+
+
+
+<body layout:fragment="content">
+
+<div class="container">
+    <div class="row">
+
+        <div class="col sidebarCol border-end">
+            <div th:replace="fragments/sidebar.html :: sidebar('userupdate')"></div>
+        </div>
+
+        <div class="col">
+            <div id="myCommentsForm">
+
+                <h1 class="text-center mt-4">내 정보</h1>
+
+                <div class="container py-5">
+                    <div class="row justify-content-center">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="text-center mb-4">
+                                        <img class="rounded-circle" id="imagePreview" th:src="'https://ec2-myawsbucket.s3.ap-northeast-2.amazonaws.com/image/'+${#authentication.getPrincipal().dto.user_image}" style="width:85px;height:85px;">
+                                        <label for="fileInput">
+                                            <div class="btn-upload">프로필 변경</div>
+                                        </label>
+
+                                        <input type="file" id="fileInput" style="display: none;">
+                                    </div>
+                                    <div class="form-group" id="userNameDiv" onclick="showEditForm()">
+                                        <label>이름</label>
+                                        <input type="text" class="form-control"  th:value="${#authentication.getPrincipal().dto.user_name}" readonly>
+                                        <small class="form-text text-muted">클릭하여 수정</small>
+                                    </div>
+                                    <div id="nameDiv" style="display: none;">
+                                        <div class="form-group">
+                                            <label>이름</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="nameInput" th:value="${#authentication.getPrincipal().dto.user_name}">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-secondary" type="button" onclick="nameUpdate()">수정</button>
+                                                    <button class="btn btn-outline-secondary" type="button" onclick="hideEditForm()">취소</button>
+                                                </div>
+                                            </div>
+                                            <small class="form-text text-muted">클릭하여 수정</small>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" id="userEmailDiv" onclick="showEditForm2()">
+                                        <label>이메일</label>
+                                        <input type="email" class="form-control"  th:value="${#authentication.getPrincipal().dto.user_email}" readonly>
+                                        <small class="form-text text-muted">클릭하여 수정</small>
+                                    </div>
+                                    <div id="emailDiv" style="display: none;">
+                                        <div class="form-group">
+                                            <label>이메일</label>
+                                            <div class="input-group">
+                                                <input type="email" class="form-control" id="emailInput" th:value="${#authentication.getPrincipal().dto.user_email}">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-secondary" type="button" onclick="emailUpdate()">수정</button>
+                                                    <button class="btn btn-outline-secondary" type="button" onclick="hideEditForm2()">취소</button>
+                                                </div>
+                                            </div>
+                                            <small class="form-text text-muted">클릭하여 수정</small>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" id="userPasswordDiv" onclick="showEditForm3()">
+                                        <label>비밀번호</label>
+                                        <input type="password" class="form-control"  value="********" readonly>
+                                        <small class="form-text text-muted">클릭하여 수정</small>
+                                    </div>
+                                    <div id="passwordDiv" style="display: none;">
+                                        <div class="form-group">
+                                            <label>비밀번호</label>
+                                            <div class="input-group">
+                                                <input type="password" class="form-control" id="passwordInput">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-secondary" type="button" onclick="passwordUpdate()">수정</button>
+                                                    <button class="btn btn-outline-secondary" type="button" onclick="hideEditForm3()">취소</button>
+                                                </div>
+                                            </div>
+                                            <small class="form-text text-muted">클릭하여 수정</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+
+                <!--                <label for="fileInput">-->
+<!--    <div class="btn-upload">프로필 변경</div>-->
+<!--</label>-->
+<!--<input type="file" id="fileInput">-->
+<!--<img id="imagePreview" th:src="'/resources/user/'+${#authentication.getPrincipal().dto.user_image}" style="width:85px;height:85px;">-->
+
+<!--<div id="userNameDiv" th:text="${#authentication.getPrincipal().dto.user_name}" onclick="showEditForm()"></div>-->
+<!--<div id="nameDiv" style="display: none;">이름<input type="text" id="nameInput" th:value="${#authentication.getPrincipal().dto.user_name}"><a onclick="nameUpdate()">수정</a><a onclick="hideEditForm()">취소</a></div>-->
+
+
+<!--<div id="userEmailDiv" th:text="${#authentication.getPrincipal().dto.user_email}" onclick="showEditForm2()"></div>-->
+<!--<div id="emailDiv" style="display: none;">이메일<input type="text" id="emailInput" th:value="${#authentication.getPrincipal().dto.user_email}"><a onclick="emailUpdate()">수정</a><a onclick="hideEditForm2()">취소</a></div>-->
+
+<!--<div id="userPasswordDiv" onclick="showEditForm3()">********</div>-->
+<!--<div id="passwordDiv" style="display: none;">비밀번호<input type="text" id="passwordInput"><a onclick="passwordUpdate()">수정</a><a onclick="hideEditForm3()">취소</a></div>-->
+
+
+            </div>
+            </div>
+            </div>
+            </div>
+
+
+<script>
+
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            var file = e.target.files[0];
+            var formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/file-upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(result => {
+                console.log(result); // 서버 응답 출력
+
+                if (result) {
+                    showImage(result);
+
+                }
+            })
+            .catch(error => {
+                console.error(error); // 에러 처리
+            });
+        });
+
+        function showImage(url) {
+           var previewDiv = document.getElementById('imagePreview');
+           console.log(previewDiv);
+           previewDiv.src = url;
+        }
+
+
+
+
+         function nameUpdate() {
+  var newName = document.getElementById("nameInput").value;
+
+  // AJAX 요청을 통해 서버에 이름 업데이트 요청을 보냅니다.
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "/user/nameUpdate", true);
+  xhr.setRequestHeader("Content-Type", "application/json");
+
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === XMLHttpRequest.DONE) {
+      if (xhr.status === 200) {
+        alert("수정되었습니다.");
+        document.getElementById("nameDiv").innerText = newName;
+        window.location.reload();
+      } else {
+        alert("중복된 이름입니다.");
+      }
+    }
+  };
+
+  var data = JSON.stringify({ name: newName });
+  xhr.send(data);
+}
+
+function emailUpdate() {
+  var newEmail = document.getElementById("emailInput").value;
+
+  // AJAX 요청을 통해 서버에 이름 업데이트 요청을 보냅니다.
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "/user/emailUpdate", true);
+  xhr.setRequestHeader("Content-Type", "application/json");
+
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === XMLHttpRequest.DONE) {
+      if (xhr.status === 200) {
+        alert("수정되었습니다.");
+        document.getElementById("emailDiv").innerText = newEmail;
+        window.location.reload();
+      } else {
+        alert("중복된 이메일입니다.");
+      }
+    }
+  };
+
+  var data = JSON.stringify({ email: newEmail });
+  xhr.send(data);
+}
+
+function passwordUpdate() {
+  var newPassword = document.getElementById("passwordInput").value;
+
+  // AJAX 요청을 통해 서버에 이름 업데이트 요청을 보냅니다.
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "/user/passwordUpdate", true);
+  xhr.setRequestHeader("Content-Type", "application/json");
+
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === XMLHttpRequest.DONE) {
+      if (xhr.status === 200) {
+        alert("수정되었습니다.");
+        document.getElementById("passwordDiv").innerText = newPassword;
+        window.location.reload();
+      } else {
+        alert("중복된 이메일입니다.");
+      }
+    }
+  };
+
+  var data = JSON.stringify({ password: newPassword });
+  xhr.send(data);
+}
+
+
+function showEditForm() {
+      document.getElementById("userNameDiv").style.display = "none";
+      document.getElementById("nameDiv").style.display = "block";
+    }
+
+    function hideEditForm() {
+      document.getElementById("userNameDiv").style.display = "block";
+      document.getElementById("nameDiv").style.display = "none";
+    }
+
+function showEditForm2() {
+      document.getElementById("userEmailDiv").style.display = "none";
+      document.getElementById("emailDiv").style.display = "block";
+    }
+
+    function hideEditForm2() {
+      document.getElementById("userEmailDiv").style.display = "block";
+      document.getElementById("emailDiv").style.display = "none";
+    }
+
+    function showEditForm3() {
+      document.getElementById("userPasswordDiv").style.display = "none";
+      document.getElementById("passwordDiv").style.display = "block";
+    }
+
+    function hideEditForm3() {
+      document.getElementById("userPasswordDiv").style.display = "block";
+      document.getElementById("passwordDiv").style.display = "none";
+    }
+    </script>
+
+</body>
+</html>
