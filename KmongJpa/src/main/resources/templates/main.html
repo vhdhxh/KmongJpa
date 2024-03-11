@@ -166,7 +166,7 @@ function go() {
 
     <script th:inline="javascript">
         /*<![CDATA[*/
-
+   var response
             window.onload = () => {
                 // 페이지가 로드되었을 때, 딱 한 번만 함수를 실행
                 getPost();
@@ -178,7 +178,7 @@ function go() {
         url: "/api/v1/Item",
         type: "get",
         success: function(data){
-
+                 data.
         },
         error: function(error){
             alert(error.responseJSON.message);
