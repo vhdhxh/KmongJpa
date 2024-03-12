@@ -11,4 +11,5 @@ public class BoardPagingResponse {
     public String title;
     public int price;
     public String writer;
+
 }
