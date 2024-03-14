@@ -7,6 +7,7 @@ import lombok.Data;
 @Builder
 public class BoardPagingResponse {
 
+
     public Long itemId;
     public String thumbnail;
     public String title;
