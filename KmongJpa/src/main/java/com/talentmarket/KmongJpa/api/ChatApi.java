@@ -35,7 +35,7 @@ public class ChatApi {
     //바뀐 플로우
     //문의하기 버튼을 누르면, 상대와 나의 채팅 방이 있는지 확인하고, 없다면 만들어서 채팅방 id를 넘겨주고
     // 있다면 기존 채팅방 id를 넘겨준다.
-    @PostMapping("api/chat/{user2Id}")
+    @PostMapping("api/v1/chat/{user2Id}")
     public ApiResponse createRoom(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @PathVariable("user2Id") Long user2Id) {
@@ -48,13 +48,13 @@ public class ChatApi {
     }
 
     //로그인 한 유저의 채팅 목록을 불러옵니다
-    @GetMapping("/api/chatList")
+    @GetMapping("/api/v1/chatList")
     public ApiResponse getChatList (@AuthenticationPrincipal PrincipalDetails principalDetails) {
        List<ChatListResponse> chatListResponses = chatService.getChatList(principalDetails);
         return ApiResponse.ok(chatListResponses);
     }
     //유저의 채팅방의 메세지 기록을 불러옵니다
-    @GetMapping("/api/chat/{roomId}")
+    @GetMapping("/api/v1/chat/{roomId}")
     public ApiResponse getChat (@AuthenticationPrincipal PrincipalDetails principalDetails
                               , @RequestBody ChatRequest request
                               , @PathVariable Long roomId) {
