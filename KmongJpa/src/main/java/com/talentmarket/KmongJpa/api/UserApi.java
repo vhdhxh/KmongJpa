@@ -39,6 +39,7 @@ public class UserApi {
     }
 
 
+
     @PostMapping("/api/v1/user/sendSms")
     public ApiResponse sendSms(@RequestBody FindPasswordRequest request) throws UnsupportedEncodingException, URISyntaxException, NoSuchAlgorithmException, InvalidKeyException, JsonProcessingException {
         userService.sendSms(request);
