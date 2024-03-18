@@ -46,7 +46,7 @@ class LikeServiceTest {
         itemId = itemService.WriteBoard(request , new PrincipalDetails(user));
 
     //when
-    likeService.likeCount(itemId,new PrincipalDetails(user));
+    likeService.likeCount(itemId,user);
         List<Like> likes = likeRepository.findLikesByItemId(itemId);
     //then
      assertThat(likes.get(0).getUsers().getId()).isEqualTo(1L);
@@ -62,8 +62,8 @@ class LikeServiceTest {
         PrincipalDetails principalDetails = new PrincipalDetails(user);
         itemId = itemService.WriteBoard(request , principalDetails);
     //when
-        likeService.likeCount(itemId,principalDetails);
-    likeService.disLike(itemId ,principalDetails);
+        likeService.likeCount(itemId,user);
+    likeService.disLike(itemId ,user);
         List<Like> likes = likeRepository.findLikesByItemId(itemId);
     //then
         assertThat(likes).isEmpty();

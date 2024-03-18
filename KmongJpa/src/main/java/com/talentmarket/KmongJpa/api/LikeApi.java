@@ -15,14 +15,14 @@ public class LikeApi {
     private final LikeService likeService;
 
     @PostMapping("api/v1/like/{boardId}")
-    public ApiResponse likeCount(@AuthenticationPrincipal PrincipalDetails principalDetails , @PathVariable Long boardId) {
+    public ApiResponse like(@AuthenticationPrincipal PrincipalDetails principalDetails , @PathVariable Long boardId) {
 
-        likeService.likeCount(boardId,principalDetails);
+        likeService.like(boardId,principalDetails);
         return ApiResponse.ok(null);
     }
     @DeleteMapping("api/v1/like/{boardId}")
     public ApiResponse disLike(@PathVariable Long boardId ,@AuthenticationPrincipal PrincipalDetails principalDetails) {
-        likeService.disLike(boardId, principalDetails);
+        likeService.disLike(boardId, principalDetails.getDto());
 
         return ApiResponse.ok(null);
     }
