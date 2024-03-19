@@ -15,7 +15,7 @@ public class LikeApi {
     private final LikeService likeService;
 
     @PostMapping("api/v1/like/{boardId}")
-    public ApiResponse like(@AuthenticationPrincipal PrincipalDetails principalDetails , @PathVariable Long boardId) {
+    public ApiResponse like(@AuthenticationPrincipal PrincipalDetails principalDetails , @PathVariable("boardId") Long boardId) {
 
         likeService.like(boardId,principalDetails);
         return ApiResponse.ok(null);

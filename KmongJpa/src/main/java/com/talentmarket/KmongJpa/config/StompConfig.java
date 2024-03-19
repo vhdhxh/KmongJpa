@@ -28,8 +28,8 @@ public class StompConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/chat/stomp-chatting") //SockJS 연결주소
                 .addInterceptors(new HttpSessionHandshakeInterceptor())
-                .setAllowedOriginPatterns("*")
-                .withSockJS();
+                .setAllowedOriginPatterns("*");
+//                .withSockJS();
         // 주ㅡ소 : ws://localhost:8080/ws-stomp
     }
 }

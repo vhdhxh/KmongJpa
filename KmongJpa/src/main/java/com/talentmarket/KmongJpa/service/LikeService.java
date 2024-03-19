@@ -47,9 +47,9 @@ public class LikeService {
 
         Long userId = user.getId();
 
-       if(likeRepository.findLikesByItemIdAndUsersId(itemId,userId).isPresent()){
-          throw new CustomException(ErrorCode.COUNTED_LIKE);
-       }
+//       if(likeRepository.findLikesByItemIdAndUsersId(itemId,userId).isPresent()){
+//          throw new CustomException(ErrorCode.COUNTED_LIKE);
+//       }
 
         Item item = itemRepository.findById(itemId).orElseThrow(()->new CustomException(ErrorCode.ITEM_NOT_FOUND));
 
@@ -62,9 +62,9 @@ public class LikeService {
     public void disLike(Long itemId , Users user) {
 
 
-        if(likeRepository.findLikesByItemIdAndUsersId(itemId,user.getId()).isEmpty()){
-            throw new CustomException(ErrorCode.NOT_COUNTED_LIKE);
-        }
+//        if(likeRepository.findLikesByItemIdAndUsersId(itemId,user.getId()).isEmpty()){
+//            throw new CustomException(ErrorCode.NOT_COUNTED_LIKE);
+//        }
         Long userId = user.getId();
         likeRepository.deleteByUsersIdAndItemId(userId,itemId);
     }

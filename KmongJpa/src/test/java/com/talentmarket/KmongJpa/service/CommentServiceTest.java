@@ -60,7 +60,7 @@ class CommentServiceTest {
         //when //then
         assertThatThrownBy(()-> commentService.CommentWrite(commentWriteDto ,new PrincipalDetails()))
                 .isInstanceOf(CustomException.class)
-                .hasMessage("게시글을 찾을 수 없습니다.")
+                .hasMessage("상품을 찾을 수 없습니다.")
                 ;
 
     }

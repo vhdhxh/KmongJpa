@@ -4,6 +4,7 @@ import com.talentmarket.KmongJpa.Dto.*;
 import com.talentmarket.KmongJpa.config.auth.PrincipalDetails;
 import com.talentmarket.KmongJpa.service.ChatService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -14,13 +15,15 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class ChatApi {
    private final ChatService chatService;
    private final SimpMessagingTemplate template;
     @MessageMapping("/room/{roomId}/{nickname}")
     //StompConfig에 적힌 setApplicationDestinationPrefixes  /chat/send 제외해서 작성한다.
-    public void message(@RequestBody SendRequest req, @DestinationVariable Long roomId, @DestinationVariable String nickname) throws Exception {
+    public void message(@RequestBody SendRequest req, @DestinationVariable("roomId") Long roomId, @DestinationVariable("nickname") String nickname) throws Exception {
         //채팅을 치면 url에 적힌 roomId, nickname 과 클라이언트에서 받은 json데이터를 chatDTO 로받고 DB에 저장한다.
+        log.info("message = {}" , req.getMessage());
 
               SendResponse sendResponse = chatService.sendMessage(req,nickname);
 

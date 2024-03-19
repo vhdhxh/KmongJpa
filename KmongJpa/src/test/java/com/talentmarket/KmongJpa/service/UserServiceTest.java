@@ -5,6 +5,8 @@ import com.talentmarket.KmongJpa.config.auth.PrincipalDetails;
 import com.talentmarket.KmongJpa.entity.Users;
 import com.talentmarket.KmongJpa.exception.CustomException;
 import com.talentmarket.KmongJpa.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import jakarta.xml.bind.ValidationException;
 import org.junit.jupiter.api.DisplayName;
@@ -104,6 +106,7 @@ class UserServiceTest {
         userRepository.save(users);
     Optional<Users> user = userRepository.findByEmail("test");
         PrincipalDetails principalDetails = new PrincipalDetails(user.get());
+
     //given
 //      userRepository.delete(user.get());
         userService.Withdrawal(principalDetails,any());

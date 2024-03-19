@@ -30,6 +30,7 @@ public class Users implements Serializable { //직렬화 클래스 명시
     private String address;
     private String name;
     private String gender;
+    private String phone;
     private String provider;
     private Long providerId;
     private String image;

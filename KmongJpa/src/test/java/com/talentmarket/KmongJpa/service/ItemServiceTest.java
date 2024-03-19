@@ -73,7 +73,7 @@ class ItemServiceTest {
         Long Id = itemService.WriteBoard(request , principalDetails);
 
         request.setTitle("변경된 제목");
-        request.setPrice(100);
+        request.setPrice(1000);
         request.setContents("변경된 내용");
         request.setDetail("변경된 디테일");
         request.setThumbnail("변경된 썸네일");
@@ -83,7 +83,7 @@ class ItemServiceTest {
     //then
         assertThat(Id).isEqualTo(updatedBoardId);
         assertThat(item.getTitle()).isEqualTo("변경된 제목");
-        assertThat(item.getPrice()).isEqualTo("변경된 가격");
+        assertThat(item.getPrice()).isEqualTo(1000);
         assertThat(item.getContents()).isEqualTo("변경된 내용");
         assertThat(item.getDetail()).isEqualTo("변경된 디테일");
         assertThat(item.getThumbnail()).isEqualTo("변경된 썸네일");
