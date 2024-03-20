@@ -94,10 +94,14 @@ public class OrderService {
         Order order = orderRepository.findByUuid(paymentRequest.getUuid());
         int orderItemCount = order.getOrderItems().size();
         int dbAmount = 0;
-        for (int i = 0; i < orderItemCount; i++) {
-            dbAmount += order.getOrderItems().get(i).getItem().getPrice();
 
-        }
+       dbAmount = order.getOrderItems().stream()
+                .mapToInt(item -> item.getItem().getPrice())
+                .sum();
+//        for (int i = 0; i < orderItemCount; i++) {
+//            dbAmount += order.getOrderItems().get(i).getItem().getPrice();
+//
+//        }
         // 가격이 서로 다르다면 결제 취소 요청
         if (payAmount != dbAmount) {
             order.updateStatus(OrderStatus.Fail);  //이부분은 아래 예외가 터지면 어차피 롤백되어서 의미가 없는거같다. 그럼어떻게?
@@ -124,7 +128,7 @@ public class OrderService {
 
 
     //payment 서비스를 분리해야될거같다.
-    public boolean cancelPayment(String imp_uid,int price) throws URISyntaxException, JsonProcessingException {
+    private boolean cancelPayment(String imp_uid,int price) throws URISyntaxException, JsonProcessingException {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

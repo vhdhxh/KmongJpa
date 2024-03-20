@@ -48,7 +48,7 @@ public class BoardApi {
     @GetMapping("/api/v1/board/{boardId}")
     public ApiResponse<DetailResponse> DetailBoard (
              @AuthenticationPrincipal PrincipalDetails principalDetails
-            , @PathVariable Long boardId) {
+            , @PathVariable("boardId") Long boardId) {
 
         return ApiResponse.ok(itemService.DetailBoard(boardId));
     }
