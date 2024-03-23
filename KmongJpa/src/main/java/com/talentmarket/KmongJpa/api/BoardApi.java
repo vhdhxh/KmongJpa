@@ -62,4 +62,12 @@ public class BoardApi {
 
         return ApiResponse.ok(itemService.DetailBoard(pageable));
     }
+
+    @GetMapping("/api/v2/Item")
+    public ApiResponse<Page> getPagingBoard2 (
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+            , @PageableDefault(size = 6)Pageable pageable) {
+
+        return ApiResponse.ok(itemService.DetailBoard2(pageable));
+    }
 }

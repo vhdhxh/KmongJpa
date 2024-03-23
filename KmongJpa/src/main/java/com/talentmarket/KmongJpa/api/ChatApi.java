@@ -60,7 +60,7 @@ public class ChatApi {
     @GetMapping("/api/v1/chat/{roomId}")
     public ApiResponse getChat (@AuthenticationPrincipal PrincipalDetails principalDetails
                               , @RequestBody ChatRequest request
-                              , @PathVariable Long roomId) {
+                              , @PathVariable("roomId") Long roomId) {
         List<ChatResponse> chatResponses = chatService.getChat(principalDetails,request,roomId);
         return ApiResponse.ok(chatResponses);
     }

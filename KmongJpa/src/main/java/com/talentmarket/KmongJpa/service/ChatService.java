@@ -105,9 +105,11 @@ public class ChatService {
     }
     public List<ChatResponse> getChat (PrincipalDetails principalDetails, ChatRequest req , Long roomId) {
         Long userId = principalDetails.getDto().getId();
+        log.info("userId :{}",userId);
         Long partnerId = req.getPartnerId();
         String partnerName = req.getPartnerName();
-        String userNickName = principalDetails.getName();
+        String userNickName = principalDetails.getDto().getName();
+        log.info("userNickName:{}",userNickName);
         List<Chat> chatList = chatRepository.findByChatRoomId(roomId);
         Map<Long, String> userIdToNameMap = new HashMap<>();
         userIdToNameMap.put(userId, userNickName);

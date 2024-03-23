@@ -28,7 +28,7 @@ public class LikeApi {
     }
 
     @GetMapping("api/v1/like/{boardId}")
-    public ApiResponse getLikeCount(@PathVariable Long boardId){
+    public ApiResponse getLikeCount(@PathVariable("boardId") Long boardId){
        LikeResponse likeResponse = likeService.getLike(boardId);
         return ApiResponse.ok(likeResponse);
     }

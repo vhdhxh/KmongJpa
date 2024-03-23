@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface ItemRepository extends JpaRepository<Item,Long> {
+public interface ItemRepository extends JpaRepository<Item,Long> ,ItemRepositoryCustom{
     List<Item> findByTitle(String title);
     @Query("select I from Item I left join fetch I.users left join fetch I.comment left join fetch I.comment.users where I.Id = :Id")
     Optional<Item> findItemAndComment(@Param("Id") Long Id);
