@@ -6,7 +6,7 @@ import com.talentmarket.KmongJpa.Dto.ItemPaginationDto;
 import com.talentmarket.KmongJpa.Dto.WriteRequest;
 import com.talentmarket.KmongJpa.config.auth.PrincipalDetails;
 import com.talentmarket.KmongJpa.entity.Item;
-import com.talentmarket.KmongJpa.entity.itemcount;
+import com.talentmarket.KmongJpa.entity.Itemcount;
 import com.talentmarket.KmongJpa.entity.Users;
 import com.talentmarket.KmongJpa.exception.CustomException;
 import com.talentmarket.KmongJpa.exception.ErrorCode;
@@ -71,9 +71,10 @@ public class ItemService {
 
     @Transactional(readOnly = true)
     public Page<ItemPaginationDto> DetailBoard2(Pageable pageable) {
-         itemcount itemCount = itemCountRepository.findById(1L).get();
+         Itemcount itemCount = itemCountRepository.findById(1L).get();
          Long total = itemCount.getItemcount();
        Page<ItemPaginationDto> items = itemRepository.paginationCoveringIndex(pageable , total);
+        System.out.println(itemRepository.getClass());
 
         return items;
 

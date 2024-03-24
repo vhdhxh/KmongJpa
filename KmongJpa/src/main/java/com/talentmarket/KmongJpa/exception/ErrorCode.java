@@ -21,7 +21,9 @@ public enum ErrorCode {
     CHATROOM_NOT_FOUND(HttpStatus.BAD_REQUEST,"채팅방이 없습니다."),
     USER_NOT_FOUND(HttpStatus.BAD_REQUEST,"일치하는 유저 정보가 없습니다."),
     CODE_NOT_MATCH(HttpStatus.BAD_REQUEST,"인증번호가 일치하지 않습니다."),
-    FAIL_SEND_MESSAGE(HttpStatus.BAD_REQUEST,"메시지 발송이 실패했습니다.");
+    FAIL_SEND_MESSAGE(HttpStatus.BAD_REQUEST,"메시지 발송이 실패했습니다."),
+    ITEM_COUNT_ZERO(HttpStatus.BAD_REQUEST,"상품 수량을 잘못 입력했습니다."),
+    STOCK_NOT_ENOUGH(HttpStatus.BAD_REQUEST,"재고 수량이 부족합니다.");
 
     private HttpStatus httpStatus;
     private String message;

@@ -22,8 +22,8 @@ public class CartApi {
         return ApiResponse.ok(null);
     }
     @DeleteMapping("/api/v1/cart")
-    public ApiResponse deleteCart(@RequestBody List<Long> boardIds, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        cartService.deleteCart(boardIds, principalDetails);
+    public ApiResponse deleteCart(@RequestBody List<Long> itemIds, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        cartService.deleteCart(itemIds, principalDetails);
         return ApiResponse.ok(null);
     }
     @GetMapping("/api/v1/cart")

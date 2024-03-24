@@ -5,11 +5,14 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
 @Getter
 @Builder
+
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
@@ -21,19 +24,28 @@ public class Cart {
     @ManyToOne(fetch = FetchType.LAZY)
     private Users user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Item item;
+    @Builder.Default
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CartItem> cartItems = new ArrayList<>();
 
-    private int count;
+
+    public void addCartItem(CartItem cartItem) {
+        cartItems.add(cartItem);
+        cartItem.setCart(this);
+
+    }
+
+
+
 
     public static Cart createCart(Item item, int count , PrincipalDetails principalDetails) {
         return Cart.builder()
-                .count(count)
+
                 .user(principalDetails.getDto())
-                .item(item)
+//                .item(item)
                 .build();
     }
-    public void updateCount(int count){
-        this.count +=count;
-    }
+//    public void updateCount(int count){
+//        this.count +=count;
+//    }
 }

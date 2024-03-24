@@ -67,6 +67,7 @@ public class BoardApi {
     public ApiResponse<Page> getPagingBoard2 (
             @AuthenticationPrincipal PrincipalDetails principalDetails
             , @PageableDefault(size = 6)Pageable pageable) {
+        System.out.println(itemService.getClass());
 
         return ApiResponse.ok(itemService.DetailBoard2(pageable));
     }
