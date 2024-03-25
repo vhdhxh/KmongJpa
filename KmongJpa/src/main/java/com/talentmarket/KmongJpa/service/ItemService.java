@@ -29,7 +29,10 @@ public class ItemService {
     public Long WriteBoard(WriteRequest request, PrincipalDetails principalDetails) {
         Users.checkUserSession(principalDetails);
         Item item = Item.createBoard(request , principalDetails);
-        return  itemRepository.save(item).getId();
+        Long Id = itemRepository.save(item).getId();
+        itemCountRepository.plusCount();
+
+        return Id;
 
     }
     //게시글 수정
@@ -47,6 +50,7 @@ public class ItemService {
         Item item = itemRepository.findById(boardId)
                 .orElseThrow(()->new CustomException(ErrorCode.ITEM_NOT_FOUND));
         itemRepository.delete(item);
+        itemCountRepository.minusCount();
     }
 
     //게시글 상세보기
