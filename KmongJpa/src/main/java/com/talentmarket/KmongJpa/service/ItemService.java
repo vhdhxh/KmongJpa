@@ -30,7 +30,10 @@ public class ItemService {
         Users.checkUserSession(principalDetails);
         Item item = Item.createBoard(request , principalDetails);
         Long Id = itemRepository.save(item).getId();
+        System.out.println(itemCountRepository.findById(1L).get().getItemcount());
         itemCountRepository.plusCount();
+        System.out.println(itemCountRepository.findById(1L).get().getItemcount());
+
 
         return Id;
 

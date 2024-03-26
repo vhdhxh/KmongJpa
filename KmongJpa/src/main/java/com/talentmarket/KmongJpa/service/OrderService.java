@@ -41,6 +41,7 @@ public class OrderService {
         Users.checkUserSession(principalDetails);
         // 1.요청으로 주문상품을 받아 주문상품 생성.
         // 2.가주문 생성
+        Users user = principalDetails.getDto();
 
         List<Long> itemIds = tempOrderRequest.getTempOrderItems().stream()
                 .map(tempOrderItems->tempOrderItems.getItemId())
@@ -51,23 +52,24 @@ public class OrderService {
                 .collect(Collectors.toList());
 
       List<Item> item = itemRepository.findAllByIdIn(itemIds);
+      //재고 확인
 
 
         String uuid = UUID.randomUUID().toString();
-        Order order = Order.builder()
-                .orderStatus(OrderStatus.Try)
-                .uuid(uuid)
-                .user(principalDetails.getDto())
-                .build();
+
+        Order order = Order.createOrder(user , uuid);
+
        orderRepository.save(order);
 
         List<OrderItem> orderItems = new ArrayList<>();
+
+        //재고 확인 , 주문 상품 추가
         for(int i =0;i<item.size();i++){
-            OrderItem orderItem = OrderItem.builder()
-                    .count(itemCounts.get(i))
-                    .item(item.get(i))
-                    .order(order)
-                    .build();
+            int stockQuantity = item.get(i).getStockQuantity();
+            int itemCount = itemCounts.get(i);
+            if(stockQuantity==0 && stockQuantity<itemCount)
+                throw new CustomException(ErrorCode.STOCK_NOT_ENOUGH);
+            OrderItem orderItem = OrderItem.createOrderItem(itemCount,item.get(i),order);
             orderItems.add(orderItem);
         }
         //벌크 인서트로 개선하는게 좋겠다.

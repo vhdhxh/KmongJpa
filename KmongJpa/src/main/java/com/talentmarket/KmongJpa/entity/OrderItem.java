@@ -33,6 +33,14 @@ public class OrderItem {
 
     private int count;
 
+    public static OrderItem createOrderItem(int count , Item item , Order order) {
+        return OrderItem.builder()
+                .count(count)
+                .item(item)
+                .order(order)
+                .build();
+    }
+
 
 
 

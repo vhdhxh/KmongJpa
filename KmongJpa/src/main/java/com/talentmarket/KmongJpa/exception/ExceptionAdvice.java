@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.ErrorResponse;
@@ -29,6 +30,16 @@ public class ExceptionAdvice {
         return ApiResponse.of(HttpStatus.BAD_REQUEST,exception.getMessage(),null);
 
     }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ApiResponse UNAUTHORIZEDException(HttpMessageNotReadableException exception) {
+        log.info(exception.getMessage());
+
+        return ApiResponse.of(HttpStatus.UNAUTHORIZED,"로그인이 필요합니다",null);
+
+    }
+
 
 
 

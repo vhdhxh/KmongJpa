@@ -34,5 +34,13 @@ public class Order {
         this.orderStatus = status;
     }
 
+    public static Order createOrder(Users user, String uuid) {
+        return Order.builder()
+                .orderStatus(OrderStatus.Try)
+                .uuid(uuid)
+                .user(user)
+                .build();
+    }
+
 
 }
