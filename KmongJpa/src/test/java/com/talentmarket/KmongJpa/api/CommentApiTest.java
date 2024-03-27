@@ -1,12 +1,11 @@
 package com.talentmarket.KmongJpa.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.talentmarket.KmongJpa.Dto.CommentWriteDto;
-import com.talentmarket.KmongJpa.Dto.WriteRequest;
-import com.talentmarket.KmongJpa.exception.CustomException;
-import com.talentmarket.KmongJpa.exception.ErrorCode;
-import com.talentmarket.KmongJpa.service.CommentService;
-import com.talentmarket.KmongJpa.service.UserService;
+import com.talentmarket.KmongJpa.comment.application.dto.CommentWriteDto;
+import com.talentmarket.KmongJpa.comment.presentation.CommentApi;
+import com.talentmarket.KmongJpa.global.exception.CustomException;
+import com.talentmarket.KmongJpa.global.exception.ErrorCode;
+import com.talentmarket.KmongJpa.comment.application.CommentService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +18,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;

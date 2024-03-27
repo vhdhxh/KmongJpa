@@ -1,21 +1,18 @@
 package com.talentmarket.KmongJpa.service;
 
-import com.talentmarket.KmongJpa.Dto.RegisterRequest;
-import com.talentmarket.KmongJpa.config.auth.PrincipalDetails;
-import com.talentmarket.KmongJpa.entity.Users;
-import com.talentmarket.KmongJpa.exception.CustomException;
-import com.talentmarket.KmongJpa.repository.UserRepository;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
+import com.talentmarket.KmongJpa.user.application.dto.RegisterRequest;
+import com.talentmarket.KmongJpa.global.auth.PrincipalDetails;
+import com.talentmarket.KmongJpa.user.application.UserService;
+import com.talentmarket.KmongJpa.user.domain.Users;
+import com.talentmarket.KmongJpa.global.exception.CustomException;
+import com.talentmarket.KmongJpa.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import jakarta.xml.bind.ValidationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.*;

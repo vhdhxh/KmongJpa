@@ -1,8 +1,9 @@
 package com.talentmarket.KmongJpa.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.talentmarket.KmongJpa.Dto.WriteRequest;
-import com.talentmarket.KmongJpa.service.ItemService;
+import com.talentmarket.KmongJpa.Item.application.dto.WriteRequest;
+import com.talentmarket.KmongJpa.Item.presentation.ItemController;
+import com.talentmarket.KmongJpa.Item.application.ItemService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
-@WebMvcTest(controllers = BoardApi.class)
+@WebMvcTest(controllers = ItemController.class)
 @ActiveProfiles("test")
 class ItemApiTest {
     @Autowired

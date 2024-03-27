@@ -1,13 +1,15 @@
 package com.talentmarket.KmongJpa.service;
 
-import com.talentmarket.KmongJpa.Dto.WriteRequest;
-import com.talentmarket.KmongJpa.config.auth.PrincipalDetails;
-import com.talentmarket.KmongJpa.entity.Item;
-import com.talentmarket.KmongJpa.entity.Like;
-import com.talentmarket.KmongJpa.entity.Users;
-import com.talentmarket.KmongJpa.repository.ItemRepository;
-import com.talentmarket.KmongJpa.repository.LikeRepository;
-import com.talentmarket.KmongJpa.repository.UserRepository;
+import com.talentmarket.KmongJpa.Item.application.dto.WriteRequest;
+import com.talentmarket.KmongJpa.Item.application.ItemService;
+import com.talentmarket.KmongJpa.global.auth.PrincipalDetails;
+import com.talentmarket.KmongJpa.Item.domain.Item;
+import com.talentmarket.KmongJpa.like.domain.Like;
+import com.talentmarket.KmongJpa.like.application.LikeService;
+import com.talentmarket.KmongJpa.user.domain.Users;
+import com.talentmarket.KmongJpa.Item.repository.ItemRepository;
+import com.talentmarket.KmongJpa.like.repository.LikeRepository;
+import com.talentmarket.KmongJpa.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,23 +1,15 @@
 package com.talentmarket.KmongJpa.api;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.talentmarket.KmongJpa.Dto.RegisterRequest;
-import com.talentmarket.KmongJpa.config.auth.PrincipalDetails;
-import com.talentmarket.KmongJpa.config.auth.PrincipalDetailsService;
-import com.talentmarket.KmongJpa.entity.Users;
-import com.talentmarket.KmongJpa.exception.CustomException;
-import com.talentmarket.KmongJpa.exception.ErrorCode;
-import com.talentmarket.KmongJpa.service.UserService;
+import com.talentmarket.KmongJpa.user.application.dto.RegisterRequest;
+import com.talentmarket.KmongJpa.global.exception.CustomException;
+import com.talentmarket.KmongJpa.global.exception.ErrorCode;
+import com.talentmarket.KmongJpa.user.application.UserService;
+import com.talentmarket.KmongJpa.user.presentation.UserApi;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -25,9 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;

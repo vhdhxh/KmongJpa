@@ -1,14 +1,15 @@
 package com.talentmarket.KmongJpa.service;
 
-import com.talentmarket.KmongJpa.Dto.CommentWriteDto;
-import com.talentmarket.KmongJpa.Dto.WriteRequest;
-import com.talentmarket.KmongJpa.config.auth.PrincipalDetails;
-import com.talentmarket.KmongJpa.entity.Item;
-import com.talentmarket.KmongJpa.entity.Comment;
-import com.talentmarket.KmongJpa.entity.Users;
-import com.talentmarket.KmongJpa.exception.CustomException;
-import com.talentmarket.KmongJpa.repository.ItemRepository;
-import com.talentmarket.KmongJpa.repository.CommentRepository;
+import com.talentmarket.KmongJpa.comment.application.dto.CommentWriteDto;
+import com.talentmarket.KmongJpa.Item.application.dto.WriteRequest;
+import com.talentmarket.KmongJpa.comment.application.CommentService;
+import com.talentmarket.KmongJpa.global.auth.PrincipalDetails;
+import com.talentmarket.KmongJpa.Item.domain.Item;
+import com.talentmarket.KmongJpa.comment.domain.Comment;
+import com.talentmarket.KmongJpa.user.domain.Users;
+import com.talentmarket.KmongJpa.global.exception.CustomException;
+import com.talentmarket.KmongJpa.Item.repository.ItemRepository;
+import com.talentmarket.KmongJpa.comment.repository.CommentRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

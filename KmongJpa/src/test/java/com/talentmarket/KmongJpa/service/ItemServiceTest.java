@@ -1,13 +1,14 @@
 package com.talentmarket.KmongJpa.service;
 
-import com.talentmarket.KmongJpa.Dto.BoardPagingResponse;
-import com.talentmarket.KmongJpa.Dto.DetailResponse;
-import com.talentmarket.KmongJpa.Dto.WriteRequest;
-import com.talentmarket.KmongJpa.config.auth.PrincipalDetails;
-import com.talentmarket.KmongJpa.entity.Item;
-import com.talentmarket.KmongJpa.entity.Users;
-import com.talentmarket.KmongJpa.repository.ItemRepository;
-import com.talentmarket.KmongJpa.repository.UserRepository;
+import com.talentmarket.KmongJpa.Item.application.dto.ItemPagingResponse;
+import com.talentmarket.KmongJpa.Item.application.dto.DetailResponse;
+import com.talentmarket.KmongJpa.Item.application.dto.WriteRequest;
+import com.talentmarket.KmongJpa.Item.application.ItemService;
+import com.talentmarket.KmongJpa.global.auth.PrincipalDetails;
+import com.talentmarket.KmongJpa.Item.domain.Item;
+import com.talentmarket.KmongJpa.user.domain.Users;
+import com.talentmarket.KmongJpa.Item.repository.ItemRepository;
+import com.talentmarket.KmongJpa.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,7 +127,7 @@ class ItemServiceTest {
 
         userRepository.save(users);
         Long Id = itemService.WriteBoard(request , new PrincipalDetails(users));
-        Page<BoardPagingResponse> boardList= itemService.DetailBoard(pageable);
+        Page<ItemPagingResponse> boardList= itemService.DetailBoard(pageable);
         //then
         assertThat(boardList.getSize()).isEqualTo(6);
         assertThat(boardList.getContent().get(0).getPrice()).isEqualTo(request.getPrice());
