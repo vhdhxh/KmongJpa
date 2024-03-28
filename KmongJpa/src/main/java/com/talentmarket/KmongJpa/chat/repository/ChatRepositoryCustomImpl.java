@@ -3,7 +3,7 @@ package com.talentmarket.KmongJpa.chat.repository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.talentmarket.KmongJpa.chat.domain.Chat;
 import com.talentmarket.KmongJpa.chat.repository.ChatRepositoryCustom;
-import com.talentmarket.KmongJpa.entity.QChat;
+import com.talentmarket.KmongJpa.chat.domain.QChat;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 

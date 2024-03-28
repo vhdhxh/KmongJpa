@@ -1,11 +1,13 @@
 package com.talentmarket.KmongJpa;
 
+import com.talentmarket.KmongJpa.auth.AuthPrincipal;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @SpringBootApplication
+
 public class KmongJpaApplication {
 
     public static void main(String[] args) {

@@ -3,7 +3,7 @@ package com.talentmarket.KmongJpa.cart.repository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.talentmarket.KmongJpa.global.auth.PrincipalDetails;
 import com.talentmarket.KmongJpa.cart.domain.Cart;
-import com.talentmarket.KmongJpa.entity.QCart;
+import com.talentmarket.KmongJpa.cart.domain.QCart;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;

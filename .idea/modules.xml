@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/KmongJpa.iml" filepath="$PROJECT_DIR$/.idea/KmongJpa.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/KmongJpa.KmongJpa.iml" filepath="$PROJECT_DIR$/.idea/modules/KmongJpa.KmongJpa.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/KmongJpa.KmongJpa.main.iml" filepath="$PROJECT_DIR$/.idea/modules/KmongJpa.KmongJpa.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/KmongJpa.KmongJpa.test.iml" filepath="$PROJECT_DIR$/.idea/modules/KmongJpa.KmongJpa.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/KmongJpa.KmongJpa.test~1.iml" filepath="$PROJECT_DIR$/.idea/modules/KmongJpa.KmongJpa.test~1.iml" />

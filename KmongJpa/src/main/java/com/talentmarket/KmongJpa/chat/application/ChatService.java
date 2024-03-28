@@ -99,7 +99,7 @@ public class ChatService {
                     .recentMessage(chat.getMessage())
                     .roomId(chat.getChatRoom().getId())
                     .build();
-        }).collect(Collectors.toList());
+        }).toList();
 
         return chatListResponses;
     }
