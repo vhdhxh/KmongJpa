@@ -38,8 +38,9 @@ public class UserApi {
     public void testLogin (@RequestBody UserDto userDto,HttpServletRequest request) {
         HttpSession httpSession = request.getSession();
         httpSession.setAttribute("userSession" , userDto);
+//  Session session = sessionRepository.createSession();
+//  session.setAttribute("userSession", userDto);
 
-        sessionRepository.save((Session) httpSession);
     }
     @GetMapping("/test")
     public void test (@AuthenticationPrincipal PrincipalDetails principalDetails,HttpServletRequest httpServletRequest) {
