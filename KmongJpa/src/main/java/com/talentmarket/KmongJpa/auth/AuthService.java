@@ -29,7 +29,7 @@ public class AuthService {
             httpSession.setMaxInactiveInterval(1800);
             return;
         }
-        Users user = userRepository.findByEmail(userDto.userEmail()).get();
+        Users user = userRepository.findByEmail(userDto.userEmail()).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
 
         boolean passwordCheck = passwordEncoder.matches(userDto.password(), user.getPassword());
         if(!passwordCheck){
@@ -39,14 +39,7 @@ public class AuthService {
         httpSession.setAttribute("user" , userDto);
         httpSession.setMaxInactiveInterval(1800);
 
-        Object sessionObj = httpSession.getAttribute("user");
-        if (sessionObj instanceof UserDto) {
-            System.out.println(sessionObj);
-            // UserDto 타입으로 안전하게 캐스팅된 후의 로직
-        } else {
-            // 타입이 일치하지 않을 경우의 처리 로직
-            System.out.println("no");
-        }
+
     }
 
     public void logout(HttpServletRequest httpServletRequest) {
