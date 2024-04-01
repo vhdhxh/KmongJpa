@@ -1,6 +1,5 @@
 package com.talentmarket.KmongJpa;
 
-import com.talentmarket.KmongJpa.auth.AuthPrincipal;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;

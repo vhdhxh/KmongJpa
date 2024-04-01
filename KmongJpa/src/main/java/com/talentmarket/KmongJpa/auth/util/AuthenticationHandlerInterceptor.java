@@ -1,4 +1,4 @@
-package com.talentmarket.KmongJpa.auth;
+package com.talentmarket.KmongJpa.auth.util;
 
 import com.talentmarket.KmongJpa.global.exception.CustomException;
 import com.talentmarket.KmongJpa.global.exception.ErrorCode;

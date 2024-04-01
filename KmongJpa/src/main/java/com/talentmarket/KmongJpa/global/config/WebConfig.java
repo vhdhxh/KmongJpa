@@ -1,8 +1,7 @@
 package com.talentmarket.KmongJpa.global.config;
 
-import com.talentmarket.KmongJpa.auth.AuthPrincipalArgumentResolver;
-import com.talentmarket.KmongJpa.auth.AuthenticationHandlerInterceptor;
-import com.talentmarket.KmongJpa.auth.PathMethod;
+import com.talentmarket.KmongJpa.auth.util.AuthPrincipalArgumentResolver;
+import com.talentmarket.KmongJpa.auth.util.AuthenticationHandlerInterceptor;
 import com.talentmarket.KmongJpa.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;

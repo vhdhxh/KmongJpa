@@ -1,4 +1,4 @@
-package com.talentmarket.KmongJpa.auth;
+package com.talentmarket.KmongJpa.auth.util;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

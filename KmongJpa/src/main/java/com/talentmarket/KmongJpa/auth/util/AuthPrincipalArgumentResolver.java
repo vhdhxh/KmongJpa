@@ -1,5 +1,6 @@
-package com.talentmarket.KmongJpa.auth;
+package com.talentmarket.KmongJpa.auth.util;
 
+import com.talentmarket.KmongJpa.auth.UserDto;
 import com.talentmarket.KmongJpa.global.exception.CustomException;
 import com.talentmarket.KmongJpa.global.exception.ErrorCode;
 import com.talentmarket.KmongJpa.user.domain.Users;

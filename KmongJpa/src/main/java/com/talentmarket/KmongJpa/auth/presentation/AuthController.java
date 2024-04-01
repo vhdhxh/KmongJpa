@@ -1,6 +1,12 @@
-package com.talentmarket.KmongJpa.auth;
+package com.talentmarket.KmongJpa.auth.presentation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.talentmarket.KmongJpa.auth.application.dto.KakaoRequest;
+import com.talentmarket.KmongJpa.auth.application.OauthProvider;
+import com.talentmarket.KmongJpa.auth.application.OauthService;
+import com.talentmarket.KmongJpa.auth.UserDto;
+import com.talentmarket.KmongJpa.auth.application.AuthService;
+import com.talentmarket.KmongJpa.auth.util.AuthPrincipal;
 import com.talentmarket.KmongJpa.global.ApiResponse;
 import com.talentmarket.KmongJpa.user.domain.Users;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,6 +22,8 @@ import java.net.URISyntaxException;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
+    private final OauthService oauthService;
+    private final OauthProvider oauthProvider;
     @PostMapping("/logout2")
     public ApiResponse logout(HttpServletRequest httpServletRequest) {
        authService.logout(httpServletRequest);
@@ -35,10 +43,11 @@ public class AuthController {
     }
 
     @GetMapping("/login/oauth2/code/kakao")
-    public ApiResponse kakaoLogin(KakaoRequest request) throws JsonProcessingException, URISyntaxException {
+    public ApiResponse kakaoLogin(KakaoRequest request, HttpServletRequest request2) throws JsonProcessingException, URISyntaxException {
 
 
-        return ApiResponse.ok( authService.kakaoLogin(request));
+
+        return ApiResponse.ok( oauthService.kakaoLogin(request,request2));
     }
 
 
