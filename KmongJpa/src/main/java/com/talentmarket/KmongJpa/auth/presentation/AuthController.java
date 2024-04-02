@@ -1,6 +1,7 @@
 package com.talentmarket.KmongJpa.auth.presentation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.talentmarket.KmongJpa.auth.Test4;
 import com.talentmarket.KmongJpa.auth.application.dto.KakaoRequest;
 import com.talentmarket.KmongJpa.auth.application.OauthProvider;
 import com.talentmarket.KmongJpa.auth.application.OauthService;
@@ -8,6 +9,8 @@ import com.talentmarket.KmongJpa.auth.UserDto;
 import com.talentmarket.KmongJpa.auth.application.AuthService;
 import com.talentmarket.KmongJpa.auth.util.AuthPrincipal;
 import com.talentmarket.KmongJpa.global.ApiResponse;
+import com.talentmarket.KmongJpa.global.exception.CustomException;
+import com.talentmarket.KmongJpa.global.exception.ErrorCode;
 import com.talentmarket.KmongJpa.user.domain.Users;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +51,25 @@ public class AuthController {
 
 
         return ApiResponse.ok( oauthService.kakaoLogin(request,request2));
+    }
+
+    @GetMapping("/test3")
+    public ApiResponse test3() {
+        System.out.println("test3 print");
+        return ApiResponse.ok(null);
+    }
+
+
+    @PostMapping("/test4")
+    public ApiResponse test4(@RequestBody Test4 test4) {
+        System.out.println("test4 print");
+        return ApiResponse.ok(null);
+    }
+
+    @GetMapping("/test5")
+    public ApiResponse test5() {
+        throw new CustomException(ErrorCode.USER_NOT_FOUND);
+
     }
 
 

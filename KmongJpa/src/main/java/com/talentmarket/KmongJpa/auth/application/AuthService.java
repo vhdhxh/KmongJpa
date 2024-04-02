@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.*;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import com.talentmarket.KmongJpa.auth.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -30,6 +30,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
+
     @Value("${KAKAO_RESTAPI_KEY}")
     private String REST_API_KEY;
     @Value("${KAKAO_REDIRECT_URI}")
@@ -39,38 +40,39 @@ public class AuthService {
 
 
     //로그인 -> 비밀번호 체크 -> 맞으면 세션 생성
-    public void login(HttpServletRequest httpServletRequest , UserDto userDto) {
+    public void login(HttpServletRequest httpServletRequest, UserDto userDto) {
         HttpSession httpSession = httpServletRequest.getSession();
-        if(httpSession.getAttribute("user")!=null){
+        if (httpSession.getAttribute("user") != null) {
             httpSession.setMaxInactiveInterval(1800);
             return;
         }
-        Users user = userRepository.findByEmail(userDto.userEmail()).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
+        Users user = userRepository.findByEmail(userDto.userEmail()).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         boolean passwordCheck = passwordEncoder.matches(userDto.password(), user.getPassword());
-        if(!passwordCheck){
+        if (!passwordCheck) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
         }
 
-        httpSession.setAttribute("user" , userDto);
+        httpSession.setAttribute("user", userDto);
         httpSession.setMaxInactiveInterval(1800);
 
 
     }
 
     public void logout(HttpServletRequest httpServletRequest) {
-       HttpSession httpSession =  httpServletRequest.getSession();
-       httpSession.invalidate();
+        HttpSession httpSession = httpServletRequest.getSession();
+        httpSession.invalidate();
 
     }
+
     public void kakao() {
 
 
     }
 
-    public  ResponseEntity<String> kakaoLogin(KakaoRequest request) throws JsonProcessingException, URISyntaxException {
+    public ResponseEntity<String> kakaoLogin(KakaoRequest request) throws JsonProcessingException, URISyntaxException {
 
-       String code = request.getCode();
+        String code = request.getCode();
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
@@ -104,7 +106,6 @@ public class AuthService {
         // 기존 사용자면 세션발급 -> 로그인처리
 
 
-
-      return response;
+        return response;
     }
 }

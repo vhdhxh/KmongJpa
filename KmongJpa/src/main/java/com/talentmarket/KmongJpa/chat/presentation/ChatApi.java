@@ -1,15 +1,15 @@
 package com.talentmarket.KmongJpa.chat.presentation;
 
+import com.talentmarket.KmongJpa.auth.util.AuthPrincipal;
 import com.talentmarket.KmongJpa.chat.application.dto.*;
 import com.talentmarket.KmongJpa.chat.application.ChatService;
 import com.talentmarket.KmongJpa.global.ApiResponse;
-import com.talentmarket.KmongJpa.global.auth.PrincipalDetails;
+import com.talentmarket.KmongJpa.user.domain.Users;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,11 +41,11 @@ public class ChatApi {
     // 있다면 기존 채팅방 id를 넘겨준다.
     @PostMapping("api/v1/chat/{user2Id}")
     public ApiResponse createRoom(
-            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @AuthPrincipal Users user,
             @PathVariable("user2Id") Long user2Id) {
 
 
-       Long RoomId = chatService.createRoom(principalDetails, user2Id);
+       Long RoomId = chatService.createRoom(user, user2Id);
         //만들어진 채팅방 roomId 를  매개변수에 넣어서 채팅방 인원들을 추가한다.
 
         return ApiResponse.ok(RoomId);
@@ -53,16 +53,16 @@ public class ChatApi {
 
     //로그인 한 유저의 채팅 목록을 불러옵니다
     @GetMapping("/api/v1/chatList")
-    public ApiResponse getChatList (@AuthenticationPrincipal PrincipalDetails principalDetails) {
-       List<ChatListResponse> chatListResponses = chatService.getChatList(principalDetails);
+    public ApiResponse getChatList (@AuthPrincipal Users user) {
+       List<ChatListResponse> chatListResponses = chatService.getChatList(user);
         return ApiResponse.ok(chatListResponses);
     }
     //유저의 채팅방의 메세지 기록을 불러옵니다
     @GetMapping("/api/v1/chat/{roomId}")
-    public ApiResponse getChat (@AuthenticationPrincipal PrincipalDetails principalDetails
+    public ApiResponse getChat (@AuthPrincipal Users user
                               , @RequestBody ChatRequest request
                               , @PathVariable("roomId") Long roomId) {
-        List<ChatResponse> chatResponses = chatService.getChat(principalDetails,request,roomId);
+        List<ChatResponse> chatResponses = chatService.getChat(user,request,roomId);
         return ApiResponse.ok(chatResponses);
     }
 }

@@ -2,7 +2,6 @@ package com.talentmarket.KmongJpa.Item.domain;
 
 import com.talentmarket.KmongJpa.Item.application.dto.WriteRequest;
 import com.talentmarket.KmongJpa.comment.domain.Comment;
-import com.talentmarket.KmongJpa.global.auth.PrincipalDetails;
 import com.talentmarket.KmongJpa.user.domain.Users;
 import com.talentmarket.KmongJpa.global.exception.CustomException;
 import com.talentmarket.KmongJpa.global.exception.ErrorCode;
@@ -45,8 +44,8 @@ public class Item {
     private String detail;
     private int stockQuantity;
 
-    public static Item createBoard(WriteRequest request, PrincipalDetails principalDetails) {
-        Users user = principalDetails.getDto();
+    public static Item createBoard(WriteRequest request, Users user) {
+
         return Item.builder()
                 .users(user)
                 .writer(user.getName())

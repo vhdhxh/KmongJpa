@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.talentmarket.KmongJpa.Item.domain.Item;
 import com.talentmarket.KmongJpa.payment.application.CanselRequest;
-import com.talentmarket.KmongJpa.global.auth.PrincipalDetails;
 import com.talentmarket.KmongJpa.global.exception.CustomException;
 import com.talentmarket.KmongJpa.global.exception.ErrorCode;
 import com.talentmarket.KmongJpa.Item.repository.ItemRepository;
@@ -44,11 +43,11 @@ public class OrderService {
     // 장바구니나 게시글에서
     // 결제하기 버튼을 누르면
     // 가주문 생성
-    public String createTempOrder(TempOrderRequest tempOrderRequest , PrincipalDetails principalDetails) {
-        Users.checkUserSession(principalDetails);
+    public String createTempOrder(TempOrderRequest tempOrderRequest , Users user) {
+        Users.checkUserSession(user);
         // 1.요청으로 주문상품을 받아 주문상품 생성.
         // 2.가주문 생성
-        Users user = principalDetails.getDto();
+
 
         List<Long> itemIds = tempOrderRequest.getTempOrderItems().stream()
                 .map(tempOrderItems->tempOrderItems.getItemId())
@@ -85,8 +84,8 @@ public class OrderService {
         return uuid;
     }
     //가주문 불러오기
-    public List<TempOrderResponse> getTempOrder(String orderUUID, PrincipalDetails principalDetails) {
-        Users user = principalDetails.getDto();
+    public List<TempOrderResponse> getTempOrder(String orderUUID, Users user) {
+
        Order order = orderRepository.findByUUIDAndUserAndOrderStatus(orderUUID,user.getId(), OrderStatus.Try);
       List<TempOrderResponse> responses = TempOrderResponse.createResponses(order);
          return responses;

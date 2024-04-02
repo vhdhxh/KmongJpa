@@ -21,10 +21,6 @@ public class AuthPrincipalArgumentResolver implements HandlerMethodArgumentResol
     private final UserRepository userRepository;
 
 
-
-
-
-
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         return  parameter.hasParameterAnnotation(AuthPrincipal.class); //AuthPrincipal 클래스로 등록한 애너테이션을 사용하면 true
@@ -40,6 +36,7 @@ public class AuthPrincipalArgumentResolver implements HandlerMethodArgumentResol
        UserDto userDto = (UserDto) httpSession.getAttribute("user");
       Users user = userRepository // user 엔티티말고 userId만 반환하는것도 고려해야봐야겠다.
               .findByEmail(userDto.userEmail()).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
+        System.out.println("resolveArgument");
 
 return user;
 

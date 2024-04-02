@@ -2,7 +2,6 @@ package com.talentmarket.KmongJpa.comment.application;
 
 import com.talentmarket.KmongJpa.comment.application.dto.CommentWriteDto;
 import com.talentmarket.KmongJpa.comment.repository.CommentRepository;
-import com.talentmarket.KmongJpa.global.auth.PrincipalDetails;
 import com.talentmarket.KmongJpa.Item.domain.Item;
 import com.talentmarket.KmongJpa.comment.domain.Comment;
 import com.talentmarket.KmongJpa.user.domain.Users;
@@ -22,7 +21,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     //댓글 쓰기
-    public void CommentWrite (CommentWriteDto commentWriteDto, PrincipalDetails principalDetails) {
+    public void CommentWrite (CommentWriteDto commentWriteDto, Users principalDetails) {
         Users.checkUserSession(principalDetails);
         Long boardId = commentWriteDto.getBoardId();
        Item item = itemRepository.findById(boardId).orElseThrow(()->new CustomException(ErrorCode.ITEM_NOT_FOUND));
@@ -31,7 +30,7 @@ public class CommentService {
 
     }
     //댓글 수정
-    public void commentUpdate(CommentWriteDto commentWriteDto, PrincipalDetails principalDetails, Long commentId) {
+    public void commentUpdate(CommentWriteDto commentWriteDto, Users principalDetails, Long commentId) {
         Users.checkUserSession(principalDetails);
         Long boardId = commentWriteDto.getBoardId();
         Item item = itemRepository.findById(boardId).orElseThrow(()->new CustomException(ErrorCode.ITEM_NOT_FOUND));
@@ -41,7 +40,7 @@ public class CommentService {
     }
 
     //댓글 삭제
-    public void commentDelete(PrincipalDetails principalDetails,Long commentId) {
+    public void commentDelete(Users principalDetails, Long commentId) {
         Users.checkUserSession(principalDetails);
         Comment comment = commentRepository.findById(commentId).orElseThrow(()->new CustomException(ErrorCode.COMMENT_NOT_FOUND));
         commentRepository.deleteById(commentId);

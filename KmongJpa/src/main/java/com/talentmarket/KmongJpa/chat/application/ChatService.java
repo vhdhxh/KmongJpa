@@ -5,7 +5,6 @@ import com.talentmarket.KmongJpa.chat.application.dto.*;
 import com.talentmarket.KmongJpa.chat.domain.ChatRoom;
 import com.talentmarket.KmongJpa.chat.repository.ChatRepository;
 import com.talentmarket.KmongJpa.chat.repository.ChatRoomRepository;
-import com.talentmarket.KmongJpa.global.auth.PrincipalDetails;
 import com.talentmarket.KmongJpa.chat.domain.Chat;
 import com.talentmarket.KmongJpa.user.domain.Users;
 import com.talentmarket.KmongJpa.global.exception.CustomException;
@@ -31,10 +30,10 @@ public class ChatService {
     //바뀐 플로우
     //문의하기 버튼을 누르면, 상대와 나의 채팅 방이 있는지 확인하고, 없다면 만들어서 채팅방 id를 넘겨주고
     // 있다면 기존 채팅방 id를 넘겨준다.
-    public Long createRoom(PrincipalDetails principalDetails, Long user2Id) {
+    public Long createRoom(Users user, Long user2Id) {
 
         Long chatRoomId;
-        Users user1 = principalDetails.getDto();
+        Users user1 = user;
         Long user1Id = user1.getId();
         Optional<ChatRoom> chatRoom = chatRoomRepository.findChatUser(user1Id, user2Id);
         if (chatRoom.isEmpty()) {
@@ -66,8 +65,8 @@ public class ChatService {
         return sendResponse;
     }
 
-    public List<ChatListResponse> getChatList(PrincipalDetails principalDetails) {
-        Long userId = principalDetails.getDto().getId();
+    public List<ChatListResponse> getChatList(Users user) {
+        Long userId = user.getId();
         log.info(String.valueOf(userId));
         //chatroomRepository 에서 유저의 모든 방 리스트 엔티티를 찾아온다.
         List<ChatRoom> chatRoomList = chatRoomRepository.findChatRoom(userId);
@@ -103,12 +102,12 @@ public class ChatService {
 
         return chatListResponses;
     }
-    public List<ChatResponse> getChat (PrincipalDetails principalDetails, ChatRequest req , Long roomId) {
-        Long userId = principalDetails.getDto().getId();
+    public List<ChatResponse> getChat (Users user, ChatRequest req , Long roomId) {
+        Long userId = user.getId();
         log.info("userId :{}",userId);
         Long partnerId = req.getPartnerId();
         String partnerName = req.getPartnerName();
-        String userNickName = principalDetails.getDto().getName();
+        String userNickName = user.getName();
         log.info("userNickName:{}",userNickName);
         List<Chat> chatList = chatRepository.findByChatRoomId(roomId);
         Map<Long, String> userIdToNameMap = new HashMap<>();

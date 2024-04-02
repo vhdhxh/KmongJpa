@@ -2,7 +2,6 @@ package com.talentmarket.KmongJpa.cart.application;
 
 import com.talentmarket.KmongJpa.cart.application.dto.CartRequest;
 import com.talentmarket.KmongJpa.cart.application.dto.CartResponse;
-import com.talentmarket.KmongJpa.global.auth.PrincipalDetails;
 import com.talentmarket.KmongJpa.cart.domain.CartItem;
 import com.talentmarket.KmongJpa.Item.domain.Item;
 import com.talentmarket.KmongJpa.cart.domain.Cart;
@@ -32,15 +31,15 @@ public class CartService {
 
 
     //장바구니 담기
-    public void cart (CartRequest cartRequest, PrincipalDetails principalDetails) {
-        Users.checkUserSession(principalDetails);
-        Long userId = principalDetails.getDto().getId();
+    public void cart (CartRequest cartRequest, Users users) {
+        Users.checkUserSession(users);
+        Long userId = users.getId();
 
 
         Cart cart = cartRepository.findByUserId(userId)
                 .orElseGet(() -> {
                     Cart newCart = Cart.builder()
-                            .user(principalDetails.getDto())
+                            .user(users)
                             .build();
                     return cartRepository.save(newCart);
                 });
@@ -80,10 +79,10 @@ public class CartService {
 
 
     //장바구니 삭제
-    public void deleteCart(List<Long> itemIds, PrincipalDetails principalDetails) {
-        Users.checkUserSession(principalDetails);
+    public void deleteCart(List<Long> itemIds, Users user) {
+        Users.checkUserSession(user);
 
-       Cart cart = cartRepository.findByUserId(principalDetails.getDto().getId()).get();
+       Cart cart = cartRepository.findByUserId(user.getId()).get();
 
        cartItemRepository.deleteCartItem(cart.getId(),itemIds);
 
@@ -93,9 +92,9 @@ public class CartService {
 
         //장바구니 불러오기
     @Transactional(readOnly = true)
-    public List<CartResponse> getCart(PrincipalDetails principalDetails) {
-        Users.checkUserSession(principalDetails);
-        Long userId = principalDetails.getDto().getId();
+    public List<CartResponse> getCart(Users user) {
+        Users.checkUserSession(user);
+        Long userId = user.getId();
         Cart cart = cartRepository.findByUserId(userId).get();
         List<CartItem> cartItems = cart.getCartItems();
         List<CartResponse> response = cartItems.stream()

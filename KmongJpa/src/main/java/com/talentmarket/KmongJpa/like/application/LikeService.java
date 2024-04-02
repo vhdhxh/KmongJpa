@@ -2,7 +2,6 @@ package com.talentmarket.KmongJpa.like.application;
 
 
 import com.talentmarket.KmongJpa.like.application.dto.LikeResponse;
-import com.talentmarket.KmongJpa.global.auth.PrincipalDetails;
 import com.talentmarket.KmongJpa.Item.domain.Item;
 import com.talentmarket.KmongJpa.like.domain.Like;
 import com.talentmarket.KmongJpa.like.repository.LikeRepository;
@@ -28,9 +27,9 @@ public class LikeService {
 
 
    //사용자가 찜 을 누르는 행위를 해서 조회후 값이 없으면 likeCount, 있으면 disLike 메서드를 호출
-    public void like(Long itemId , PrincipalDetails principalDetails) {
-        Users.checkUserSession(principalDetails);
-        Users user = principalDetails.getDto();
+    public void like(Long itemId , Users user) {
+        Users.checkUserSession(user);
+
         Long userId = user.getId();
         // 컬럼값이 있다면 삭제
         if(likeRepository.findLikesByItemIdAndUsersId(itemId,userId).isPresent()){

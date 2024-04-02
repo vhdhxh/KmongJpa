@@ -8,7 +8,6 @@ import com.talentmarket.KmongJpa.Item.domain.Item;
 import com.talentmarket.KmongJpa.Item.domain.Itemcount;
 import com.talentmarket.KmongJpa.Item.repository.ItemCountRepository;
 import com.talentmarket.KmongJpa.Item.repository.ItemRepository;
-import com.talentmarket.KmongJpa.global.auth.PrincipalDetails;
 import com.talentmarket.KmongJpa.user.domain.Users;
 import com.talentmarket.KmongJpa.global.exception.CustomException;
 import com.talentmarket.KmongJpa.global.exception.ErrorCode;
@@ -26,7 +25,7 @@ public class ItemService {
 
     //글쓰기
     @Transactional
-    public Long WriteBoard(WriteRequest request, PrincipalDetails principalDetails) {
+    public Long WriteBoard(WriteRequest request, Users principalDetails) {
         Users.checkUserSession(principalDetails);
         Item item = Item.createBoard(request , principalDetails);
         Long Id = itemRepository.save(item).getId();
@@ -40,7 +39,7 @@ public class ItemService {
     }
     //게시글 수정
     @Transactional
-    public Long UpdateBoard(WriteRequest writeRequest,  Long boardId,PrincipalDetails principalDetails) {
+    public Long UpdateBoard(WriteRequest writeRequest, Long boardId, Users principalDetails) {
         Users.checkUserSession(principalDetails);
         Item item = itemRepository.findById(boardId)
                .orElseThrow(()->new CustomException(ErrorCode.ITEM_NOT_FOUND));
@@ -48,7 +47,7 @@ public class ItemService {
     }
     //게시글 삭제
     @Transactional
-    public void DeleteBoard(Long boardId , PrincipalDetails principalDetails) {
+    public void DeleteBoard(Long boardId , Users principalDetails) {
         Users.checkUserSession(principalDetails);
         Item item = itemRepository.findById(boardId)
                 .orElseThrow(()->new CustomException(ErrorCode.ITEM_NOT_FOUND));

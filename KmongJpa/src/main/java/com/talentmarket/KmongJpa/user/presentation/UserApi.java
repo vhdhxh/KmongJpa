@@ -2,20 +2,20 @@ package com.talentmarket.KmongJpa.user.presentation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.talentmarket.KmongJpa.auth.UserDto;
+import com.talentmarket.KmongJpa.auth.util.AuthPrincipal;
 import com.talentmarket.KmongJpa.global.ApiResponse;
 import com.talentmarket.KmongJpa.sms.application.CheckRequest;
-import com.talentmarket.KmongJpa.global.auth.PrincipalDetails;
 import com.talentmarket.KmongJpa.user.application.UserService;
 import com.talentmarket.KmongJpa.user.application.dto.FindPasswordRequest;
 import com.talentmarket.KmongJpa.user.application.dto.RegisterRequest;
+import com.talentmarket.KmongJpa.user.domain.Users;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import com.talentmarket.KmongJpa.auth.BCryptPasswordEncoder;
 import org.springframework.session.Session;
 import org.springframework.session.SessionRepository;
 import org.springframework.web.bind.annotation.*;
@@ -43,9 +43,8 @@ public class UserApi {
 
     }
     @GetMapping("/test")
-    public void test (@AuthenticationPrincipal PrincipalDetails principalDetails,HttpServletRequest httpServletRequest) {
-        System.out.println(principalDetails.getDto().getPassword());
-       boolean matches = bCryptPasswordEncoder.matches("1234", principalDetails.getPassword());
+    public void test (@AuthPrincipal Users user, HttpServletRequest httpServletRequest) {
+       boolean matches = bCryptPasswordEncoder.matches("1234", user.getPassword());
         System.out.println(matches);
 
        HttpSession httpSession = httpServletRequest.getSession();
@@ -72,8 +71,8 @@ public class UserApi {
     }
 
     @DeleteMapping("/api/v1/user")
-    public ApiResponse Withdrawal(HttpServletRequest request, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        userService.Withdrawal(principalDetails,request);
+    public ApiResponse Withdrawal(HttpServletRequest request, @AuthPrincipal Users user) {
+        userService.Withdrawal(user,request);
         return ApiResponse.ok(null);
     }
 

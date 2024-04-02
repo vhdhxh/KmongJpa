@@ -2,6 +2,8 @@ package com.talentmarket.KmongJpa.global.config;
 
 import com.talentmarket.KmongJpa.auth.util.AuthPrincipalArgumentResolver;
 import com.talentmarket.KmongJpa.auth.util.AuthenticationHandlerInterceptor;
+//import com.talentmarket.KmongJpa.global.HttpLoggingInterceptor;
+import com.talentmarket.KmongJpa.global.HttpLoggingInterceptor;
 import com.talentmarket.KmongJpa.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +27,11 @@ public class WebConfig implements WebMvcConfigurer {
 registry.addInterceptor(new AuthenticationHandlerInterceptor())
         .addPathPatterns("/test2") //로그인 체크 인터셉터를 포함할 url
         .excludePathPatterns();//포함하지 않을 url
+
+        registry.addInterceptor(new HttpLoggingInterceptor())
+                .addPathPatterns("/test3")
+                .addPathPatterns("/test4")
+                .addPathPatterns("/test5");
 
     }
 

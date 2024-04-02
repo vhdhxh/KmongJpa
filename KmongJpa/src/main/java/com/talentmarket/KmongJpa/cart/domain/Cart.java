@@ -1,6 +1,5 @@
 package com.talentmarket.KmongJpa.cart.domain;
 
-import com.talentmarket.KmongJpa.global.auth.PrincipalDetails;
 import com.talentmarket.KmongJpa.Item.domain.Item;
 import com.talentmarket.KmongJpa.user.domain.Users;
 import jakarta.persistence.*;
@@ -40,10 +39,10 @@ public class Cart {
 
 
 
-    public static Cart createCart(Item item, int count , PrincipalDetails principalDetails) {
+    public static Cart createCart(Item item, int count , Users user) {
         return Cart.builder()
 
-                .user(principalDetails.getDto())
+                .user(user)
 //                .item(item)
                 .build();
     }

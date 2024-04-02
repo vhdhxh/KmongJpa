@@ -1,7 +1,6 @@
 package com.talentmarket.KmongJpa.user.domain;
 
 import com.talentmarket.KmongJpa.Item.domain.Item;
-import com.talentmarket.KmongJpa.global.auth.PrincipalDetails;
 import com.talentmarket.KmongJpa.global.exception.CustomException;
 import com.talentmarket.KmongJpa.global.exception.ErrorCode;
 import com.talentmarket.KmongJpa.user.application.dto.RegisterRequest;
@@ -53,7 +52,7 @@ protected Users () {}
             .gender(request.getGender())
             .build();
     }
-    public static void checkUserSession(PrincipalDetails principalDetails) {
+    public static void checkUserSession(Users principalDetails) {
         if (principalDetails == null) {
             throw new CustomException(ErrorCode.USER_NOT_LOGIN);
         }

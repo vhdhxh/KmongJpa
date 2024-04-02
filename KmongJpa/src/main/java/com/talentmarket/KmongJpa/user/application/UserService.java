@@ -2,7 +2,6 @@ package com.talentmarket.KmongJpa.user.application;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.talentmarket.KmongJpa.sms.application.SmsMessageDto;
-import com.talentmarket.KmongJpa.global.auth.PrincipalDetails;
 import com.talentmarket.KmongJpa.global.config.RedisConfig;
 import com.talentmarket.KmongJpa.sms.application.SmsService;
 import com.talentmarket.KmongJpa.global.exception.CustomException;
@@ -14,7 +13,7 @@ import com.talentmarket.KmongJpa.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import com.talentmarket.KmongJpa.auth.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,13 +48,13 @@ public class UserService {
 
      //회원탈퇴
     @Transactional
-    public void Withdrawal(PrincipalDetails principalDetails , HttpServletRequest httpServletRequest){
-        Users.checkUserSession(principalDetails);
+    public void Withdrawal(Users users , HttpServletRequest httpServletRequest){
+        Users.checkUserSession(users);
 
 //        if(userRepository.findById(principalDetails.getDto().getId()).isEmpty()){
 //            throw new CustomException(ErrorCode.USER_WITHDRAWLED);
 //        };
-        userRepository.delete(principalDetails.getDto());
+        userRepository.delete(users);
        HttpSession httpSession = httpServletRequest.getSession();
        //세션 저장소에있는 세션데이터를 삭제
        httpSession.invalidate();

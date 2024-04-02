@@ -1,7 +1,6 @@
 package com.talentmarket.KmongJpa.comment.domain;
 
 import com.talentmarket.KmongJpa.comment.application.dto.CommentWriteDto;
-import com.talentmarket.KmongJpa.global.auth.PrincipalDetails;
 import com.talentmarket.KmongJpa.Item.domain.Item;
 import com.talentmarket.KmongJpa.user.domain.Users;
 import jakarta.persistence.*;
@@ -33,11 +32,11 @@ public class Comment {
     private LocalDateTime createdDate;
 
 
-    public static Comment CreateComment(CommentWriteDto commentWriteDto , PrincipalDetails principalDetails , Item item) {
+    public static Comment CreateComment(CommentWriteDto commentWriteDto , Users user , Item item) {
         return Comment.builder()
                 .item(item)
                 .contents(commentWriteDto.getContents())
-                .users(principalDetails.getDto())
+                .users(user)
                 .build();
 
     }
