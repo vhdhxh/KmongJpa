@@ -63,7 +63,7 @@ public class AuthController {
     @PostMapping("/test4")
     public ApiResponse test4(@RequestBody Test4 test4) {
         System.out.println("test4 print");
-        return ApiResponse.ok(null);
+        return ApiResponse.ok("testResponse");
     }
 
     @GetMapping("/test5")
