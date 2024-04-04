@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.core.annotation.Order;
+import org.springframework.session.web.http.SessionRepositoryFilter;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
@@ -19,7 +20,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 
 @Slf4j
-@Order(Integer.MIN_VALUE)
 public class HttpLoggingFilter extends OncePerRequestFilter {
     private static final String HTTP_LOG_FORMAT = """
                                     
@@ -59,14 +59,12 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
 
         Long entTime = System.currentTimeMillis();
         String duration = String.valueOf(entTime - startTime) + "ms";
-        System.out.println(cachingResponse.getContentType());
-        if(cachingResponse.getContentType().equals("text/html;charset=UTF-8")){
-            log.info(HTTP_LOG_FORMAT,method , uri ,queryString , header, new String(cachingRequest.getContentAsByteArray()),cachingResponse.getStatus(),"html",duration);
-            cachingResponse.copyBodyToResponse();
-            return;
+        String responseBody = "html";
+        if(cachingResponse.getContentType()=="application/json"){
+            responseBody = String.valueOf(objectMapper.readTree(cachingResponse.getContentAsByteArray()));
 
         }
-        log.info(HTTP_LOG_FORMAT,method , uri ,queryString , header, new String(cachingRequest.getContentAsByteArray()), MDC.get("handler"),cachingResponse.getStatus(),objectMapper.readTree(cachingResponse.getContentAsByteArray()),duration);
+        log.info(HTTP_LOG_FORMAT,method , uri ,queryString , header, new String(cachingRequest.getContentAsByteArray()), MDC.get("handler"),cachingResponse.getStatus(),responseBody,duration);
         cachingResponse.copyBodyToResponse();
 
 

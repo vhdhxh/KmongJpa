@@ -27,15 +27,24 @@ public class OauthService {
         String accessToken = oauthProvider.getKaKaoToken(kakaoRequest);
         KaKaoUserInfo kaKaoUserInfo =  oauthProvider.getUserInfo(accessToken);
 
-        System.out.println(accessToken);
+        HttpSession httpSession = request.getSession();
+        if(httpSession.getAttribute("user")!=null) {
+           KaKaoUserInfo kaKaoUserSessionInfo = (KaKaoUserInfo) httpSession.getAttribute("user");
+            httpSession.setMaxInactiveInterval(1800);
+            return kaKaoUserSessionInfo;
 
-        Optional<Users> optionalUser = userRepository.findByProviderAndProviderId("kakao",kaKaoUserInfo.getId());
+        }
 
-        if(!optionalUser.isPresent()) {
+//        Optional<Users> optionalUser = userRepository.findByProviderAndProviderId("kakao",kaKaoUserInfo.getId());
+        boolean registerCheck = userRepository.existsByProviderAndProviderId("kakao", kaKaoUserInfo.getId());
+//        if(!optionalUser.isPresent()) {
+//            kakaoRegister(kaKaoUserInfo);
+//        }
+        if(!registerCheck) {
             kakaoRegister(kaKaoUserInfo);
         }
 
-        HttpSession httpSession = request.getSession();
+
         httpSession.setAttribute("user",kaKaoUserInfo);
 
         return kaKaoUserInfo;

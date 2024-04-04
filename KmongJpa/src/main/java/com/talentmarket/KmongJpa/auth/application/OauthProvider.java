@@ -39,6 +39,7 @@ public class OauthProvider {
 
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
                 new HttpEntity<>(null, headers);
+
         ResponseEntity<String> response = new RestTemplate().exchange(
                 "https://kapi.kakao.com/v2/user/me",
                 HttpMethod.GET,
@@ -78,11 +79,13 @@ public class OauthProvider {
 
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
                 new HttpEntity<>(body, headers);
+
         ResponseEntity<String> response = new RestTemplate().exchange(
                 "https://kauth.kakao.com/oauth/token",
                 HttpMethod.POST,
                 kakaoTokenRequest,
                 String.class);
+
         ObjectMapper mapper = new ObjectMapper();
         JsonNode json = mapper.readTree(response.getBody());
         String accessToken = json.get("access_token").asText();

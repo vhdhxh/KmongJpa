@@ -21,8 +21,5 @@ public class AuthenticationHandlerInterceptor implements HandlerInterceptor {
         return true;
     }
 
-//    public AuthenticationHandlerInterceptor addPathPatterns(String url , PathMethod pathMethod) {
-//        return new AuthenticationHandlerInterceptor();
-//
-//    }
+
 }
