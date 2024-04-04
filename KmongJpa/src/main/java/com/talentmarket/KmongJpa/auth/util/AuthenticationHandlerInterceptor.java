@@ -17,6 +17,7 @@ public class AuthenticationHandlerInterceptor implements HandlerInterceptor {
         if(httpSession.getAttribute("user")==null){
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
+
         return true;
     }
 

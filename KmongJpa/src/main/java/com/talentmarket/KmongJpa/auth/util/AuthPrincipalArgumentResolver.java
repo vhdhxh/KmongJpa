@@ -23,7 +23,9 @@ public class AuthPrincipalArgumentResolver implements HandlerMethodArgumentResol
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return  parameter.hasParameterAnnotation(AuthPrincipal.class); //AuthPrincipal 클래스로 등록한 애너테이션을 사용하면 true
+        return  parameter.hasParameterAnnotation(AuthPrincipal.class) &&
+        parameter.getParameterType().equals(Users.class);//AuthPrincipal 클래스로 등록한 애너테이션 과 Users 타입의 파라미터를 사용하면 true
+
     }
 
     @Override

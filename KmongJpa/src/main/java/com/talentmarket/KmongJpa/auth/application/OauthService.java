@@ -27,7 +27,7 @@ public class OauthService {
         String accessToken = oauthProvider.getKaKaoToken(kakaoRequest);
         KaKaoUserInfo kaKaoUserInfo =  oauthProvider.getUserInfo(accessToken);
 
-        System.out.println(kaKaoUserInfo.getId());
+        System.out.println(accessToken);
 
         Optional<Users> optionalUser = userRepository.findByProviderAndProviderId("kakao",kaKaoUserInfo.getId());
 
@@ -44,7 +44,7 @@ public class OauthService {
 
     public void kakaoRegister(KaKaoUserInfo kaKaoUserInfo) {
        String pw =  passwordEncoder.encode(String.valueOf(kaKaoUserInfo.getId()));
-        Users user = Users.builder().email(kaKaoUserInfo.getEmail()).name(kaKaoUserInfo.getName()).password(pw).provider("kakao")
+        Users user = Users.builder().email(kaKaoUserInfo.getEmail()+"/kakao").name(kaKaoUserInfo.getName()).password(pw).provider("kakao")
                 .providerId(kaKaoUserInfo.getId()).build();
      userRepository.save(user);
     }

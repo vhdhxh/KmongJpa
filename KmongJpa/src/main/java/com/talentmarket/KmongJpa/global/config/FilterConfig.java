@@ -20,7 +20,7 @@ public class FilterConfig {
     public FilterRegistrationBean logFilter() {
         FilterRegistrationBean<HttpLoggingFilter> filterRegistrationBean = new FilterRegistrationBean<HttpLoggingFilter>();
         filterRegistrationBean.setFilter(new HttpLoggingFilter()); // 여기서 만든 필터 클래스  등록
-        filterRegistrationBean.setOrder(Integer.MIN_VALUE);
+        filterRegistrationBean.setOrder(Integer.MAX_VALUE);
         filterRegistrationBean.addUrlPatterns("/*");
         return filterRegistrationBean;
     }

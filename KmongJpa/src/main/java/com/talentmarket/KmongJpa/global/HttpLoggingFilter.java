@@ -5,6 +5,7 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
@@ -27,6 +28,7 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
                 QueryString: {}
                 Authorization: {}
                 Body: {}
+                handler: {}
             ================
             response:
                 statusCode: {}
@@ -57,13 +59,14 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
 
         Long entTime = System.currentTimeMillis();
         String duration = String.valueOf(entTime - startTime) + "ms";
-
+        System.out.println(cachingResponse.getContentType());
         if(cachingResponse.getContentType().equals("text/html;charset=UTF-8")){
             log.info(HTTP_LOG_FORMAT,method , uri ,queryString , header, new String(cachingRequest.getContentAsByteArray()),cachingResponse.getStatus(),"html",duration);
             cachingResponse.copyBodyToResponse();
             return;
+
         }
-        log.info(HTTP_LOG_FORMAT,method , uri ,queryString , header, new String(cachingRequest.getContentAsByteArray()),cachingResponse.getStatus(),objectMapper.readTree(cachingResponse.getContentAsByteArray()),duration);
+        log.info(HTTP_LOG_FORMAT,method , uri ,queryString , header, new String(cachingRequest.getContentAsByteArray()), MDC.get("handler"),cachingResponse.getStatus(),objectMapper.readTree(cachingResponse.getContentAsByteArray()),duration);
         cachingResponse.copyBodyToResponse();
 
 
