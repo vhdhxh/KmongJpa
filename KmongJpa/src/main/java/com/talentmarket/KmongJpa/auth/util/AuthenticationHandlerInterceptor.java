@@ -18,6 +18,7 @@ public class AuthenticationHandlerInterceptor implements HandlerInterceptor {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
+
         return true;
     }
 
