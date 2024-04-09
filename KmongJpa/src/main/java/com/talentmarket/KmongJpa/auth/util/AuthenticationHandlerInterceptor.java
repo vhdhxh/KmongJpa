@@ -13,6 +13,7 @@ public class AuthenticationHandlerInterceptor implements HandlerInterceptor {
     // 컨트롤러 실행 전에 preHandle 을 호출하고  preHandle() 이 false 를 반환한다면, 다음 HandlerInterceptor 혹은 컨트롤러를 실행하지 않는다.
     @Override
 
+
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HttpSession httpSession = request.getSession();
         if(httpSession.getAttribute("user")==null){
