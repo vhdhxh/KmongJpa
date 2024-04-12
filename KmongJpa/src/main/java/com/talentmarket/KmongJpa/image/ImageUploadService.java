@@ -1,4 +1,4 @@
-package com.talentmarket.KmongJpa.global;
+package com.talentmarket.KmongJpa.image;
 
 import com.talentmarket.KmongJpa.Item.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;

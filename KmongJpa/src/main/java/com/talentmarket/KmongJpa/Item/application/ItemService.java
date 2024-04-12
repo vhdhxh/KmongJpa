@@ -5,8 +5,10 @@ import com.talentmarket.KmongJpa.Item.application.dto.DetailResponse;
 import com.talentmarket.KmongJpa.Item.application.dto.ItemPaginationDto;
 import com.talentmarket.KmongJpa.Item.application.dto.WriteRequest;
 import com.talentmarket.KmongJpa.Item.domain.Item;
+import com.talentmarket.KmongJpa.Item.domain.ItemImage;
 import com.talentmarket.KmongJpa.Item.domain.Itemcount;
 import com.talentmarket.KmongJpa.Item.repository.ItemCountRepository;
+import com.talentmarket.KmongJpa.Item.repository.ItemImageRepository;
 import com.talentmarket.KmongJpa.Item.repository.ItemRepository;
 import com.talentmarket.KmongJpa.user.domain.Users;
 import com.talentmarket.KmongJpa.global.exception.CustomException;
@@ -17,11 +19,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
+
 @Service
 @RequiredArgsConstructor
 public class ItemService {
     private final ItemRepository itemRepository;
     private final ItemCountRepository itemCountRepository;
+    private final ItemImageRepository itemImageRepository;
 
     //글쓰기
     @Transactional
@@ -29,6 +38,13 @@ public class ItemService {
         Users.checkUserSession(principalDetails);
         Item item = Item.createBoard(request , principalDetails);
         Long Id = itemRepository.save(item).getId();
+        List<ItemImage> itemImages = request.getImages().stream()
+                .map(imageName -> ItemImage.builder()
+                        .item(item)
+                        .imageName(imageName)
+                        .build())
+                .collect(Collectors.toList());
+        itemImageRepository.saveAll(itemImages);
         System.out.println(itemCountRepository.findById(1L).get().getItemcount());
         itemCountRepository.plusCount();
         System.out.println(itemCountRepository.findById(1L).get().getItemcount());
@@ -62,7 +78,9 @@ public class ItemService {
        Item item = itemRepository.findItemAndComment(boardId)
                .orElseThrow(()->new CustomException(ErrorCode.ITEM_NOT_FOUND));
 
-       return DetailResponse.ToDto(item);
+       List<ItemImage> itemImages= itemImageRepository.findByItemId(boardId);
+
+       return DetailResponse.ToDto(item, itemImages);
     }
 
 //    게시글 페이징 반환

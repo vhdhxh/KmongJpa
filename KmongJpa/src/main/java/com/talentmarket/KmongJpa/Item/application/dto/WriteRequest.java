@@ -3,6 +3,8 @@ package com.talentmarket.KmongJpa.Item.application.dto;
 import com.talentmarket.KmongJpa.Item.domain.Item;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -14,6 +16,7 @@ public class WriteRequest {
     private String thumbnail;
     private int price;
     private String detail;
+    private List<String> images;
 
     public static WriteRequest ToDto(Item item) {
         return WriteRequest

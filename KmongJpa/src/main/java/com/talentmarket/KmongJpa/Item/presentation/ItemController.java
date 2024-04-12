@@ -47,8 +47,8 @@ public class ItemController {
     //게시글 상세보기
     @GetMapping("/api/v1/board/{boardId}")
     public ApiResponse<DetailResponse> DetailBoard (
-            @AuthPrincipal Users user
-            , @PathVariable("boardId") Long boardId) {
+
+             @PathVariable("boardId") Long boardId) {
 
         return ApiResponse.ok(itemService.DetailBoard(boardId));
     }
