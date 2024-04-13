@@ -56,6 +56,7 @@ public class Item {
                 .contents(request.getContents())
                 .build();
     }
+
     public Long updateBoard(WriteRequest request) {
         this.contents = request.getContents();
         this.detail = request.getDetail();
