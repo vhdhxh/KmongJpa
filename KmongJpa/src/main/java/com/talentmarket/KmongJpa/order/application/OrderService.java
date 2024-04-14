@@ -3,7 +3,7 @@ package com.talentmarket.KmongJpa.order.application;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.talentmarket.KmongJpa.Item.domain.Item;
-import com.talentmarket.KmongJpa.payment.application.CanselRequest;
+import com.talentmarket.KmongJpa.payment.application.*;
 import com.talentmarket.KmongJpa.global.exception.CustomException;
 import com.talentmarket.KmongJpa.global.exception.ErrorCode;
 import com.talentmarket.KmongJpa.Item.repository.ItemRepository;
@@ -13,9 +13,6 @@ import com.talentmarket.KmongJpa.order.domain.Order;
 import com.talentmarket.KmongJpa.order.domain.OrderItem;
 import com.talentmarket.KmongJpa.order.repository.OrderItemRepository;
 import com.talentmarket.KmongJpa.order.repository.OrderRepository;
-import com.talentmarket.KmongJpa.payment.application.PaymentRequest;
-import com.talentmarket.KmongJpa.payment.application.TokenRequestDto;
-import com.talentmarket.KmongJpa.payment.application.TokenResponseDto;
 import com.talentmarket.KmongJpa.user.domain.Users;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
@@ -37,6 +34,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ItemRepository itemRepository;
     private final OrderItemRepository orderItemRepository;
+    private final ImportClient importClient;
 
     private static final String imp_key = "1470258353350864";
     private static final String imp_secret = "tJRnFafeZng5NiUj4SJRpTMjr1bhUr3FvSBJVuPSV2iOFtb5BDxMkSGmtGpodMiYshdwrJt9oMRyzANh";
@@ -113,8 +111,8 @@ public class OrderService {
         // 가격이 서로 다르다면 결제 취소 요청
         if (payAmount != dbAmount) {
             order.updateStatus(OrderStatus.Fail);  //이부분은 아래 예외가 터지면 어차피 롤백되어서 의미가 없는거같다. 그럼어떻게?
-            boolean result = cancelPayment(paymentRequest.getImp_uid(), payAmount);  //외부 api인데 트랜잭션을 어떻게 적용하는게 좋을까? 만약 취소 요청 자체가 실패한다면?
-
+//            boolean result = cancelPayment(paymentRequest.getImp_uid(), payAmount);  //외부 api인데 트랜잭션을 어떻게 적용하는게 좋을까? 만약 취소 요청 자체가 실패한다면?
+            boolean result = importClient.cancelPayment(paymentRequest.getImp_uid(),payAmount,imp_key,imp_secret);
             return false;
             //예외를 던지지말고 차라리 response를 return할까?
         }
