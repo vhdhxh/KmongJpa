@@ -67,8 +67,8 @@ public class Item {
     }
 
     public void stockReduce(int quantity) {
-       int restStock = this.stockQuantity-quantity;
-       if (restStock<0) {
+       stockQuantity = stockQuantity-quantity;
+       if (stockQuantity<0) {
            throw new CustomException(ErrorCode.STOCK_NOT_NEGATIVE);
        }
     }

@@ -19,6 +19,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class OrderService {
     private final OrderRepository orderRepository;
     private final ItemRepository itemRepository;
@@ -113,6 +115,10 @@ public class OrderService {
             order.updateStatus(OrderStatus.Fail);  //이부분은 아래 예외가 터지면 어차피 롤백되어서 의미가 없는거같다. 그럼어떻게?
 //            boolean result = cancelPayment(paymentRequest.getImp_uid(), payAmount);  //외부 api인데 트랜잭션을 어떻게 적용하는게 좋을까? 만약 취소 요청 자체가 실패한다면?
             boolean result = importClient.cancelPayment(paymentRequest.getImp_uid(),payAmount,imp_key,imp_secret);
+            if (!result){
+                // 환불이 실패 했으므로 일단 주문상태를 결제취소 실패로 변경
+
+            }
             return false;
             //예외를 던지지말고 차라리 response를 return할까?
         }
@@ -121,6 +127,8 @@ public class OrderService {
         for (int i = 0; i < orderItemCount; i++) {
             int count = order.getOrderItems().get(i).getCount();
             order.getOrderItems().get(i).getItem().stockReduce(count);
+            System.out.println("count : " +  count);
+            System.out.println(order.getOrderItems().get(i).getItem().getStockQuantity());
         }
 
         order.updateStatus(OrderStatus.Success);
