@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 
 public enum OrderStatus {
-    Try,Success,Fail;
+    Try,Success,Fail, cancelFail;
 
 
 

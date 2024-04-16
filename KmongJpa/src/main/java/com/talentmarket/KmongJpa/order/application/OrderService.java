@@ -117,7 +117,7 @@ public class OrderService {
             boolean result = importClient.cancelPayment(paymentRequest.getImp_uid(),payAmount,imp_key,imp_secret);
             if (!result){
                 // 환불이 실패 했으므로 일단 주문상태를 결제취소 실패로 변경
-
+             order.updateStatus(OrderStatus.cancelFail);
             }
             return false;
             //예외를 던지지말고 차라리 response를 return할까?
