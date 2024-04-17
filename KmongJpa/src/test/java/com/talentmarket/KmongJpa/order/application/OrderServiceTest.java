@@ -20,6 +20,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URISyntaxException;
 
@@ -29,6 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest
+@Transactional
 @ActiveProfiles("test")
 class OrderServiceTest {
     @Autowired
@@ -52,22 +54,23 @@ class OrderServiceTest {
         Users user = Users.builder().name("test").email("test").build();
         userRepository.save(user);
         Item item = Item.builder().title("testItem").price(1000).stockQuantity(3).build();
-        itemRepository.save(item);
+       Item item2 =  itemRepository.save(item);
 
 
         Order order = Order.builder().uuid("uuid").orderStatus(OrderStatus.Try).user(user).build();
         orderRepository.save(order);
-        OrderItem orderItem = OrderItem.createOrderItem(1,item,order);
+        OrderItem orderItem = OrderItem.createOrderItem(2,item,order);
         orderItemRepository.save(orderItem);
 
 
+
     //when
-        orderService.afterOrder(new PaymentRequest("imp",1000,"uuid"));
+        orderService.afterOrder(new PaymentRequest("imp",2000,"uuid"));
     //then
        Order order1 = orderRepository.findByUuid("uuid");
-       Item item1 = itemRepository.findById(1L).get();
+       Item item1 = itemRepository.findById(item2.getId()).get();
        assertThat(order1.getOrderStatus()).isEqualTo(OrderStatus.Success);
-       assertThat(item1.getStockQuantity()).isEqualTo(2);
+       assertThat(item1.getStockQuantity()).isEqualTo(1);
 
     }
 
@@ -79,7 +82,7 @@ class OrderServiceTest {
         Users user = Users.builder().name("test").email("test").build();
         userRepository.save(user);
         Item item = Item.builder().title("testItem").price(1000).stockQuantity(3).build();
-        itemRepository.save(item);
+        Item item2 = itemRepository.save(item);
 
 
         Order order = Order.builder().uuid("uuid").orderStatus(OrderStatus.Try).user(user).build();
@@ -92,7 +95,7 @@ class OrderServiceTest {
         orderService.afterOrder(new PaymentRequest("imp",900,"uuid"));
         //then
         Order order1 = orderRepository.findByUuid("uuid");
-        Item item1 = itemRepository.findById(1L).get();
+        Item item1 = itemRepository.findById(item2.getId()).get();
         assertThat(order1.getOrderStatus()).isEqualTo(OrderStatus.cancelFail);
         assertThat(item1.getStockQuantity()).isEqualTo(3);
 

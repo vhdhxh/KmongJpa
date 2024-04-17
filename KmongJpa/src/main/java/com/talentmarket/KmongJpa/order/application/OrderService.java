@@ -100,11 +100,14 @@ public class OrderService {
 
         int payAmount = paymentRequest.getAmount();
         Order order = orderRepository.findByUuid(paymentRequest.getUuid());
-        int orderItemCount = order.getOrderItems().size();
+        List<OrderItem> orderItems = orderItemRepository.findByOrderId(order.getId());
+
+        int orderItemCount = orderItems.size();
         int dbAmount = 0;
 
-       dbAmount = order.getOrderItems().stream()
-                .mapToInt(item -> item.getItem().getPrice())
+
+       dbAmount = orderItems.stream()
+                .mapToInt(item-> item.getItem().getPrice()*item.getCount())
                 .sum();
 //        for (int i = 0; i < orderItemCount; i++) {
 //            dbAmount += order.getOrderItems().get(i).getItem().getPrice();
@@ -125,10 +128,9 @@ public class OrderService {
         // 가격이 맞다면 주문 상태 변경 후 재고차감 그런데, 재고차감을 이시점에 하는게맞나?
 
         for (int i = 0; i < orderItemCount; i++) {
-            int count = order.getOrderItems().get(i).getCount();
-            order.getOrderItems().get(i).getItem().stockReduce(count);
-            System.out.println("count : " +  count);
-            System.out.println(order.getOrderItems().get(i).getItem().getStockQuantity());
+            int count = orderItems.get(i).getCount();
+            orderItems.get(i).getItem().stockReduce(count);
+
         }
 
         order.updateStatus(OrderStatus.Success);
