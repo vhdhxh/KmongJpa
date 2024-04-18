@@ -24,6 +24,7 @@ public class StompConfig implements WebSocketMessageBrokerConfigurer {
 
     }
 
+
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/chat/stomp-chatting") //SockJS 연결주소
