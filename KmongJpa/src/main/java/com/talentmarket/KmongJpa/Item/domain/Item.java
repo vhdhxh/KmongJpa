@@ -21,7 +21,8 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 public class Item {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "item_id")
     private Long Id;
     private String title;
@@ -67,9 +68,18 @@ public class Item {
     }
 
     public void stockReduce(int quantity) {
-       stockQuantity = stockQuantity-quantity;
-       if (stockQuantity<0) {
-           throw new CustomException(ErrorCode.STOCK_NOT_NEGATIVE);
-       }
+        stockQuantity = stockQuantity - quantity;
+        if (stockQuantity < 0) {
+            throw new CustomException(ErrorCode.STOCK_NOT_NEGATIVE);
+        }
+        }
+    public boolean soldOutCheck () {
+       return this.stockQuantity>0;
     }
+
+    public boolean stockCheck(int itemCount) {
+        return (this.stockQuantity - itemCount)>=0;
+
+    }
+
 }

@@ -45,9 +45,8 @@ public class ItemService {
                         .build())
                 .collect(Collectors.toList());
         itemImageRepository.saveAll(itemImages);
-        System.out.println(itemCountRepository.findById(1L).get().getItemcount());
         itemCountRepository.plusCount();
-        System.out.println(itemCountRepository.findById(1L).get().getItemcount());
+
 
 
         return Id;
