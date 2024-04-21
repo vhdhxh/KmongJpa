@@ -1,17 +1,14 @@
 package com.talentmarket.KmongJpa.order;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
+@AllArgsConstructor
 public class TempOrderRequest {
-    List<TempOrderItems> tempOrderItems;
-
-    @Data
-    public static class TempOrderItems {
-        private Long itemId;
-        private int itemCount;
-    }
-
+    List<TempOrderItem> tempOrderItems;
 }

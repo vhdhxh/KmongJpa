@@ -16,12 +16,7 @@ public class TempOrderResponse {
     private int count;
     private int price;
 
-
     public static List<TempOrderResponse> createResponses(Order order) {
-
-//        List<String> orderItems = order.getOrderItems().stream()
-//                .map(OrderItem->OrderItem.getItem().getTitle())
-//                .collect(Collectors.toList());
       List<TempOrderResponse> responses = order.getOrderItems().stream()
               .map(orderItem->TempOrderResponse
                       .builder()
@@ -30,8 +25,6 @@ public class TempOrderResponse {
                       .price(orderItem.getItem().getPrice())
                       .build())
               .collect(Collectors.toList());
-
-
         return responses;
     }
 

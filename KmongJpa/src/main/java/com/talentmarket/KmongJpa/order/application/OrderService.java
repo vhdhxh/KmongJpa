@@ -14,6 +14,9 @@ import com.talentmarket.KmongJpa.order.domain.OrderItem;
 import com.talentmarket.KmongJpa.order.repository.OrderItemRepository;
 import com.talentmarket.KmongJpa.order.repository.OrderRepository;
 import com.talentmarket.KmongJpa.user.domain.Users;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -24,9 +27,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,108 +41,73 @@ public class OrderService {
 
     private static final String imp_key = "1470258353350864";
     private static final String imp_secret = "tJRnFafeZng5NiUj4SJRpTMjr1bhUr3FvSBJVuPSV2iOFtb5BDxMkSGmtGpodMiYshdwrJt9oMRyzANh";
-    // 장바구니나 게시글에서
-    // 결제하기 버튼을 누르면
-    // 가주문 생성
+
     public String createTempOrder(TempOrderRequest tempOrderRequest , Users user) {
+
         Users.checkUserSession(user);
-        // 1.요청으로 주문상품을 받아 주문상품 생성.
-        // 2.가주문 생성
-
-
         List<Long> itemIds = tempOrderRequest.getTempOrderItems().stream()
                 .map(tempOrderItems->tempOrderItems.getItemId())
                 .collect(Collectors.toList());
-
         List<Integer> itemCounts = tempOrderRequest.getTempOrderItems().stream()
                 .map(tempOrderItems->tempOrderItems.getItemCount())
                 .collect(Collectors.toList());
-
-      List<Item> item = itemRepository.findAllByIdIn(itemIds);
-      //재고 확인
-
-
+        List<Item> items = itemRepository.findAllByIdIn(itemIds);
         String uuid = UUID.randomUUID().toString();
-
         Order order = Order.createOrder(user , uuid);
-
-       orderRepository.save(order);
-
+        orderRepository.save(order);
         List<OrderItem> orderItems = new ArrayList<>();
-
         //재고 확인 , 주문 상품 추가
-        for(int i =0;i<item.size();i++){
-            int stockQuantity = item.get(i).getStockQuantity();
+        for(int i =0;i<items.size();i++){
+            int stockQuantity = items.get(i).getStockQuantity();
             int itemCount = itemCounts.get(i);
-            if(stockQuantity==0 && stockQuantity<itemCount)
+            if(stockQuantity==0 || stockQuantity<itemCount)
                 throw new CustomException(ErrorCode.STOCK_NOT_ENOUGH);
-            OrderItem orderItem = OrderItem.createOrderItem(itemCount,item.get(i),order);
+            OrderItem orderItem = OrderItem.createOrderItem(itemCount,items.get(i),order);
             orderItems.add(orderItem);
         }
-        //벌크 인서트로 개선하는게 좋겠다.
-        orderItemRepository.saveAll(orderItems);
-
+        order.addOrderItems(orderItems);
+        orderItemRepository.saveAll(orderItems); //TODO:벌크 인서트로 개선하는게 좋겠다.
         return uuid;
     }
     //가주문 불러오기
     public List<TempOrderResponse> getTempOrder(String orderUUID, Users user) {
-
        Order order = orderRepository.findByUUIDAndUserAndOrderStatus(orderUUID,user.getId(), OrderStatus.Try);
-      List<TempOrderResponse> responses = TempOrderResponse.createResponses(order);
-         return responses;
+       List<TempOrderResponse> responses = TempOrderResponse.createResponses(order);
+       return responses;
     }
 
-    // 결제가 (성공이든 실패든 처리되면)
-    // 주문 상태 변경
-    // 성공일 경우 포트원 서버 와 DB 주문 가격을 검증
-    //주문을 성공 했을경우 true , 실패했을경우 false 반환
-    public Boolean afterOrder(PaymentRequest paymentRequest) throws JsonProcessingException, URISyntaxException {
-        // 포트원 서버 와 DB 주문 가격을 검증
-
+    public Boolean afterOrder(PaymentRequest paymentRequest)  {
         int payAmount = paymentRequest.getAmount();
         Order order = orderRepository.findByUuid(paymentRequest.getUuid());
         List<OrderItem> orderItems = orderItemRepository.findByOrderId(order.getId());
-
-        int orderItemCount = orderItems.size();
-        int dbAmount = 0;
-
-
-       dbAmount = orderItems.stream()
+        int dbAmount = orderItems.stream()
                 .mapToInt(item-> item.getItem().getPrice()*item.getCount())
                 .sum();
-//        for (int i = 0; i < orderItemCount; i++) {
-//            dbAmount += order.getOrderItems().get(i).getItem().getPrice();
-//
-//        }
-        // 가격이 서로 다르다면 결제 취소 요청
-        if (payAmount != dbAmount) {
-            order.updateStatus(OrderStatus.Fail);  //이부분은 아래 예외가 터지면 어차피 롤백되어서 의미가 없는거같다. 그럼어떻게?
-//            boolean result = cancelPayment(paymentRequest.getImp_uid(), payAmount);  //외부 api인데 트랜잭션을 어떻게 적용하는게 좋을까? 만약 취소 요청 자체가 실패한다면?
-            boolean result = importClient.cancelPayment(paymentRequest.getImp_uid(),payAmount,imp_key,imp_secret);
-            if (!result){
-                // 환불이 실패 했으므로 일단 주문상태를 결제취소 실패로 변경
-             order.updateStatus(OrderStatus.cancelFail);
-            }
-            return false;
-            //예외를 던지지말고 차라리 response를 return할까?
-        }
-        // 가격이 맞다면 주문 상태 변경 후 재고차감 그런데, 재고차감을 이시점에 하는게맞나?
-
-        for (int i = 0; i < orderItemCount; i++) {
-            int count = orderItems.get(i).getCount();
-            orderItems.get(i).getItem().stockReduce(count);
-
-        }
-
+        if(!amountCheck(payAmount,dbAmount,order, paymentRequest.getImp_uid()))
+           return false;
+        orderItems.stream().forEach(orderItem->orderItem.getItem().stockReduce(orderItem.getCount()));
         order.updateStatus(OrderStatus.Success);
-
-        //아니면 검증메소드();
-        //      결제취소메소드();
-        //
-
-      return true;
+        return true;
     }
 
+    boolean amountCheck(int payAmount,int dbAmount,Order order,String imp_uid)  {
+        if (payAmount != dbAmount) {
+            order.updateStatus(OrderStatus.Fail);
+            boolean result = false;
+            try {
+                result = importClient.cancelPayment(imp_uid, payAmount, imp_key, imp_secret);
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+            if (!result) {
+                order.updateStatus(OrderStatus.cancelFail);
+            }
+            return false;
+        }
+        return true;
+    }
 
     //payment 서비스를 분리해야될거같다.
     private boolean cancelPayment(String imp_uid,int price) throws URISyntaxException, JsonProcessingException {

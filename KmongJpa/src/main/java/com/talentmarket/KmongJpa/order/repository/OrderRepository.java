@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface OrderRepository extends JpaRepository<Order,Long> {
 
 
@@ -15,5 +17,9 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
             , @Param("userId") Long userId,
               @Param("status") OrderStatus orderStatus);
 
+
     Order findByUuid (String uuid);
+    @Query("select o from Order o where o.orderStatus = :orderStatus")
+    List<Order> findByItemId(@Param("orderStatus") OrderStatus orderStatus);
+
 }

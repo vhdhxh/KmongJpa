@@ -26,8 +26,8 @@ public class Order {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private Users user;
-    @Builder.Default
-    @OneToMany(mappedBy = "order")
+    //@Builder.Default
+    @OneToMany(mappedBy = "order",fetch = FetchType.LAZY)
     private List<OrderItem> orderItems=new ArrayList<>();
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
@@ -42,6 +42,9 @@ public class Order {
                 .uuid(uuid)
                 .user(user)
                 .build();
+    }
+    public void addOrderItems(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
     }
 
 

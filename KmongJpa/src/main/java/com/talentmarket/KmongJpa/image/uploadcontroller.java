@@ -12,11 +12,11 @@ import java.io.IOException;
 @RestController
 @RequiredArgsConstructor
 public class uploadcontroller {
-    private final ImageUploadService imageUploadService;
+    private final LocalUploadService localUploadService;
 
     @PostMapping("/upload")
     public ApiResponse upload(@RequestPart("file") MultipartFile multipartFile) throws IOException {
-      imageUploadService.upload(multipartFile);
+      localUploadService.upload(multipartFile);
         return ApiResponse.ok(null);
     }
 }

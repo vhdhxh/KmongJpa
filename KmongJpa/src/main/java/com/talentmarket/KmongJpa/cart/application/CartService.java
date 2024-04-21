@@ -38,12 +38,9 @@ public class CartService {
         Long itemId = cartRequest.getItemId();
         int ItemCount = cartRequest.getCount();
         Cart cart = findCartByUserId(userId, users);
-
         addOrUpdateCartItem(cart,itemId,ItemCount);
-
         Item item = itemRepository.findById(cartRequest.getItemId()).orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
         cart.getCartItems();
-
         validateCount(ItemCount);
         //재고가 만약 count 보다 작다면 수량부족(품절)
         if (!item.soldOutCheck()) {
@@ -55,19 +52,13 @@ public class CartService {
         CartItem cartItem = CartItem.createCartItem(cart, item, ItemCount);
 
         cartItemRepository.save(cartItem);
-
     }
-
 
     //장바구니 삭제
     public void deleteCart(List<Long> itemIds, Users user) {
         Users.checkUserSession(user);
-
         Cart cart = cartRepository.findByUserId(user.getId()).get();
-
         cartItemRepository.deleteCartItem(cart.getId(), itemIds);
-
-
     }
 
     //장바구니 불러오기
@@ -78,13 +69,10 @@ public class CartService {
         Cart cart = cartRepository.findByUserId(userId).get();
         CartItems cartItems = new CartItems(cart.getCartItems());
         List<CartResponse> response = cartItems.toResponse();
-
         return response;
-
         //        List<CartItem> cartItems = cart.getCartItems();
 //        List<CartResponse> response = cartItems.stream()
 //                .map(c -> new CartResponse(c.getItem().getTitle(), c.getCount(), c.getItem().getPrice())).collect(Collectors.toList());
-
     }
 
     private void validateCount(int ItemCount) {

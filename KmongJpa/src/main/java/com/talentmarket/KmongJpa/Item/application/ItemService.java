@@ -46,11 +46,7 @@ public class ItemService {
                 .collect(Collectors.toList());
         itemImageRepository.saveAll(itemImages);
         itemCountRepository.plusCount();
-
-
-
         return Id;
-
     }
     //게시글 수정
     @Transactional
@@ -73,12 +69,9 @@ public class ItemService {
     //게시글 상세보기
     @Transactional(readOnly = true)
     public DetailResponse DetailBoard(Long boardId) {
-
        Item item = itemRepository.findItemAndComment(boardId)
                .orElseThrow(()->new CustomException(ErrorCode.ITEM_NOT_FOUND));
-
        List<ItemImage> itemImages= itemImageRepository.findByItemId(boardId);
-
        return DetailResponse.ToDto(item, itemImages);
     }
 
@@ -88,7 +81,6 @@ public class ItemService {
      Page<Item> boards = itemRepository.findItem(pageable);
         Page<ItemPagingResponse> map = boards.map(b-> ItemPagingResponse.builder()
                 .writer(b.getUsers().getName()).price(b.getPrice()).title(b.getTitle()).thumbnail(b.getThumbnail()).itemId(b.getId()).build());
-
         return map;
     }
 
@@ -98,7 +90,6 @@ public class ItemService {
          Long total = itemCount.getItemcount();
        Page<ItemPaginationDto> items = itemRepository.paginationCoveringIndex(pageable , total);
         System.out.println(itemRepository.getClass());
-
         return items;
 
     }

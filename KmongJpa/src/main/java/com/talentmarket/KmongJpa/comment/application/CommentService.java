@@ -27,7 +27,6 @@ public class CommentService {
        Item item = itemRepository.findById(boardId).orElseThrow(()->new CustomException(ErrorCode.ITEM_NOT_FOUND));
        Comment comment = Comment.CreateComment(commentWriteDto , principalDetails , item);
        commentRepository.save(comment);
-
     }
     //댓글 수정
     public void commentUpdate(CommentWriteDto commentWriteDto, Users principalDetails, Long commentId) {
@@ -36,7 +35,6 @@ public class CommentService {
         Item item = itemRepository.findById(boardId).orElseThrow(()->new CustomException(ErrorCode.ITEM_NOT_FOUND));
         Comment comment = commentRepository.findById(commentId).orElseThrow(()->new CustomException(ErrorCode.COMMENT_NOT_FOUND));
         comment.update(commentWriteDto.getContents());
-
     }
 
     //댓글 삭제

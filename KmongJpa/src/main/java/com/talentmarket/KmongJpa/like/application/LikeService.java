@@ -20,50 +20,36 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 public class LikeService {
-
    private final LikeRepository likeRepository;
    private final ItemRepository itemRepository;
-   private final UserRepository userRepository;
-
-
    //사용자가 찜 을 누르는 행위를 해서 조회후 값이 없으면 likeCount, 있으면 disLike 메서드를 호출
     public void like(Long itemId , Users user) {
         Users.checkUserSession(user);
-
         Long userId = user.getId();
-        // 컬럼값이 있다면 삭제
         if(likeRepository.findLikesByItemIdAndUsersId(itemId,userId).isPresent()){
             disLike(itemId,user);
-        } else {
-            likeCount(itemId,user);
+            return;
         }
+        likeCount(itemId,user);
     }
 
    //찜 카운터 갱신
     public void likeCount(Long itemId , Users user) {
-
         // 중복카운트 불가, 카운트가 없다는것을 검증해야됨
-
         Long userId = user.getId();
-
-//       if(likeRepository.findLikesByItemIdAndUsersId(itemId,userId).isPresent()){
-//          throw new CustomException(ErrorCode.COUNTED_LIKE);
-//       }
-
+       if(likeRepository.findLikesByItemIdAndUsersId(itemId,userId).isPresent()){
+          throw new CustomException(ErrorCode.COUNTED_LIKE);
+       }
         Item item = itemRepository.findById(itemId).orElseThrow(()->new CustomException(ErrorCode.ITEM_NOT_FOUND));
-
-
         Like like = Like.builder().item(item).users(user).build();
        likeRepository.save(like);
     }
 
     //찜 카운터 내림
     public void disLike(Long itemId , Users user) {
-
-
-//        if(likeRepository.findLikesByItemIdAndUsersId(itemId,user.getId()).isEmpty()){
-//            throw new CustomException(ErrorCode.NOT_COUNTED_LIKE);
-//        }
+       if(likeRepository.findLikesByItemIdAndUsersId(itemId,user.getId()).isEmpty()){
+            throw new CustomException(ErrorCode.NOT_COUNTED_LIKE);
+        }
         Long userId = user.getId();
         likeRepository.deleteByUsersIdAndItemId(userId,itemId);
     }
