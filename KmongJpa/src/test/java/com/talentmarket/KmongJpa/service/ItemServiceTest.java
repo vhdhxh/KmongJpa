@@ -37,6 +37,7 @@ class ItemServiceTest {
     @DisplayName("게시글을 쓴다.")
     @Test
     void writeBoard() {
+
         //given
         Users users = Users.builder().email("vhdhxh@naver.com").password("1234").build();
 
