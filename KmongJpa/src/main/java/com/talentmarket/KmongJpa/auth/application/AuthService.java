@@ -3,6 +3,7 @@ package com.talentmarket.KmongJpa.auth.application;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.talentmarket.KmongJpa.auth.application.dto.LoginResponse;
 import com.talentmarket.KmongJpa.auth.application.dto.KakaoRequest;
 import com.talentmarket.KmongJpa.auth.UserDto;
 import com.talentmarket.KmongJpa.global.exception.CustomException;
@@ -40,11 +41,12 @@ public class AuthService {
 
 
     //로그인 -> 비밀번호 체크 -> 맞으면 세션 생성
-    public void login(HttpServletRequest httpServletRequest, UserDto userDto) {
-        HttpSession httpSession = httpServletRequest.getSession();
-        if (httpSession.getAttribute("user") != null) {
-            httpSession.setMaxInactiveInterval(1800);
-            return;
+    public LoginResponse login(HttpServletRequest httpServletRequest, UserDto userDto) {
+        HttpSession httpSession = httpServletRequest.getSession(false);
+        if (httpSession != null) {
+            System.out.println("httpsessionsdfdsf = "+httpSession);
+            httpSession.setMaxInactiveInterval(1801);
+            return LoginResponse.builder().build();
         }
         Users user = userRepository.findByEmail(userDto.userEmail()).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
@@ -52,11 +54,11 @@ public class AuthService {
         if (!passwordCheck) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
         }
-
+        httpSession = httpServletRequest.getSession(true);
         httpSession.setAttribute("user", userDto);
-        httpSession.setMaxInactiveInterval(1800);
-
-
+        httpSession.setMaxInactiveInterval(1801);
+        LoginResponse loginResponse = LoginResponse.builder().userEmail(user.getEmail()).userImage(user.getImage()).userName(user.getName()).build();
+      return loginResponse;
     }
 
     public void logout(HttpServletRequest httpServletRequest) {

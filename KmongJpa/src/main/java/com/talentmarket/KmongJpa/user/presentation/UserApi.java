@@ -1,6 +1,7 @@
 package com.talentmarket.KmongJpa.user.presentation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.talentmarket.KmongJpa.Dto.UserResponse;
 import com.talentmarket.KmongJpa.auth.UserDto;
 import com.talentmarket.KmongJpa.auth.util.AuthPrincipal;
 import com.talentmarket.KmongJpa.global.ApiResponse;
@@ -10,6 +11,7 @@ import com.talentmarket.KmongJpa.user.application.dto.FindPasswordRequest;
 import com.talentmarket.KmongJpa.user.application.dto.RegisterRequest;
 import com.talentmarket.KmongJpa.user.domain.Users;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,8 +40,6 @@ public class UserApi {
     public void testLogin (@RequestBody UserDto userDto,HttpServletRequest request) {
         HttpSession httpSession = request.getSession();
         httpSession.setAttribute("userSession" , userDto);
-//  Session session = sessionRepository.createSession();
-//  session.setAttribute("userSession", userDto);
 
     }
     @GetMapping("/test")
@@ -62,6 +62,12 @@ public class UserApi {
 
 
 
+    }
+
+    @GetMapping("/api/v1/user")
+    public ApiResponse<UserResponse> getUserInfo(@AuthPrincipal Users user) {
+        UserResponse response = user.getResponse();
+        return ApiResponse.ok(response);
     }
 
     @PostMapping("/api/v1/user")

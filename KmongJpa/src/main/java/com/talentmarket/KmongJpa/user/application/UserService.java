@@ -1,6 +1,8 @@
 package com.talentmarket.KmongJpa.user.application;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.talentmarket.KmongJpa.Dto.UserResponse;
+import com.talentmarket.KmongJpa.auth.UserDto;
 import com.talentmarket.KmongJpa.sms.application.SmsMessageDto;
 import com.talentmarket.KmongJpa.global.config.RedisConfig;
 import com.talentmarket.KmongJpa.sms.application.SmsService;
@@ -79,7 +81,13 @@ public class UserService {
             throw new CustomException(ErrorCode.CODE_NOT_MATCH);
         }
     }
+
+    public UserResponse getUserInfo(UserDto reqUser) {
+    Users user = userRepository.findByEmail(reqUser.userEmail()).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
+    UserResponse response = user.getResponse();
+      return response;
     }
+}
 
 
 

@@ -57,8 +57,7 @@ public class ItemController {
 
     @GetMapping("/api/v1/Item")
     public ApiResponse<Page> getPagingBoard (
-            @AuthPrincipal Users user
-            , @PageableDefault(size = 6)Pageable pageable) {
+             @PageableDefault(size = 6)Pageable pageable) {
 
         return ApiResponse.ok(itemService.DetailBoard(pageable));
     }
@@ -70,5 +69,12 @@ public class ItemController {
         System.out.println(itemService.getClass());
 
         return ApiResponse.ok(itemService.DetailBoard2(pageable));
+    }
+
+    @PostMapping("/file")
+    public ApiResponse file (@ModelAttribute FileDto fileDto) {
+        System.out.println("file name = " +  fileDto.getName() + "file array = " + fileDto.getFiles());
+        System.out.println(fileDto.getFiles().get(3).getContentType());
+        return ApiResponse.ok(null);
     }
 }

@@ -34,7 +34,10 @@ public class AuthPrincipalArgumentResolver implements HandlerMethodArgumentResol
                                   NativeWebRequest webRequest,
                                   WebDataBinderFactory binderFactory) throws Exception {
         HttpServletRequest httpServletRequest = (HttpServletRequest) webRequest.getNativeRequest();
-       HttpSession httpSession = httpServletRequest.getSession();
+       HttpSession httpSession = httpServletRequest.getSession(false);
+                   if(httpSession==null){
+                       throw new Exception("session is null");
+                   }
        UserDto userDto = (UserDto) httpSession.getAttribute("user");
       Users user = userRepository // user 엔티티말고 userId만 반환하는것도 고려해야봐야겠다.
               .findByEmail(userDto.userEmail()).orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));

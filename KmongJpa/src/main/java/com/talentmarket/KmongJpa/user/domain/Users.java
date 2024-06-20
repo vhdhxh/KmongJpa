@@ -1,5 +1,6 @@
 package com.talentmarket.KmongJpa.user.domain;
 
+import com.talentmarket.KmongJpa.Dto.UserResponse;
 import com.talentmarket.KmongJpa.Item.domain.Item;
 import com.talentmarket.KmongJpa.global.exception.CustomException;
 import com.talentmarket.KmongJpa.global.exception.ErrorCode;
@@ -56,6 +57,9 @@ protected Users () {}
         if (principalDetails == null) {
             throw new CustomException(ErrorCode.USER_NOT_LOGIN);
         }
+    }
+    public UserResponse getResponse(){
+    return UserResponse.builder().email(this.email).image(this.image).name(this.name).build();
     }
 
 }

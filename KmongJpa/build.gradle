@@ -41,7 +41,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 //	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 	implementation 'org.mindrot:jbcrypt:0.4'
-
+	implementation 'org.springframework.retry:spring-retry'
+	implementation 'org.springframework:spring-aspects'
 	//레디스
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	//쿼리디에쎌

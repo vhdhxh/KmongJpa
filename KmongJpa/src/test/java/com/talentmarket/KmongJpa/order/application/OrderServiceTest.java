@@ -16,6 +16,8 @@ import com.talentmarket.KmongJpa.payment.application.ImportClient;
 import com.talentmarket.KmongJpa.payment.application.PaymentRequest;
 import com.talentmarket.KmongJpa.user.domain.Users;
 import com.talentmarket.KmongJpa.user.repository.UserRepository;
+import jakarta.persistence.OptimisticLockException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -23,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,17 +33,22 @@ import org.springframework.transaction.annotation.Transactional;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.ClassBasedNavigableIterableAssert.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest
 @Transactional
-@ActiveProfiles("test")
+//@Rollback(value = false)
+@ActiveProfiles("test2")
 class OrderServiceTest {
     @Autowired
     private OrderService orderService;
@@ -51,9 +59,12 @@ class OrderServiceTest {
     @Autowired
     private OrderItemRepository orderItemRepository;
     @Autowired
-    ItemRepository itemRepository;
+    private ItemRepository itemRepository;
     @MockBean
     private ImportClient importClient;
+
+
+
 
     @DisplayName("결제가 성공하면 주문 상태가 바뀌고 재고를 차감한다")
     @Test
@@ -104,9 +115,10 @@ class OrderServiceTest {
 
     @DisplayName("가주문을 생성한다.")
     @Test
-    void test3() {
+    void test3() throws InterruptedException {
     //given
-        itemRepository.save(Item.builder().Id(1L).stockQuantity(3).build());
+        itemRepository.saveAndFlush(Item.builder().Id(1L).stockQuantity(3).build());
+        Thread.sleep(3000);
         Users user =  Users.builder().build();
         TempOrderItem tempOrderItem = new TempOrderItem(1L,3);
         List<TempOrderItem> tempOrderItems = new ArrayList<>();
@@ -153,6 +165,49 @@ class OrderServiceTest {
         assertThat(tempOrderResponses.get(0).getItem()).isEqualTo("testItemName");
         assertThat(tempOrderResponses.get(0).getPrice()).isEqualTo(1000);
         assertThat(tempOrderResponses.get(0).getCount()).isEqualTo(3);
+    }
+
+    @DisplayName("재고보다 많은양의 구매가 들어왔을 경우 예외를 던지며 구매에 실패한다")
+    @Test
+    void 재고동시성테스트() throws URISyntaxException, JsonProcessingException, InterruptedException {
+        //    //given
+
+        int numThreads = 30;
+        Mockito.when(importClient.cancelPayment(any(String.class),any(Integer.class),any(String.class),any(String.class))).thenReturn(true);
+        CountDownLatch doneSignal = new CountDownLatch(numThreads);
+        ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
+        AtomicInteger successCount = new AtomicInteger();
+        AtomicInteger failCount = new AtomicInteger();
+        executorService.execute(()->{
+            itemRepository.save(Item.builder().version(1).Id(1L).price(1000).stockQuantity(10).title("apple").build());
+        });
+      Thread.sleep(10000);
+    //when
+        for (int i = 0; i < numThreads; i++) {
+            int finalI = i;
+            executorService.execute(() -> {
+                try {
+                    Order order = Order.builder().uuid("uuid"+finalI).orderStatus(OrderStatus.Try).build();
+                    orderRepository.save(order);
+                    OrderItem orderItem = OrderItem.createOrderItem(1,itemRepository.findById(1L).orElseThrow(),order);
+                    orderItemRepository.save(orderItem);
+                    boolean result = orderService.afterOrder(new PaymentRequest("imp", 1000, "uuid" + finalI));
+                    successCount.getAndIncrement();
+                } catch (OptimisticLockingFailureException e) {
+                    e.printStackTrace();
+                    failCount.getAndIncrement();
+                } finally {
+                    doneSignal.countDown();
+                }
+            });
+        }
+        doneSignal.await();
+        executorService.shutdown();
+    //then
+        assertAll(
+                () -> assertThat(successCount.get()).isEqualTo(2),
+                () -> assertThat(failCount.get()).isEqualTo(8)
+        );
     }
 
 

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -18,9 +19,15 @@ public class ExceptionAdvice {
     @ExceptionHandler(CustomException.class)
     public ApiResponse DuplicateRegisterException(CustomException exception) {
         log.info(exception.getErrorCode().getMessage());
-
         return ApiResponse.of(HttpStatus.BAD_REQUEST,exception.getMessage(),null);
+    }
 
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public  ApiResponse ObjectOptimisticLockingFailureException(ObjectOptimisticLockingFailureException exception) {
+
+        return ApiResponse.of(HttpStatus.BAD_REQUEST,"재고가 부족합니다",null);
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)

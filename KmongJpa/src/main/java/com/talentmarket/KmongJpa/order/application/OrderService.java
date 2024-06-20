@@ -21,6 +21,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -43,7 +46,6 @@ public class OrderService {
     private static final String imp_secret = "tJRnFafeZng5NiUj4SJRpTMjr1bhUr3FvSBJVuPSV2iOFtb5BDxMkSGmtGpodMiYshdwrJt9oMRyzANh";
 
     public String createTempOrder(TempOrderRequest tempOrderRequest , Users user) {
-
         Users.checkUserSession(user);
         List<Long> itemIds = tempOrderRequest.getTempOrderItems().stream()
                 .map(tempOrderItems->tempOrderItems.getItemId())
@@ -76,6 +78,11 @@ public class OrderService {
        return responses;
     }
 
+    @Retryable(
+            retryFor = {ObjectOptimisticLockingFailureException.class},
+            maxAttempts = 1000,
+            backoff = @Backoff(100)
+    )
     public Boolean afterOrder(PaymentRequest paymentRequest)  {
         int payAmount = paymentRequest.getAmount();
         Order order = orderRepository.findByUuid(paymentRequest.getUuid());
@@ -83,8 +90,9 @@ public class OrderService {
         int dbAmount = orderItems.stream()
                 .mapToInt(item-> item.getItem().getPrice()*item.getCount())
                 .sum();
-        if(!amountCheck(payAmount,dbAmount,order, paymentRequest.getImp_uid()))
-           return false;
+        if(!amountCheck(payAmount,dbAmount,order, paymentRequest.getImp_uid())) {
+            return false;
+        }
         orderItems.stream().forEach(orderItem->orderItem.getItem().stockReduce(orderItem.getCount()));
         order.updateStatus(OrderStatus.Success);
         return true;

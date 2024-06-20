@@ -7,12 +7,14 @@ import com.talentmarket.KmongJpa.auth.application.OauthProvider;
 import com.talentmarket.KmongJpa.auth.application.OauthService;
 import com.talentmarket.KmongJpa.auth.UserDto;
 import com.talentmarket.KmongJpa.auth.application.AuthService;
+import com.talentmarket.KmongJpa.auth.application.dto.LoginResponse;
 import com.talentmarket.KmongJpa.auth.util.AuthPrincipal;
 import com.talentmarket.KmongJpa.global.ApiResponse;
 import com.talentmarket.KmongJpa.global.exception.CustomException;
 import com.talentmarket.KmongJpa.global.exception.ErrorCode;
 import com.talentmarket.KmongJpa.user.domain.Users;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,16 +29,16 @@ public class AuthController {
     private final AuthService authService;
     private final OauthService oauthService;
     private final OauthProvider oauthProvider;
-    @PostMapping("/logout2")
+    @PostMapping("/api/v1/logout")
     public ApiResponse logout(HttpServletRequest httpServletRequest) {
        authService.logout(httpServletRequest);
         return ApiResponse.ok("logout");
     }
 
-    @PostMapping("/login2")
-    public ApiResponse login(HttpServletRequest httpServletRequest, @RequestBody UserDto userDto) {
-        authService.login(httpServletRequest,userDto);
-        return ApiResponse.ok("login");
+    @PostMapping("/api/v1/login")
+    public ApiResponse login(HttpServletRequest httpServletRequest, @RequestBody UserDto userDto, HttpServletResponse response) {
+        LoginResponse loginResponse = authService.login(httpServletRequest,userDto);
+        return ApiResponse.ok(loginResponse);
     }
     @GetMapping("/test2")
     public ApiResponse test2(@AuthPrincipal Users user) {

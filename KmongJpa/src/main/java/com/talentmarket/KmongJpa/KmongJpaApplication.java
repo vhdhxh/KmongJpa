@@ -5,8 +5,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.Bean;
 import com.talentmarket.KmongJpa.auth.BCryptPasswordEncoder;
+import org.springframework.retry.annotation.EnableRetry;
 
 @SpringBootApplication
+@EnableRetry
 @ServletComponentScan
 public class KmongJpaApplication {
 
