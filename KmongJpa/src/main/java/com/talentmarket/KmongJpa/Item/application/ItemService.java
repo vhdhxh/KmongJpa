@@ -14,6 +14,7 @@ import com.talentmarket.KmongJpa.user.domain.Users;
 import com.talentmarket.KmongJpa.global.exception.CustomException;
 import com.talentmarket.KmongJpa.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -77,7 +78,9 @@ public class ItemService {
 
 //    게시글 페이징 반환
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "items")
     public Page<ItemPagingResponse> DetailBoard(Pageable pageable) {
+        System.out.println("DetailBoard");
      Page<Item> boards = itemRepository.findItem(pageable);
         Page<ItemPagingResponse> map = boards.map(b-> ItemPagingResponse.builder()
                 .writer(b.getUsers().getName()).price(b.getPrice()).title(b.getTitle()).thumbnail(b.getThumbnail()).itemId(b.getId()).build());

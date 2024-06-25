@@ -42,8 +42,6 @@ public class QItem extends EntityPathBase<Item> {
 
     public final com.talentmarket.KmongJpa.user.domain.QUsers users;
 
-    public final NumberPath<Integer> version = createNumber("version", Integer.class);
-
     public final StringPath writer = createString("writer");
 
     public QItem(String variable) {
