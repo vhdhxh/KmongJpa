@@ -88,6 +88,17 @@ public class ItemService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "items")
+    public Page<ItemPagingResponse> cacheTest(Pageable pageable) {
+        System.out.println("DetailBoard");
+        Page<Item> boards = itemRepository.findItem(pageable);
+        Page<ItemPagingResponse> map = boards.map(b-> ItemPagingResponse.builder()
+                .writer(b.getUsers().getName()).price(b.getPrice()).title(b.getTitle()).thumbnail(b.getThumbnail()).itemId(b.getId()).build());
+        return map;
+    }
+
+    @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "items")
     public Page<ItemPaginationDto> DetailBoard2(Pageable pageable) {
          Itemcount itemCount = itemCountRepository.findById(1L).get();
          Long total = itemCount.getItemcount();

@@ -64,17 +64,21 @@ public class ItemController {
 
     @GetMapping("/api/v2/Item")
     public ApiResponse<Page> getPagingBoard2 (
-            @AuthPrincipal Users user
-            , @PageableDefault(size = 6)Pageable pageable) {
+             @PageableDefault(size = 6)Pageable pageable) {
         System.out.println(itemService.getClass());
 
         return ApiResponse.ok(itemService.DetailBoard2(pageable));
     }
 
+    //test
     @PostMapping("/file")
     public ApiResponse file (@ModelAttribute FileDto fileDto) {
         System.out.println("file name = " +  fileDto.getName() + "file array = " + fileDto.getFiles());
         System.out.println(fileDto.getFiles().get(3).getContentType());
+        return ApiResponse.ok(null);
+    }
+    @GetMapping("/cache")
+    public ApiResponse cacheTest() {
         return ApiResponse.ok(null);
     }
 }
