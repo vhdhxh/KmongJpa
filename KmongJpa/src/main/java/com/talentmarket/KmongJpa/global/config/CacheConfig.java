@@ -7,6 +7,7 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.binder.cache.CaffeineCacheMetrics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +20,7 @@ import static java.util.stream.Collectors.toList;
 
 
 @Configuration
+@EnableCaching
 public class CacheConfig {
 
   @Autowired

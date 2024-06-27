@@ -37,8 +37,8 @@ public class Item {
     @Builder.Default
     @OneToMany(mappedBy = "item")
     private List<Comment> comment = new ArrayList<>();
-    @Version
-    private Integer version;
+//    @Version
+//    private Integer version;
 
     @CreatedDate
     private LocalDateTime createdDate;

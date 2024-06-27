@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -78,13 +79,21 @@ public class ItemController {
     //test
     @PostMapping("/file")
     public ApiResponse file (@ModelAttribute FileDto fileDto) {
-//        System.out.println("file name = " +  fileDto.getName() + "file array = " + fileDto.getFiles());
-//        System.out.println(fileDto.getFiles().get(3).getContentType());
+        System.out.println("file name = " +  fileDto.getName() + "file array = " + fileDto.getFiles());
+        System.out.println(fileDto.getFiles().get(0).getOriginalFilename());
         List<MultipartFile> files = fileDto.getFiles();
-
         uploadService.fileUpload(files);
         return ApiResponse.ok(null);
     }
+    @PostMapping("/file1")
+    public ApiResponse file1 (@ModelAttribute FileDto fileDto) throws IOException {
+        System.out.println("file name = " +  fileDto.getName() + "file array = " + fileDto.getFiles());
+        System.out.println(fileDto.getFiles().get(0).getOriginalFilename());
+        List<MultipartFile> files = fileDto.getFiles();
+        uploadService.normalUpload(files);
+        return ApiResponse.ok(null);
+    }
+
     @GetMapping("/cache")
     public ApiResponse cacheTest() {
         return ApiResponse.ok(null);

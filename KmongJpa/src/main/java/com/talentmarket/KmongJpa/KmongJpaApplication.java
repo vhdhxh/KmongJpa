@@ -7,10 +7,10 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import com.talentmarket.KmongJpa.auth.BCryptPasswordEncoder;
 import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
 @EnableRetry
-@EnableCaching
 @ServletComponentScan
 public class KmongJpaApplication {
 
