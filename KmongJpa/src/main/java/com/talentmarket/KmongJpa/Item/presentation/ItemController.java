@@ -1,5 +1,6 @@
 package com.talentmarket.KmongJpa.Item.presentation;
 
+import com.talentmarket.KmongJpa.Item.application.UploadService;
 import com.talentmarket.KmongJpa.auth.util.AuthPrincipal;
 import com.talentmarket.KmongJpa.global.ApiResponse;
 import com.talentmarket.KmongJpa.Item.application.dto.DetailResponse;
@@ -13,11 +14,15 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 public class ItemController {
     private final ItemService itemService;
+    private final UploadService uploadService;
 
     //게시글 쓰기
     @PostMapping("/api/v1/board")
@@ -73,8 +78,11 @@ public class ItemController {
     //test
     @PostMapping("/file")
     public ApiResponse file (@ModelAttribute FileDto fileDto) {
-        System.out.println("file name = " +  fileDto.getName() + "file array = " + fileDto.getFiles());
-        System.out.println(fileDto.getFiles().get(3).getContentType());
+//        System.out.println("file name = " +  fileDto.getName() + "file array = " + fileDto.getFiles());
+//        System.out.println(fileDto.getFiles().get(3).getContentType());
+        List<MultipartFile> files = fileDto.getFiles();
+
+        uploadService.fileUpload(files);
         return ApiResponse.ok(null);
     }
     @GetMapping("/cache")
