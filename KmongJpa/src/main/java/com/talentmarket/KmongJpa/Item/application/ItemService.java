@@ -105,7 +105,10 @@ public class ItemService {
        Page<ItemPaginationDto> items = itemRepository.paginationCoveringIndex(pageable , total);
         System.out.println(itemRepository.getClass());
         return items;
-
+    }
+    @Transactional(readOnly = true)
+    public Page searchTest(Pageable pageable , SearchDto searchDto) {
+        Page search = itemRepository.
     }
     
 }

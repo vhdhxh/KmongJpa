@@ -14,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 @Service
 @RequiredArgsConstructor
 public class UploadService {
-    private final Uploader uploader;
+//    private final Uploader uploader;
     public static String PATH ="C:\\Users\\윤민수\\Downloads\\kmongimage\\";
     public void fileUpload(List<MultipartFile> files) {
 //        File file = new File(PATH);
@@ -41,14 +41,14 @@ public class UploadService {
 //                throw new RuntimeException(e);
 //            }
 //        });
-        files.forEach(file -> {
-            try {
-                uploader.uploadImage(file);
-
-            } catch (IOException  e) {
-                throw new RuntimeException(e);
-            }
-        });
+//        files.forEach(file -> {
+//            try {
+////                uploader.uploadImage(file);
+//
+//            } catch (IOException  e) {
+//                throw new RuntimeException(e);
+//            }
+//        });
 
 
 

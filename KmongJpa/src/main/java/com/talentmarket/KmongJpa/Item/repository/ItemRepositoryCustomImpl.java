@@ -1,21 +1,27 @@
 package com.talentmarket.KmongJpa.Item.repository;
 
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.talentmarket.KmongJpa.Item.application.dto.ItemPaginationDto;
+import com.talentmarket.KmongJpa.Item.domain.Item;
 import com.talentmarket.KmongJpa.Item.domain.QItem;
+import com.talentmarket.KmongJpa.Item.presentation.SortType;
 import com.talentmarket.KmongJpa.user.domain.QUsers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
 @RequiredArgsConstructor
 public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
-
+    private final QItem item;
     public Page<ItemPaginationDto> paginationCoveringIndex (Pageable pageable,Long total) {
         QItem item = QItem.item;
         QUsers user = QUsers.users;
@@ -33,6 +39,48 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
                 .orderBy(item.Id.desc())
                 .fetch();
          return new PageImpl<>(items,pageable,total);
+// select itemId , title , name ,price from item join user where item.id in () order by item.id desc
+    }
+    //sort :   최신순 , 저가순 , 고가순
+    public PageImpl<ItemPaginationDto> search(Pageable pageable ,String title ,String category, String sort) {
+        //기본적으로 , 처음에 검색하게되면 title 만 입력받음 정렬은 최신이 default   sort = date , price_desc , price_asc
+        //
+        QItem item = QItem.item;
+        int count = jpaQueryFactory.select(item.Id)
+                .from(item)
+                .where(titleLike(title))
+                .fetch().size();
 
+        List <Long> ids = jpaQueryFactory.select(item.Id)
+                .from(item)
+                .limit(pageable.getPageSize())
+                .offset(pageable.getPageNumber())
+                .where(titleLike(title),categoryLike(category))
+                .fetch();
+        OrderSpecifier order ;
+
+        if (sort == null || "date".equals(sort)) {
+            order = new OrderSpecifier<>(Order.DESC, item.Id);
+        }
+        if (sort=="price_desc"){
+            order = new OrderSpecifier<>(Order.DESC , item.price);
+        } else {
+            order = new OrderSpecifier<>(Order.ASC , item.price);
+
+        }
+
+        List<Item> items = jpaQueryFactory.select(item)
+                .from(item)
+                .where(item.Id.in(ids)) //category 가 들어갈수도 , 안들어갈수도 있음 안들어갔다면 title 우선
+                .orderBy(order)
+                .fetch();
+
+        return new PageImpl<ItemPaginationDto>(items,pageable,count);
+    }
+    private BooleanExpression titleLike(String title) {
+        return StringUtils.hasText(title) ? item.title.contains(title) : null;
+    }
+    private BooleanExpression categoryLike(String category) {
+        return StringUtils.hasText(category) ? item.title.contains(category) : null;
     }
 }
