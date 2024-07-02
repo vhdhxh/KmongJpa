@@ -2,6 +2,7 @@ package com.talentmarket.KmongJpa.Item.domain;
 
 import com.talentmarket.KmongJpa.Item.application.dto.WriteRequest;
 import com.talentmarket.KmongJpa.comment.domain.Comment;
+import com.talentmarket.KmongJpa.global.entity.BaseEntity;
 import com.talentmarket.KmongJpa.user.domain.Users;
 import com.talentmarket.KmongJpa.global.exception.CustomException;
 import com.talentmarket.KmongJpa.global.exception.ErrorCode;
@@ -20,7 +21,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-public class Item {
+public class Item extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "item_id")
@@ -29,6 +30,7 @@ public class Item {
     private String contents;
     private String thumbnail;
     private int price;
+    private String category;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

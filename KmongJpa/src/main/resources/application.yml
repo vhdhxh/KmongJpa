@@ -11,15 +11,15 @@ spring:
       max-file-size: 200MB
       max-request-size: 200MB
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/kmongJpa?useUnicode=true&serverTimezone=Asia/Seoul
-#    url: jdbc:mysql://host.docker.internal:3306/kmongJpa?useUnicode=true&serverTimezone=Asia/Seoul
+#    url: jdbc:mysql://127.0.0.1:3306/kmongJpa?useUnicode=true&serverTimezone=Asia/Seoul
+    url: jdbc:mysql://127.0.0.1:13306/kmongJpa?useUnicode=true&serverTimezone=Asia/Seoul
 
     username: root
-    password: u1234
+    password: root
 
   jpa:
     hibernate:
-      ddl-auto: validate #create #validate #create #validate #create
+      ddl-auto: validate  #create #validate #create #validate #create
     properties:
       hibernate:
         default_batch_fetch_size: 100

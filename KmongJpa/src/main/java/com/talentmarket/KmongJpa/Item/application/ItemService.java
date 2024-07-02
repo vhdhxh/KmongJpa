@@ -1,9 +1,6 @@
 package com.talentmarket.KmongJpa.Item.application;
 
-import com.talentmarket.KmongJpa.Item.application.dto.ItemPagingResponse;
-import com.talentmarket.KmongJpa.Item.application.dto.DetailResponse;
-import com.talentmarket.KmongJpa.Item.application.dto.ItemPaginationDto;
-import com.talentmarket.KmongJpa.Item.application.dto.WriteRequest;
+import com.talentmarket.KmongJpa.Item.application.dto.*;
 import com.talentmarket.KmongJpa.Item.domain.Item;
 import com.talentmarket.KmongJpa.Item.domain.ItemImage;
 import com.talentmarket.KmongJpa.Item.domain.Itemcount;
@@ -107,8 +104,9 @@ public class ItemService {
         return items;
     }
     @Transactional(readOnly = true)
-    public Page searchTest(Pageable pageable , SearchDto searchDto) {
-        Page search = itemRepository.
+    public Page<ItemPaginationDto> searchTest(Pageable pageable , SearchDto searchDto) {
+        Page sear = itemRepository.search(pageable, searchDto.getTitle(),searchDto.getCategory(), searchDto.getSort());
+        return sear;
     }
     
 }

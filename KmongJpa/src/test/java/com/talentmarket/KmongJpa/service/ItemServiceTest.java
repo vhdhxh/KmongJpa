@@ -1,8 +1,6 @@
 package com.talentmarket.KmongJpa.service;
 
-import com.talentmarket.KmongJpa.Item.application.dto.ItemPagingResponse;
-import com.talentmarket.KmongJpa.Item.application.dto.DetailResponse;
-import com.talentmarket.KmongJpa.Item.application.dto.WriteRequest;
+import com.talentmarket.KmongJpa.Item.application.dto.*;
 import com.talentmarket.KmongJpa.Item.application.ItemService;
 import com.talentmarket.KmongJpa.Item.domain.Item;
 import com.talentmarket.KmongJpa.user.domain.Users;
@@ -133,5 +131,43 @@ class ItemServiceTest {
 //
 //    }
 //
+    }
+    @DisplayName("검색")
+    @Test
+    void searchTest() {
+        //given
+        Pageable pageable = PageRequest.of(0,6);
+        Item item1 = Item.builder()
+                .title("test1")
+                .category("전자제품")
+                .price(5000)
+                .build();
+        Item item2 = Item.builder()
+                .title("test2")
+                .category("전자제품")
+                .price(3000)
+                .build();
+        Item item3 = Item.builder()
+                .title("test3")
+                .category("전자제품")
+                .price(1000)
+                .build();
+        Item item4 = Item.builder()
+                .title("test4")
+                .category("의류")
+                .price(15000)
+                .build();
+        itemRepository.save(item1);
+        itemRepository.save(item2);
+        itemRepository.save(item3);
+        itemRepository.save(item4);
+        SearchDto searchDto = SearchDto.builder()
+                .title("test")
+                .sort("price_asc")
+                .build();
+        //when
+        Page<ItemPaginationDto> page = itemService.searchTest(pageable,searchDto);
+        //then
+        assertThat(page.getContent().get(0).getPrice()).isEqualTo(15000);
     }
 }

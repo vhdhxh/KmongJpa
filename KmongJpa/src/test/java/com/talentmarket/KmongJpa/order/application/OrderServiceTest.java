@@ -179,7 +179,7 @@ class OrderServiceTest {
         AtomicInteger successCount = new AtomicInteger();
         AtomicInteger failCount = new AtomicInteger();
         executorService.execute(()->{
-            itemRepository.save(Item.builder().version(1).Id(1L).price(1000).stockQuantity(10).title("apple").build());
+//            itemRepository.save(Item.builder().version(1).Id(1L).price(1000).stockQuantity(10).title("apple").build());
         });
       Thread.sleep(10000);
     //when

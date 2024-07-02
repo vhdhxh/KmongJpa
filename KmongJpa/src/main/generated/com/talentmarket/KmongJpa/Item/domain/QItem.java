@@ -22,9 +22,16 @@ public class QItem extends EntityPathBase<Item> {
 
     public static final QItem item = new QItem("item");
 
+    public final com.talentmarket.KmongJpa.global.entity.QBaseEntity _super = new com.talentmarket.KmongJpa.global.entity.QBaseEntity(this);
+
+    public final StringPath category = createString("category");
+
     public final ListPath<com.talentmarket.KmongJpa.comment.domain.Comment, com.talentmarket.KmongJpa.comment.domain.QComment> comment = this.<com.talentmarket.KmongJpa.comment.domain.Comment, com.talentmarket.KmongJpa.comment.domain.QComment>createList("comment", com.talentmarket.KmongJpa.comment.domain.Comment.class, com.talentmarket.KmongJpa.comment.domain.QComment.class, PathInits.DIRECT2);
 
     public final StringPath contents = createString("contents");
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 
     public final DateTimePath<java.time.LocalDateTime> createdDate = createDateTime("createdDate", java.time.LocalDateTime.class);
 
@@ -39,6 +46,9 @@ public class QItem extends EntityPathBase<Item> {
     public final StringPath thumbnail = createString("thumbnail");
 
     public final StringPath title = createString("title");
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
     public final com.talentmarket.KmongJpa.user.domain.QUsers users;
 
