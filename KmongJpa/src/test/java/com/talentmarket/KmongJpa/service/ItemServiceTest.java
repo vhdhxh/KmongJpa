@@ -23,7 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest
 @Transactional
-@ActiveProfiles("test")
+@ActiveProfiles("local")
 class ItemServiceTest {
     @Autowired
     ItemRepository itemRepository;
@@ -132,42 +132,150 @@ class ItemServiceTest {
 //    }
 //
     }
-    @DisplayName("검색")
+
+    @DisplayName("가격 높은순으로 정렬 검색한다.")
     @Test
-    void searchTest() {
+    void searchOrderByDESCTest() {
         //given
-        Pageable pageable = PageRequest.of(0,6);
-        Item item1 = Item.builder()
-                .title("test1")
-                .category("전자제품")
-                .price(5000)
-                .build();
-        Item item2 = Item.builder()
-                .title("test2")
-                .category("전자제품")
-                .price(3000)
-                .build();
-        Item item3 = Item.builder()
-                .title("test3")
-                .category("전자제품")
-                .price(1000)
-                .build();
-        Item item4 = Item.builder()
-                .title("test4")
-                .category("의류")
-                .price(15000)
-                .build();
+        Pageable pageable = PageRequest.of(0, 3);
+        Item item1 = createItem("test1", "전자제품", 15000);
+        Item item2 = createItem("test2", "전자제품", 5000);
+        Item item3 = createItem("test3", "전자제품", 3000);
+        Item item4 = createItem("test4", "전자제품", 1000);
+        Item item5 = createItem("test5", "의류", 7000);
         itemRepository.save(item1);
         itemRepository.save(item2);
         itemRepository.save(item3);
         itemRepository.save(item4);
+        itemRepository.save(item5);
+        SearchDto searchDto = SearchDto.builder()
+                .title("test")
+                .sort("price_desc")
+                .build();
+        //when
+        Page<ItemPaginationDto> page = itemService.searchTest(pageable, searchDto);
+        //then
+        assertThat(page.getContent().get(0).getPrice()).isEqualTo(15000);
+        assertThat(page.getContent().get(1).getPrice()).isEqualTo(7000);
+        assertThat(page.getContent().get(2).getPrice()).isEqualTo(5000);
+    }
+
+    @DisplayName("가격 낮은순으로 정렬 검색한다.")
+    @Test
+    void searchOrderByASCTest() {
+        //given
+        Pageable pageable = PageRequest.of(0, 3);
+        Item item1 = createItem("test1", "전자제품", 15000);
+        Item item2 = createItem("test2", "전자제품", 5000);
+        Item item3 = createItem("test3", "전자제품", 3000);
+        Item item4 = createItem("test4", "전자제품", 1000);
+        Item item5 = createItem("test5", "의류", 7000);
+        itemRepository.save(item1);
+        itemRepository.save(item2);
+        itemRepository.save(item3);
+        itemRepository.save(item4);
+        itemRepository.save(item5);
         SearchDto searchDto = SearchDto.builder()
                 .title("test")
                 .sort("price_asc")
                 .build();
         //when
-        Page<ItemPaginationDto> page = itemService.searchTest(pageable,searchDto);
+        Page<ItemPaginationDto> page = itemService.searchTest(pageable, searchDto);
+        //then
+        assertThat(page.getContent().get(0).getPrice()).isEqualTo(1000);
+        assertThat(page.getContent().get(1).getPrice()).isEqualTo(3000);
+        assertThat(page.getContent().get(2).getPrice()).isEqualTo(5000);
+    }
+
+    @DisplayName("제목만 검색하면 카테고리와 상관없이 일치하는 제목의 모든 물품을 최신순으로 조회한다.")
+    @Test
+    void searchOnlyTitleTest() {
+        //given
+        Pageable pageable = PageRequest.of(0, 3);
+        Item item1 = createItem("test1", "전자제품", 15000);
+        Item item2 = createItem("test2", "전자제품", 5000);
+        Item item3 = createItem("test3", "전자제품", 3000);
+        Item item4 = createItem("test4", "전자제품", 1000);
+        Item item5 = createItem("test5", "의류", 7000);
+        itemRepository.save(item1);
+        itemRepository.save(item2);
+        itemRepository.save(item3);
+        itemRepository.save(item4);
+        itemRepository.save(item5);
+        SearchDto searchDto = SearchDto.builder()
+                .title("test")
+                .build();
+        //when
+        Page<ItemPaginationDto> page = itemService.searchTest(pageable, searchDto);
+        //then
+        assertThat(page.getContent().get(0).getTitle()).isEqualTo("test5");
+        assertThat(page.getContent().get(1).getTitle()).isEqualTo("test4");
+        assertThat(page.getContent().get(2).getTitle()).isEqualTo("test3");
+    }
+
+    @DisplayName("카테고리를 검색한다")
+    @Test
+    void searchTest2() {
+        //given
+        Pageable pageable = PageRequest.of(0, 3);
+        Item item1 = createItem("test1", "전자제품", 15000);
+        Item item2 = createItem("test2", "전자제품", 5000);
+        Item item3 = createItem("test3", "전자제품", 3000);
+        Item item4 = createItem("test4", "전자제품", 1000);
+        Item item5 = createItem("test5", "의류", 7000);
+        itemRepository.save(item1);
+        itemRepository.save(item2);
+        itemRepository.save(item3);
+        itemRepository.save(item4);
+        itemRepository.save(item5);
+        SearchDto searchDto = SearchDto.builder()
+                .title("test")
+                .category("의류")
+                .build();
+        //when
+        Page<ItemPaginationDto> page = itemService.searchTest(pageable, searchDto);
+        //then
+        assertThat(page.getContent().size()).isEqualTo(1);
+        assertThat(page.getContent().get(0).getCategory()).isEqualTo("의류");
+
+    }
+
+    private Item createItem(String title, String category, int price) {
+        return Item.builder()
+                .title(title)
+                .category(category)
+                .price(price)
+                .build();
+    }
+
+    @DisplayName("카테고리와 가격높은순을 검색한다")
+    @Test
+    void searchTest3() {
+        //given
+        Pageable pageable = PageRequest.of(0, 3);
+        Item item1 = createItem("test1", "전자제품", 15000);
+        Item item2 = createItem("test2", "전자제품", 5000);
+        Item item3 = createItem("test3", "전자제품", 3000);
+        Item item4 = createItem("test4", "전자제품", 1000);
+        Item item5 = createItem("test5", "의류", 7000);
+        Item item6 = createItem("테스트", "전자제품", 10000);
+        itemRepository.save(item1);
+        itemRepository.save(item2);
+        itemRepository.save(item3);
+        itemRepository.save(item4);
+        itemRepository.save(item5);
+        itemRepository.save(item6);
+        SearchDto searchDto = SearchDto.builder()
+                .title("test")
+                .category("전자제품")
+                .sort("price_desc")
+                .build();
+        //when
+        Page<ItemPaginationDto> page = itemService.searchTest(pageable, searchDto);
         //then
         assertThat(page.getContent().get(0).getPrice()).isEqualTo(15000);
+        assertThat(page.getContent().get(1).getPrice()).isEqualTo(5000);
+        assertThat(page.getContent().get(2).getPrice()).isEqualTo(3000);
+
     }
 }

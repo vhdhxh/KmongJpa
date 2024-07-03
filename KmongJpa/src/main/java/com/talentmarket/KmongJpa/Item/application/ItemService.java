@@ -105,8 +105,11 @@ public class ItemService {
     }
     @Transactional(readOnly = true)
     public Page<ItemPaginationDto> searchTest(Pageable pageable , SearchDto searchDto) {
-        Page sear = itemRepository.search(pageable, searchDto.getTitle(),searchDto.getCategory(), searchDto.getSort());
-        return sear;
+        String title = searchDto.getTitle();
+        String category = searchDto.getCategory();
+        String sort = searchDto.getSort();
+        return itemRepository.search(pageable, title, category,sort);
+
     }
     
 }

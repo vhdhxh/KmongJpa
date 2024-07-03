@@ -8,4 +8,5 @@ public class ItemPaginationDto {
     private String title;
     private String name;
     private int price;
+    private String category;
 }
