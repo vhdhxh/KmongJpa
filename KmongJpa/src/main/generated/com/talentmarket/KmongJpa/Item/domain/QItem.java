@@ -33,8 +33,6 @@ public class QItem extends EntityPathBase<Item> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 
-    public final DateTimePath<java.time.LocalDateTime> createdDate = createDateTime("createdDate", java.time.LocalDateTime.class);
-
     public final StringPath detail = createString("detail");
 
     public final NumberPath<Long> Id = createNumber("Id", Long.class);

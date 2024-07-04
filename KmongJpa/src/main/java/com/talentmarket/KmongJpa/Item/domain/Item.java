@@ -42,8 +42,8 @@ public class Item extends BaseEntity {
 //    @Version
 //    private Integer version;
 
-    @CreatedDate
-    private LocalDateTime createdDate;
+//    @CreatedDate
+//    private LocalDateTime createdDate;
     private String writer;
     private String detail;
     private int stockQuantity;
