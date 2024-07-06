@@ -65,6 +65,9 @@ dependencies {
 	implementation 'org.springframework.session:spring-session-jdbc'
 	//actuator
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	//
+	implementation 'net.coobird:thumbnailator:0.4.14'
+
 	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
