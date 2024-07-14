@@ -47,6 +47,51 @@ public class SmsService {
 
     private String phone;
 
+
+    public SmsResponseDto send(SmsMessageDto messageDto,String smsConfirmNum) throws JsonProcessingException, RestClientException, URISyntaxException, InvalidKeyException, NoSuchAlgorithmException, UnsupportedEncodingException {
+//        smsConfirmNum = createSmsKey();       //인증번호 초기화
+        String time = Long.toString(System.currentTimeMillis());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("x-ncp-apigw-timestamp", time);
+        headers.set("x-ncp-iam-access-key", accessKey);
+        headers.set("x-ncp-apigw-signature-v2", getSignature(time)); // signature 서명
+
+        List<SmsMessageDto> messages = new ArrayList<>();
+        messages.add(messageDto);
+
+        SmsRequestDto request = SmsRequestDto.builder()
+                .type("SMS")
+                .contentType("COMM")
+                .countryCode("82")
+                .from(phone)
+                .content("[프로젝트 테스트입니다] 인증번호 [" + smsConfirmNum + "]를 입력해주세요")
+                .messages(messages)
+                .build();
+
+        //쌓은 바디를 json형태로 반환
+        ObjectMapper objectMapper = new ObjectMapper();
+        String body = objectMapper.writeValueAsString(request);
+        // jsonBody와 헤더 조립
+        HttpEntity<String> httpBody = new HttpEntity<>(body, headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
+        //restTemplate로 post 요청 보내고 오류가 없으면 202코드 반환
+        SmsResponseDto smsResponseDto = restTemplate.postForObject(new URI("https://sens.apigw.ntruss.com/sms/v2/services/"+ serviceId +"/messages"), httpBody, SmsResponseDto.class);
+        SmsResponseDto responseDto = new SmsResponseDto(smsConfirmNum);
+        String statusCode = responseDto.getStatusCode();
+
+
+        if(statusCode!="202") {
+            throw new CustomException(ErrorCode.FAIL_SEND_MESSAGE);
+        }
+        redisConfig.setDataExpire(smsConfirmNum, messageDto.getTo(), 60 * 3L); // 유효시간 3분
+        return smsResponseDto;
+    }
+
+
     public SmsResponseDto sendSms(SmsMessageDto messageDto) throws JsonProcessingException, RestClientException, URISyntaxException, InvalidKeyException, NoSuchAlgorithmException, UnsupportedEncodingException {
         redisConfig.deleteData(smsConfirmNum);  //인증 만료시간 3분전에 인증문자를 추가로 보냈을 경우
         smsConfirmNum = createSmsKey();       //인증번호 초기화

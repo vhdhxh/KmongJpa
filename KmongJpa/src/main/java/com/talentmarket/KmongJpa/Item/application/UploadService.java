@@ -30,18 +30,27 @@ public class UploadService {
     private final Executor executor;
     public static String PATH ="C:\\Users\\윤민수\\Downloads\\kmongimage\\";
     public void fileUpload(List<MultipartFile> files) {
-//        File file = new File(PATH);
+     files.forEach(file->{
+        CompletableFuture.runAsync(()->{try {
+            imageResizer.resize(file,50,50,PATH);
+        } catch (IOException  e) {
+            throw new RuntimeException(e);
+        }} ,executor).exceptionally(e->{
+            e.printStackTrace();
+            return null;
+        });
 
-        files.forEach(file -> {
-            try {
-                Long startTime = System.currentTimeMillis();
-               imageResizer.resize(file,50,50,PATH);
-                Long entTime = System.currentTimeMillis();
-                System.out.println(" duration : " + (startTime - entTime));
+//        files.forEach(file -> {
+//                Long startTime = System.currentTimeMillis();
+//            try {
+//                imageResizer.resize(file,50,50,PATH);
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//            Long entTime = System.currentTimeMillis();
+//                System.out.println(" duration : " + (startTime - entTime));
 
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+
 //            CompletableFuture.runAsync(()->{try {
 //                file.transferTo(new File(PATH + file.getOriginalFilename()));
 //                System.out.println(file.getOriginalFilename());
