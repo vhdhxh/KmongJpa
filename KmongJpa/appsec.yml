@@ -1,0 +1,16 @@
+version: 0.0
+os: linux
+
+files:
+  - source: /
+    destination: /home/ubuntu/app/step1/remarket
+file_exists_behavior: OVERWRITE
+permissions:
+  - object: /home/ubuntu/app/step1/remarket
+    owner: ubuntu
+    group: ubuntu
+hooks:
+  AfterInstall:
+    - location: scripts/deploy.sh
+      timeout: 60
+      runas: ubuntu
