@@ -8,7 +8,7 @@ on:
     
 # --------------------------추가
 env:
-  PROJECT_NAME: kmongJpa
+  PROJECT_NAME: KmongJpa
   BUCKET_NAME: remarket-bucket
   CODE_DEPLOY_APP_NAME: remarket-code-deploy
   DEPLOYMENT_GROUP_NAME: remarket-server
