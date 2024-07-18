@@ -26,7 +26,11 @@ jobs:
           java-version: 17
 
       - name: Check pwd
-        run: pwd    
+        run: cd src
+             pwd
+             cd main
+             cd resources
+             pwd
 
       - name: Copy Secret
         env:
