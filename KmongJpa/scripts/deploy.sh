@@ -1,7 +1,7 @@
 
 #!/usr/bin/env bash
 
-REPOSITORY=/home/ec2-user/app/step1/kmong
+REPOSITORY=/KmongJpa/KmongJpa
 cd $REPOSITORY
 
 APP_NAME=kmong

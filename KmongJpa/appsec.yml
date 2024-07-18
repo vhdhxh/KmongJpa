@@ -3,10 +3,10 @@ os: linux
 
 files:
   - source: /
-    destination: /home/ubuntu/app/step1/remarket
+    destination: /KmongJpa/KmongJpa
 file_exists_behavior: OVERWRITE
 permissions:
-  - object: /home/ubuntu/app/step1/remarket
+  - object: /KmongJpa/KmongJpa
     owner: ubuntu
     group: ubuntu
 hooks:
