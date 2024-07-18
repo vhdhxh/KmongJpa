@@ -32,7 +32,7 @@ jobs:
           OCCUPY_SECRET_TEST_DIR: /src/test/resources
           OCCUPY_SECRET_DIR_FILE_NAME: application.yml
         run: 
-             cd ./src/main/resources
+             cd ${{ github.workspace }}/src/main/resources
              rm ./application.yml
           
              ls -al
