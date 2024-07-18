@@ -25,6 +25,9 @@ jobs:
         with:
           java-version: 17
 
+      - name: Check pwd
+        run: pwd    
+
       - name: Copy Secret
         env:
           APPLICATION_SECRET: ${{ secrets.APPLICATION_SECRET }}
