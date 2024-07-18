@@ -26,11 +26,11 @@ jobs:
           java-version: 17
 
       - name: Check pwd
-        run: cd src
-      - name: Check pwd  
         run: pwd
+      - name: Check pwd  
+        run: ls -a
       - name: Check pwd
-        run: cd main
+        run: ls
       - name: Check pwd  
         run: cd resources
       - name: Check pwd  
