@@ -43,7 +43,8 @@ jobs:
           OCCUPY_SECRET_TEST_DIR: src/test/resources
           OCCUPY_SECRET_DIR_FILE_NAME: config.properties
         run: echo $CONFIG_SECRET | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DIR_FILE_NAME
-
+      - name: cd
+        run: cd KmongJpa 
       - name: Permission for gradlew
         run: chmod +x ./gradlew
         shell: bash
