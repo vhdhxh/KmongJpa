@@ -37,7 +37,6 @@ public class ItemController {
     public ResponseEntity writeBoard (@RequestBody WriteRequest writeRequest
             , @AuthPrincipal Users user
             , @PathVariable Long boardId) {
-
         return ResponseEntity.status(HttpStatus.OK).body(itemService.UpdateBoard(writeRequest,boardId,user));
     }
 
