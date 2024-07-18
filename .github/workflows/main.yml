@@ -45,6 +45,8 @@ jobs:
         run: echo $CONFIG_SECRET | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DIR_FILE_NAME
       - name: cd
         run: cd KmongJpa
+      - name: cd
+        run: cd KmongJpa  
       - name: cd2
         run: ls -a
       - name: Permission for gradlew
