@@ -31,7 +31,15 @@ jobs:
           OCCUPY_SECRET_DIR: /src/main/resources
           OCCUPY_SECRET_TEST_DIR: /src/test/resources
           OCCUPY_SECRET_DIR_FILE_NAME: application.yml
-        run: echo $APPLICATION_SECRET | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DIR_FILE_NAME
+        run: 
+             cd ./src/main/resources
+             rm ./application.yml
+          
+             ls -al
+             touch ./application.yml
+          
+             echo "copy properties"
+             echo $APPLICATION_SECRET | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DIR_FILE_NAME
 
          
       - name: Copy Secret2
