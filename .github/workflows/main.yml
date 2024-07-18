@@ -27,10 +27,14 @@ jobs:
 
       - name: Check pwd
         run: cd src
-             pwd
-             cd main
-             cd resources
-             pwd
+      - name: Check pwd  
+        run: pwd
+      - name: Check pwd
+        run: cd main
+      - name: Check pwd  
+        run: cd resources
+      - name: Check pwd  
+        run: pwd
 
       - name: Copy Secret
         env:
