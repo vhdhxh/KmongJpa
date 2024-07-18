@@ -31,7 +31,6 @@ public class AuthService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
-
     @Value("${KAKAO_RESTAPI_KEY}")
     private String REST_API_KEY;
     @Value("${KAKAO_REDIRECT_URI}")
