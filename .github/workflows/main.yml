@@ -17,6 +17,9 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    defaults:
+          run:
+            working-directory: ./KmongJpa
     steps:
       - uses: actions/checkout@v2
       
@@ -30,7 +33,7 @@ jobs:
       - name: Copy Secret
         env:
           APPLICATION_SECRET: ${{ secrets.APPLICATION_SECRET }}
-          OCCUPY_SECRET_DIR: /home/runner/work/KmongJpa/KmongJpa/KmongJpa/src/main/resources
+          OCCUPY_SECRET_DIR: /src/main/resources
           OCCUPY_SECRET_TEST_DIR: /src/test/resources
           OCCUPY_SECRET_DIR_FILE_NAME: application.yml
         run: echo $APPLICATION_SECRET | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DIR_FILE_NAME
@@ -39,20 +42,20 @@ jobs:
       - name: Copy Secret2
         env:
           CONFIG_SECRET: ${{ secrets.CONFIG_SECRET }}
-          OCCUPY_SECRET_DIR: /home/runner/work/KmongJpa/KmongJpa/KmongJpa/src/main/resources
+          OCCUPY_SECRET_DIR: /src/main/resources
           OCCUPY_SECRET_TEST_DIR: src/test/resources
           OCCUPY_SECRET_DIR_FILE_NAME: config.properties
         run: echo $CONFIG_SECRET | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DIR_FILE_NAME
 
       - name: cd
-        run: ls -a /home/runner/work/KmongJpa/KmongJpa/KmongJpa
+        run: ls -a /KmongJpa
      
       - name: Permission for gradlew
-        run: chmod +x /home/runner/work/KmongJpa/KmongJpa/KmongJpa/gradlew
+        run: chmod +x ./gradlew
         shell: bash
 
       - name: Build and Test
-        run: /home/runner/work/KmongJpa/KmongJpa/KmongJpa/gradlew build -x test
+        run: ./gradlew build -x test
         
 # --------------------------추가      
       - name: Make Zip File
