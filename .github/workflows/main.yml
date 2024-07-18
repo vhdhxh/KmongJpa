@@ -25,21 +25,12 @@ jobs:
         with:
           java-version: 17
 
-      - name: Check pwd
-        run: pwd
-      - name: Check pwd  
-        run: ls -a
-      - name: Check pwd
-        run: ls
-      - name: Check pwd  
-        run: cd resources
-      - name: Check pwd  
-        run: pwd
+      
 
       - name: Copy Secret
         env:
           APPLICATION_SECRET: ${{ secrets.APPLICATION_SECRET }}
-          OCCUPY_SECRET_DIR: /home/runner/work/KmongJpa/KmongJpa/src/main/resources
+          OCCUPY_SECRET_DIR: /home/runner/work/KmongJpa/KmongJpa/KmongJpa/src/main/resources
           OCCUPY_SECRET_TEST_DIR: /src/test/resources
           OCCUPY_SECRET_DIR_FILE_NAME: application.yml
         run: echo $APPLICATION_SECRET | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DIR_FILE_NAME
