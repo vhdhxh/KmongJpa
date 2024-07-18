@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
           run:
-            working-directory: ./KmongJpa
+            working-directory: /home/runner/work/KmongJpa/KmongJpa/KmongJpa/KmongJpa
     steps:
       - uses: actions/checkout@v2
       
