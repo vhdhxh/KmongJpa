@@ -31,12 +31,7 @@ jobs:
           OCCUPY_SECRET_DIR: /src/main/resources
           OCCUPY_SECRET_TEST_DIR: /src/test/resources
           OCCUPY_SECRET_DIR_FILE_NAME: application.yml
-        run: 
-             rm ${{ github.workspace }}/src/main/resources/application.yml
-             ls -al ${{ github.workspace }}/src/main/resources
-             touch ${{ github.workspace }}/src/main/resources/application.yml
-             echo "copy properties"
-             echo $APPLICATION_SECRET | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DIR_FILE_NAME
+        run: echo $APPLICATION_SECRET | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DIR_FILE_NAME
 
          
       - name: Copy Secret2
