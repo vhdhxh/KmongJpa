@@ -18,6 +18,7 @@ public class KmongJpaApplication {
         SpringApplication.run(KmongJpaApplication.class, args);
     }
 
+
 //    @Bean
 //    BCryptPasswordEncoder bCryptPasswordEncoder () {
 //        return new BCryptPasswordEncoder();
