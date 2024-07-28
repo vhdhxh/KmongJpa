@@ -4,10 +4,56 @@
     <meta charset="UTF-8">
     <title>Title</title>
 <!--    <link rel="icon" href="data:,">-->
+    <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
 </head>
 <body>
+<script>
+   function kakaoPay() {
+    console.log('카카오페이를 선택하였습니다.');
+    // 카카오페이 결제 로직을 여기에 작성하세요.
+<!--    console.log($('#userid'));-->
+	var IMP = window.IMP;
+	IMP.init('imp68474220');
+	IMP.request_pay({
+		pg : 'kakaopay.TC0ONETIME',
+		pay_method : 'card',
+		merchant_uid : 'merchant_' + new Date().getTime(),   //주문번호
+		name : 'GOOTTFLEX',                                  //상품명
+		amount : 123 ,                    //가격
+		//customer_uid : buyer_name + new Date().getTime(),  //해당 파라미터값이 있어야 빌링 키 발급 시도
+		buyer_email : 'vhdhxh@naver.com',             //구매자 이메일
+		buyer_name : 'test',                           //구매자 이름
+		//buyer_tel : 'hp',                                    //전화번호
+		//buyer_addr : 'addr',	                             //주소
+		//buyer_postcode : '123-456'                           //우편번호
+	},function(data){
+		if(data.success){
+			var msg = "결제 완료";
+            msg += '고유ID : ' + data.imp_uid;                //아임포트 uid는 실제 결제 시 결제 고유번호를 서버와 비교해서 결제처리하는데 필요없긴함.
+            msg += '// 상점 거래ID : ' + data.merchant_uid;
+            msg += '// 결제 금액 : ' + data.paid_amount;
+            msg += '// 카드 승인번호 : ' + data.apply_num;
+
+            $.ajax({
+            	type : 'post',
+            	url : '/api/v1/getToken',
+            	data : {"userId" : 123, "amount" : data.paid_amount,"method" : "kakaopay", "boardId" : 123 },
+            });
+        }else{
+        	var msg = "결제 실패"
+        	msg += "에러 내용" + rsp.error_msg;
+        }
+		alert(msg);
+		document.location.href="/board/" + id;
+	});
+}
+
+</script>
 <a href="https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=2ff1123942d1ede953a97b2a4eb8ca3a&redirect_uri=http://localhost:8080/login/oauth2/code/kakao&scope=account_email"
     >a</a>
+<button onclick="kakaoPay()">kakaoPay</button>
 <form>
     <input type="file">
     <button onsubmit=""></button>

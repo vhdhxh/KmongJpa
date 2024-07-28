@@ -81,16 +81,16 @@ public class ItemController {
         System.out.println("file name = " +  fileDto.getName() + "file array = " + fileDto.getFiles());
         System.out.println(fileDto.getFiles().get(0).getOriginalFilename());
         List<MultipartFile> files = fileDto.getFiles();
-        uploadService.fileUpload(files);
-        return ApiResponse.ok(null);
+        List<String> url = uploadService.fileUpload(files);
+        return ApiResponse.ok(url);
     }
     @PostMapping("/file1")
     public ApiResponse file1 (@ModelAttribute FileDto fileDto) throws IOException {
         System.out.println("file name = " +  fileDto.getName() + "file array = " + fileDto.getFiles());
         System.out.println(fileDto.getFiles().get(0).getOriginalFilename());
         List<MultipartFile> files = fileDto.getFiles();
-        uploadService.normalUpload(files);
-        return ApiResponse.ok(null);
+        List<String> urls = uploadService.normalUpload(files);
+        return ApiResponse.ok(urls);
     }
 
     @GetMapping("/cache")

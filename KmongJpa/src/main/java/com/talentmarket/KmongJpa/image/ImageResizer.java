@@ -22,4 +22,17 @@ public class ImageResizer {
 //            return new ByteArrayInputStream(resizedImageBytes);
         }
     }
+    public InputStream resize(MultipartFile multipartFile, int width, int height) throws IOException {
+        try (InputStream originalInputStream = multipartFile.getInputStream();
+
+             ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            Thumbnails.of(originalInputStream)
+                    .size(width, height)
+                    .outputFormat("jpg")
+                     .toOutputStream(outputStream);
+            byte[] resizedImageBytes = outputStream.toByteArray();
+//
+            return new ByteArrayInputStream(resizedImageBytes);
+        }
+    }
 }

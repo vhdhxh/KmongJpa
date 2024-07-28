@@ -10,6 +10,8 @@ import com.talentmarket.KmongJpa.sms.application.SmsRequestDto;
 import com.talentmarket.KmongJpa.sms.application.SmsResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.hc.client5.http.utils.Base64;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -31,20 +33,20 @@ import java.util.Random;
 
 @RequiredArgsConstructor
 @Service
+@PropertySource("classpath:config.properties")
+
 public class SmsService {
     private final RedisConfig redisConfig;
 
     private String smsConfirmNum = createSmsKey();
 
+    @Value("${sms.accessKey}")
     private String accessKey;
-
-
+    @Value("${sms.secretKey}")
     private String secretKey;
-
-
+    @Value("${sms.serviceId}")
     private String serviceId;
-
-
+    @Value("${sms.phone}")
     private String phone;
 
 

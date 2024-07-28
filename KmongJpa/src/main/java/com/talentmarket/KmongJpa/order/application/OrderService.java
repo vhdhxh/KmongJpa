@@ -33,6 +33,8 @@ import java.net.URISyntaxException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -49,16 +51,18 @@ public class OrderService {
         Users.checkUserSession(user);
         List<Long> itemIds = tempOrderRequest.getTempOrderItems().stream()
                 .map(tempOrderItems->tempOrderItems.getItemId())
-                .collect(Collectors.toList());
+                .collect(toList());
         List<Integer> itemCounts = tempOrderRequest.getTempOrderItems().stream()
                 .map(tempOrderItems->tempOrderItems.getItemCount())
-                .collect(Collectors.toList());
+                .collect(toList());
+
         List<Item> items = itemRepository.findAllByIdIn(itemIds);
         String uuid = UUID.randomUUID().toString();
         Order order = Order.createOrder(user , uuid);
         orderRepository.save(order);
         List<OrderItem> orderItems = new ArrayList<>();
         //재고 확인 , 주문 상품 추가
+
         for(int i =0;i<items.size();i++){
             int stockQuantity = items.get(i).getStockQuantity();
             int itemCount = itemCounts.get(i);
