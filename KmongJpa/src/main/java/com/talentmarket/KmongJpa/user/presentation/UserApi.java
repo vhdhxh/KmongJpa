@@ -6,6 +6,7 @@ import com.talentmarket.KmongJpa.auth.UserDto;
 import com.talentmarket.KmongJpa.auth.util.AuthPrincipal;
 import com.talentmarket.KmongJpa.global.ApiResponse;
 import com.talentmarket.KmongJpa.sms.application.CheckRequest;
+import com.talentmarket.KmongJpa.user.application.SimpleMailMessageService;
 import com.talentmarket.KmongJpa.user.application.UserService;
 import com.talentmarket.KmongJpa.user.application.dto.FindPasswordRequest;
 import com.talentmarket.KmongJpa.user.application.dto.RegisterRequest;
@@ -34,7 +35,7 @@ public class UserApi {
     private final UserService userService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final SessionRepository sessionRepository;
-
+    private final SimpleMailMessageService simpleMailMessageService;
     
     @PostMapping ("/testLogin") 
     public void testLogin (@RequestBody UserDto userDto,HttpServletRequest request) {
@@ -93,6 +94,12 @@ public class UserApi {
     @PostMapping("/api/v1/user/checkSms")
     public ApiResponse checkSms(@RequestBody CheckRequest request)  {
         userService.checkCode(request.getCode());
+        return ApiResponse.ok(null);
+    }
+
+    @PostMapping("test/sendMail")
+    public ApiResponse testMailSend() {
+        simpleMailMessageService.sendEmail("vhdhxh@gmail.com");
         return ApiResponse.ok(null);
     }
 

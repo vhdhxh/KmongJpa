@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import com.talentmarket.KmongJpa.auth.BCryptPasswordEncoder;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +32,8 @@ public class UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final SmsService smsService;
     private final RedisConfig redisConfig;
-
+    private final SimpleMailMessageService simpleMailMessageService;
+    private final ApplicationEventPublisher applicationEventPublisher;
     //회원가입
 @Transactional
     public Long Register(RegisterRequest request) {
@@ -39,13 +41,17 @@ public class UserService {
     userRepository.findByEmail(request.getEmail()).ifPresent(user -> {
         throw new CustomException(ErrorCode.EMAIL_DUPLICATED);
     });
-
 //        userRepository.findByEmail(request.getEmail());
-
         String encodePassword = bCryptPasswordEncoder.encode(request.getPassword());
       Users user = Users.createUsers(request,encodePassword);
-      Long Id = userRepository.save(user).getId();
-      return Id;
+//    simpleMailMessageService.sendEmail(request.getEmail()); //메일 전송
+    Long id = userRepository.save(user).getId();
+    applicationEventPublisher.publishEvent(new MailEvent(user.getEmail()));
+    trowException();
+    return id;
+    }
+    public void trowException() {
+    throw new CustomException(ErrorCode.CODE_NOT_MATCH);
     }
 
      //회원탈퇴

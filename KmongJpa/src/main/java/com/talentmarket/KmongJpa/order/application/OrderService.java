@@ -26,6 +26,7 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
@@ -87,6 +88,7 @@ public class OrderService {
             maxAttempts = 1000,
             backoff = @Backoff(100)
     )
+    @TransactionalEventListener
     public Boolean afterOrder(PaymentRequest paymentRequest)  {
         int payAmount = paymentRequest.getAmount();
         Order order = orderRepository.findByUuid(paymentRequest.getUuid());
@@ -97,10 +99,10 @@ public class OrderService {
         if(!amountCheck(payAmount,dbAmount,order, paymentRequest.getImp_uid())) {
             return false;
         }
-        orderItems.stream().forEach(orderItem->orderItem.getItem().stockReduce(orderItem.getCount()));
+        orderItems.forEach(orderItem->orderItem.getItem().stockReduce(orderItem.getCount()));
         order.updateStatus(OrderStatus.Success);
         return true;
-    }
+    } //결제완료 -> db 가격조회 -> 결제취소 -> 주문상태 변경
 
     boolean amountCheck(int payAmount,int dbAmount,Order order,String imp_uid)  {
         if (payAmount != dbAmount) {
@@ -108,10 +110,8 @@ public class OrderService {
             boolean result = false;
             try {
                 result = importClient.cancelPayment(imp_uid, payAmount, imp_key, imp_secret);
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
+            } catch (URISyntaxException | JsonProcessingException e) {
+                order.updateStatus(OrderStatus.cancelFail);
             }
             if (!result) {
                 order.updateStatus(OrderStatus.cancelFail);

@@ -28,7 +28,7 @@ public class Order {
     private Users user;
     //@Builder.Default
     @OneToMany(mappedBy = "order",fetch = FetchType.LAZY)
-    private List<OrderItem> orderItems=new ArrayList<>();
+    private List<OrderItem> orderItems = new ArrayList<>();
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
